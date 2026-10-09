@@ -66,6 +66,21 @@ const groups: {name:string; icon:LucideIcon; sub:string[]; tint:string}[] = [
   {name:"Finanzen & Daten",icon:Database,sub:["Währungen","Krypto & Märkte","Zufallsdaten"],tint:"#80d9a5"},
 ];
 
+type KeyMode = "header" | "query";
+type ApiKeyConfig = { value: string; mode: KeyMode; field: string; prefix: string };
+function readApiKeys(): Record<string, ApiKeyConfig> {
+  try {
+    const value = localStorage.getItem("apiverse-api-keys-v1");
+    return value ? JSON.parse(value) as Record<string, ApiKeyConfig> : {};
+  } catch { return {}; }
+}
+function getKeyDefaults(apiId: string): Omit<ApiKeyConfig, "value"> {
+  if (apiId === "nasa") return { mode: "query", field: "api_key", prefix: "" };
+  if (["rawg", "steam", "opencage"].includes(apiId)) return { mode: "query", field: "key", prefix: "" };
+  if (apiId === "coingecko") return { mode: "header", field: "x-cg-demo-api-key", prefix: "" };
+  if (apiId === "github") return { mode: "header", field: "Authorization", prefix: "Bearer " };
+  return { mode: "header", field: "Authorization", prefix: "" };
+}
 function readSaved(key:string, fallback:string[]) {
   try { const value = localStorage.getItem(key); return value ? JSON.parse(value) as string[] : fallback; }
   catch { return fallback; }
@@ -88,7 +103,19 @@ function ApiVerse() {
   const [demoError,setDemoError] = useState("");
   const [demoResult,setDemoResult] = useState<any>(null);
   const [copied,setCopied] = useState(false);
+  const [apiKeys,setApiKeys] = useState<Record<string, ApiKeyConfig>>(() => readApiKeys());
+  const [keyDraft,setKeyDraft] = useState("");
+  const [keyMode,setKeyMode] = useState<KeyMode>("header");
+  const [keyField,setKeyField] = useState("Authorization");
+  const [keyPrefix,setKeyPrefix] = useState("");
+  const [keyVisible,setKeyVisible] = useState(false);
+  const [keyNotice,setKeyNotice] = useState("");
+  const [customEndpoint,setCustomEndpoint] = useState("");
+  const [customLoading,setCustomLoading] = useState(false);
+  const [customError,setCustomError] = useState("");
+  const [customResult,setCustomResult] = useState<any>(null);
 
+  useEffect(() => { try { localStorage.setItem("apiverse-api-keys-v1",JSON.stringify(apiKeys)); } catch {} },[apiKeys]);
   useEffect(() => { try { localStorage.setItem("apiverse-favorites",JSON.stringify(favorites)); } catch {} },[favorites]);
   useEffect(() => { try { localStorage.setItem("apiverse-theme",dark?"dark":"light"); } catch {} },[dark]);
   useEffect(() => {
@@ -113,7 +140,83 @@ function ApiVerse() {
   function chooseSub(name:string,sub:string) { setCategory(name); setSubcategory(sub); setView("discover"); setMobile(false); }
   function chooseView(next:"discover"|"favorites"|"playground") { setView(next); setCategory("Alle APIs"); setSubcategory(""); setMobile(false); }
   function toggleFavorite(id:string) { setFavorites(old => old.includes(id) ? old.filter(x=>x!==id) : [...old,id]); }
-  function openApi(api:ApiItem) { setActive(api); setDemoInput(api.demo==="weather"?"Berlin":api.demo==="pokemon"?"pikachu":api.demo==="tvmaze"?"doctor":api.demo==="country"?"germany":api.demo==="jikan"?"one piece":api.demo==="github"?"octocat":api.demo==="dictionary"?"hello":api.demo==="recipe"?"chicken":api.demo==="itunes"?"daft punk":""); setDemoResult(null); setDemoError(""); setDemoLoading(false); }
+  function openApi(api:ApiItem) {
+    setActive(api);
+    setDemoInput(api.demo==="weather"?"Berlin":api.demo==="pokemon"?"pikachu":api.demo==="tvmaze"?"doctor":api.demo==="country"?"germany":api.demo==="jikan"?"one piece":api.demo==="github"?"octocat":api.demo==="dictionary"?"hello":api.demo==="recipe"?"chicken":api.demo==="itunes"?"daft punk":"");
+    const defaults = getKeyDefaults(api.id);
+    const saved = apiKeys[api.id];
+    setKeyDraft(saved?.value || "");
+    setKeyMode(saved?.mode || defaults.mode);
+    setKeyField(saved?.field || defaults.field);
+    setKeyPrefix(saved?.prefix ?? defaults.prefix);
+    setKeyVisible(false);
+    setKeyNotice("");
+    setCustomEndpoint(api.endpoint);
+    setCustomLoading(false);
+    setCustomError("");
+    setCustomResult(null);
+    setDemoResult(null);
+    setDemoError("");
+    setDemoLoading(false);
+  }
+  function saveApiKey() {
+    if (!active) return;
+    const value = keyDraft.trim();
+    if (!value) { setKeyNotice("Bitte einen Schlüssel eintragen oder auf „Entfernen“ klicken."); return; }
+    const config: ApiKeyConfig = {
+      value,
+      mode: keyMode,
+      field: keyField.trim() || (keyMode === "query" ? "api_key" : "Authorization"),
+      prefix: keyMode === "header" ? keyPrefix : ""
+    };
+    setApiKeys(old => ({ ...old, [active.id]: config }));
+    setKeyField(config.field);
+    setKeyPrefix(config.prefix);
+    setKeyNotice("Schlüssel nur auf diesem Gerät gespeichert.");
+  }
+  function removeApiKey() {
+    if (!active) return;
+    setApiKeys(old => { const next = { ...old }; delete next[active.id]; return next; });
+    const defaults = getKeyDefaults(active.id);
+    setKeyDraft("");
+    setKeyMode(defaults.mode);
+    setKeyField(defaults.field);
+    setKeyPrefix(defaults.prefix);
+    setKeyNotice("Gespeicherter Schlüssel entfernt.");
+  }
+  async function requestWithApiKey(url: string, init: RequestInit = {}) {
+    let requestUrl = url;
+    const headers = new Headers(init.headers);
+    const config = active ? apiKeys[active.id] : undefined;
+    if (config?.value?.trim()) {
+      if (config.mode === "query") {
+        const parsed = new URL(requestUrl);
+        parsed.searchParams.set(config.field || "api_key", config.value);
+        requestUrl = parsed.toString();
+      } else {
+        headers.set(config.field || "Authorization", (config.prefix || "") + config.value);
+      }
+    }
+    return fetch(requestUrl, { ...init, headers });
+  }
+  async function runCustomRequest() {
+    if (!active) return;
+    setCustomLoading(true);
+    setCustomError("");
+    setCustomResult(null);
+    try {
+      const url = new URL(customEndpoint.trim());
+      if (url.protocol !== "https:" && url.protocol !== "http:") throw new Error("Nur HTTP- und HTTPS-URLs sind erlaubt.");
+      const response = await requestWithApiKey(url.toString());
+      const body = await response.text();
+      let data: any = body;
+      try { data = body ? JSON.parse(body) : null; } catch { /* Keep plain-text responses readable. */ }
+      if (!response.ok) throw new Error("HTTP " + response.status + " " + response.statusText + (body ? ": " + body.slice(0, 260) : ""));
+      setCustomResult(data);
+    } catch (error) {
+      setCustomError(error instanceof Error ? error.message : "Anfrage fehlgeschlagen. Prüfe URL, API-Key und Browserzugriff (CORS).");
+    } finally { setCustomLoading(false); }
+  }
   async function runDemo() {
     if (!active?.demo) return;
     setDemoLoading(true); setDemoError(""); setDemoResult(null);
@@ -123,7 +226,7 @@ function ApiVerse() {
       let result:any;
       switch (active.demo) {
         case "brawl": {
-          const r = await fetch("https://api.brawlapi.com/v1/brawlers"); if(!r.ok) throw new Error("BrawlAPI antwortet gerade nicht ("+r.status+").");
+          const r = await requestWithApiKey("https://api.brawlapi.com/v1/brawlers"); if(!r.ok) throw new Error("BrawlAPI antwortet gerade nicht ("+r.status+").");
           const d=await r.json(); const rows=Array.isArray(d)?d:(d.list||d.items||[]);
           result={kind:"cards",title:"Brawler im Verzeichnis",items:rows.slice(0,18).map((b:any)=>({title:b.name||"Brawler",subtitle:[b.rarity?.name,b.class?.name].filter(Boolean).join(" · ")||"Brawl Stars",image:b.imageUrl||b.image||b.icon,name:b.name}))};
           if(!rows.length) throw new Error("Die API hat keine Brawler-Liste geliefert.");
@@ -131,61 +234,61 @@ function ApiVerse() {
         }
         case "weather": {
           if(!q) throw new Error("Gib zuerst einen Ort ein.");
-          const g=await fetch("https://geocoding-api.open-meteo.com/v1/search?name="+enc+"&count=1&language=de&format=json");
+          const g=await requestWithApiKey("https://geocoding-api.open-meteo.com/v1/search?name="+enc+"&count=1&language=de&format=json");
           if(!g.ok) throw new Error("Ortssuche fehlgeschlagen.");
           const gd=await g.json(); const place=gd.results?.[0]; if(!place) throw new Error("Ort nicht gefunden. Prüfe die Schreibweise.");
-          const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude="+place.latitude+"&longitude="+place.longitude+"&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=3");
+          const r=await requestWithApiKey("https://api.open-meteo.com/v1/forecast?latitude="+place.latitude+"&longitude="+place.longitude+"&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=3");
           if(!r.ok) throw new Error("Wetterdaten nicht erreichbar.");
           result={kind:"weather",place:place.name+(place.admin1?", "+place.admin1:"")+", "+place.country,data:await r.json()};
           break;
         }
         case "pokemon": {
-          const r=await fetch("https://pokeapi.co/api/v2/pokemon/"+(q||"pikachu").toLowerCase().replace(/\s+/g,"-"));
+          const r=await requestWithApiKey("https://pokeapi.co/api/v2/pokemon/"+(q||"pikachu").toLowerCase().replace(/\s+/g,"-"));
           if(!r.ok) throw new Error("Pokémon nicht gefunden. Probiere z. B. pikachu oder 25.");
           const d=await r.json(); result={kind:"pokemon",data:d}; break;
         }
         case "tvmaze": {
           if(!q) throw new Error("Gib einen Seriennamen ein.");
-          const r=await fetch("https://api.tvmaze.com/search/shows?q="+enc); if(!r.ok) throw new Error("TVmaze ist gerade nicht erreichbar.");
+          const r=await requestWithApiKey("https://api.tvmaze.com/search/shows?q="+enc); if(!r.ok) throw new Error("TVmaze ist gerade nicht erreichbar.");
           const d=await r.json(); result={kind:"cards",title:"Serien-Treffer",items:d.slice(0,8).map((x:any)=>({title:x.show.name,subtitle:[x.show.premiered?.slice(0,4),x.show.status,x.show.genres?.slice(0,2).join(", ")].filter(Boolean).join(" · "),image:x.show.image?.medium,description:x.show.summary?.replace(/<[^>]*>/g,"").slice(0,180)}))}; break;
         }
         case "country": {
           if(!q) throw new Error("Gib ein Land ein.");
-          const r=await fetch("https://restcountries.com/v3.1/name/"+enc+"?fields=name,capital,region,population,flags,currencies,languages");
+          const r=await requestWithApiKey("https://restcountries.com/v3.1/name/"+enc+"?fields=name,capital,region,population,flags,currencies,languages");
           if(!r.ok) throw new Error("Land nicht gefunden.");
           const d=await r.json(); result={kind:"cards",title:"Länder-Treffer",items:d.slice(0,5).map((c:any)=>({title:c.name?.common,subtitle:[c.region,c.capital?.[0]].filter(Boolean).join(" · "),image:c.flags?.png,description:"Einwohner: "+prettyNum(c.population||0)+" · Sprachen: "+Object.values(c.languages||{}).slice(0,3).join(", "),name:c.name?.common}))}; break;
         }
-        case "dog": { const r=await fetch("https://dog.ceo/api/breeds/image/random"); if(!r.ok) throw new Error("Dog API nicht erreichbar."); result={kind:"image",url:(await r.json()).message,title:"Zufälliger Hund"}; break; }
-        case "catfact": { const r=await fetch("https://catfact.ninja/fact"); if(!r.ok) throw new Error("Cat Fact API nicht erreichbar."); const d=await r.json(); result={kind:"fact",title:"Katzen-Fakt",text:d.fact,meta:(d.length||"")+" Zeichen"}; break; }
+        case "dog": { const r=await requestWithApiKey("https://dog.ceo/api/breeds/image/random"); if(!r.ok) throw new Error("Dog API nicht erreichbar."); result={kind:"image",url:(await r.json()).message,title:"Zufälliger Hund"}; break; }
+        case "catfact": { const r=await requestWithApiKey("https://catfact.ninja/fact"); if(!r.ok) throw new Error("Cat Fact API nicht erreichbar."); const d=await r.json(); result={kind:"fact",title:"Katzen-Fakt",text:d.fact,meta:(d.length||"")+" Zeichen"}; break; }
         case "jikan": {
           if(!q) throw new Error("Gib einen Anime-Titel ein.");
-          const r=await fetch("https://api.jikan.moe/v4/anime?q="+enc+"&limit=8"); if(!r.ok) throw new Error("Jikan hat das Limit erreicht oder ist nicht erreichbar.");
+          const r=await requestWithApiKey("https://api.jikan.moe/v4/anime?q="+enc+"&limit=8"); if(!r.ok) throw new Error("Jikan hat das Limit erreicht oder ist nicht erreichbar.");
           const d=await r.json(); result={kind:"cards",title:"Anime-Treffer",items:d.data.map((x:any)=>({title:x.title,subtitle:[x.year,x.type,x.episodes?x.episodes+" Folgen":""].filter(Boolean).join(" · "),image:x.images?.jpg?.image_url,description:x.synopsis?.slice(0,180)}))}; break;
         }
         case "github": {
-          const name=q||"octocat"; const r=await fetch("https://api.github.com/users/"+encodeURIComponent(name)); if(!r.ok) throw new Error("GitHub-Nutzer nicht gefunden oder API-Limit erreicht.");
+          const name=q||"octocat"; const r=await requestWithApiKey("https://api.github.com/users/"+encodeURIComponent(name)); if(!r.ok) throw new Error("GitHub-Nutzer nicht gefunden oder API-Limit erreicht.");
           const d=await r.json(); result={kind:"profile",title:d.login,subtitle:d.name||"GitHub-Profil",image:d.avatar_url,description:d.bio,stats:[["Repos",d.public_repos],["Follower",d.followers],["Folgt",d.following]],url:d.html_url,meta:d.location||d.company}; break;
         }
         case "dictionary": {
           if(!q) throw new Error("Gib ein englisches Wort ein.");
-          const r=await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/"+enc); if(!r.ok) throw new Error("Wort nicht gefunden.");
+          const r=await requestWithApiKey("https://api.dictionaryapi.dev/api/v2/entries/en/"+enc); if(!r.ok) throw new Error("Wort nicht gefunden.");
           const d=await r.json(); result={kind:"dictionary",data:d[0]}; break;
         }
         case "recipe": {
           if(!q) throw new Error("Gib eine Zutat oder einen Rezeptnamen ein.");
-          const r=await fetch("https://www.themealdb.com/api/json/v1/1/search.php?s="+enc); if(!r.ok) throw new Error("Rezeptsuche nicht verfügbar.");
+          const r=await requestWithApiKey("https://www.themealdb.com/api/json/v1/1/search.php?s="+enc); if(!r.ok) throw new Error("Rezeptsuche nicht verfügbar.");
           const d=await r.json(); result={kind:"cards",title:"Rezept-Treffer",items:(d.meals||[]).slice(0,8).map((m:any)=>({title:m.strMeal,subtitle:m.strArea+" · "+m.strCategory,image:m.strMealThumb,description:m.strInstructions?.slice(0,180),url:m.strSource||m.strYoutube}))}; if(!result.items.length) throw new Error("Kein Rezept gefunden."); break;
         }
         case "joke": {
-          const r=await fetch("https://v2.jokeapi.dev/joke/Programming?safe-mode"); if(!r.ok) throw new Error("Joke API nicht erreichbar.");
+          const r=await requestWithApiKey("https://v2.jokeapi.dev/joke/Programming?safe-mode"); if(!r.ok) throw new Error("Joke API nicht erreichbar.");
           const d=await r.json(); result={kind:"fact",title:"Programmier-Witz",text:d.type==="twopart"?d.setup+"\n\n"+d.delivery:d.joke,meta:"Safe Mode aktiv"}; break;
         }
         case "currency": {
-          const r=await fetch("https://api.frankfurter.dev/v1/latest?base=EUR"); if(!r.ok) throw new Error("Wechselkurse momentan nicht erreichbar.");
+          const r=await requestWithApiKey("https://api.frankfurter.dev/v1/latest?base=EUR"); if(!r.ok) throw new Error("Wechselkurse momentan nicht erreichbar.");
           const d=await r.json(); result={kind:"currency",data:d}; break;
         }
         case "nasa": {
-          const r=await fetch("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY"); if(!r.ok) throw new Error("NASA-Demo-Key ist limitiert. Später erneut versuchen.");
+          const r=await requestWithApiKey("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY"); if(!r.ok) throw new Error("NASA-Demo-Key ist limitiert. Später erneut versuchen.");
           const d=await r.json(); result={kind:"nasa",data:d}; break;
         }
         case "qr": {
@@ -193,16 +296,16 @@ function ApiVerse() {
           result={kind:"qr",value,url:"https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=12&data="+encodeURIComponent(value)}; break;
         }
         case "swapi": {
-          const r=await fetch("https://www.swapi.tech/api/people/1"); if(!r.ok) throw new Error("Star Wars API gerade nicht erreichbar.");
+          const r=await requestWithApiKey("https://www.swapi.tech/api/people/1"); if(!r.ok) throw new Error("Star Wars API gerade nicht erreichbar.");
           const d=await r.json(); result={kind:"json",data:d.result||d}; break;
         }
         case "randomuser": {
-          const r=await fetch("https://randomuser.me/api/"); if(!r.ok) throw new Error("Random User API nicht erreichbar.");
+          const r=await requestWithApiKey("https://randomuser.me/api/"); if(!r.ok) throw new Error("Random User API nicht erreichbar.");
           const d=(await r.json()).results?.[0]; result={kind:"profile",title:d.name.first+" "+d.name.last,subtitle:d.email,image:d.picture.large,description:"Demo-Profil aus synthetischen Daten.",stats:[["Land",d.location.country],["Alter",d.dob.age],["Telefon",d.phone]],meta:d.location.city}; break;
         }
         case "httpcat": result={kind:"image",url:"https://http.cat/"+(q||"200").replace(/[^0-9]/g,"").slice(0,3),title:"HTTP Cats · Status "+(q||"200")}; break;
         case "itunes": {
-          const r=await fetch("https://itunes.apple.com/search?term="+encodeURIComponent(q||"daft punk")+"&entity=song&limit=8"); if(!r.ok) throw new Error("iTunes-Suche fehlgeschlagen.");
+          const r=await requestWithApiKey("https://itunes.apple.com/search?term="+encodeURIComponent(q||"daft punk")+"&entity=song&limit=8"); if(!r.ok) throw new Error("iTunes-Suche fehlgeschlagen.");
           const d=await r.json(); result={kind:"cards",title:"Musik-Treffer",items:d.results.map((m:any)=>({title:m.trackName||m.collectionName,subtitle:[m.artistName,m.collectionName].filter(Boolean).join(" · "),image:m.artworkUrl100,url:m.trackViewUrl,description:m.primaryGenreName}))}; break;
         }
       }
@@ -278,7 +381,21 @@ function ApiVerse() {
         <footer className="av-footer"><div className="av-footer-brand"><div className="av-brand-mark"><Layers3 size={19}/></div><div><strong>APIverse</strong><span>Das offene API-Universum.</span></div></div><div className="av-footer-links"><a href="https://apivault.dev/" target="_blank" rel="noreferrer">Inspiration: APIVault <ExternalLink size={12}/></a><a href="https://github.com/Lennonbsiq999/craft-attack-app" target="_blank" rel="noreferrer">Open Source <ExternalLink size={12}/></a></div><p>APIs werden von Drittanbietern betrieben. Verfügbarkeit, Kontingente und Nutzungsbedingungen können sich ändern.</p></footer>
       </div>
     </main>
-    {active&&<div className="av-modal-overlay" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setActive(null)}}><section className="av-modal" role="dialog" aria-modal="true" aria-labelledby="av-modal-title"><header className="av-modal-header"><div className="av-modal-icon" style={{"--api-tint":active.color} as CSSProperties}>{active.icon}</div><div className="av-modal-title"><div className="av-modal-kicker">{active.category} / {active.subcategory}</div><h2 id="av-modal-title">{active.name}</h2><p>{active.description}</p></div><button className="av-icon-btn" onClick={()=>setActive(null)} aria-label="Schließen"><X size={19}/></button></header><div className="av-modal-body"><div className="av-modal-badges"><span className={active.auth==="Keine"?"green": "amber"}>{active.auth==="Keine"?"✓ Kein API-Key nötig":active.auth==="OAuth"?"OAuth erforderlich":active.auth==="Optional"?"Key je nach Endpunkt":"API-Key erforderlich"}</span><span>{active.cors==="Ja"?"✓ Browserzugriff laut Quelle":active.cors==="Nein"?"Browserzugriff eingeschränkt":"? CORS bitte prüfen"}</span>{active.demo&&<span className="cyan">⚡ Live-Demo verfügbar</span>}</div><div className="av-detail-grid"><div><label>ENDPOINT / BEISPIEL</label><code>{active.endpoint}</code><button className="av-copy-btn" onClick={()=>copyEndpoint(active)}>{copied?<Check size={13}/>:<Copy size={13}/>} {copied?"Kopiert":"Endpoint kopieren"}</button></div><div><label>ZUGANG & HINWEISE</label><p>{active.auth==="Keine"?"Laut Eintrag ohne API-Key nutzbar. Limits und Nutzungsbedingungen des Anbieters beachten.":active.auth==="API-Key"?"Dieser Dienst erwartet typischerweise einen eigenen Schlüssel. Niemals private Schlüssel in eine öffentliche Website oder ein GitHub-Repository committen.":active.auth==="OAuth"?"Authentifizierung über OAuth kann je nach Funktion nötig sein.": "Einige Funktionen sind offen, andere können einen Schlüssel oder ein Konto voraussetzen."}</p><a className="av-doc-link" href={active.docs} target="_blank" rel="noreferrer">Offizielle Dokumentation öffnen <ExternalLink size={13}/></a></div></div><div className="av-endpoint-code"><div><span/><span/><span/><label>REQUEST PREVIEW</label><button onClick={()=>copyEndpoint(active)}><Copy size={12}/> Kopieren</button></div><pre>GET {active.endpoint}</pre></div>{active.demo?<div className="av-demo-panel"><div className="av-demo-head"><div><span className="av-demo-live"><Activity size={12}/> INTERAKTIVE DEMO</span><h3>Probier es direkt aus.</h3></div><span className="av-browser-badge">Browser · Fetch API</span></div><div className="av-demo-form">{!["dog","catfact","nasa","swapi","randomuser"].includes(active.demo)&&<input value={demoInput} onChange={e=>setDemoInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")void runDemo()}} placeholder={active.demo==="weather"?"z. B. Berlin":active.demo==="brawl"?"Optional: wird ignoriert":active.demo==="pokemon"?"Pokémon-Name oder ID":active.demo==="tvmaze"?"Serienname":active.demo==="country"?"Land, z. B. Germany":active.demo==="jikan"?"Anime-Titel":active.demo==="github"?"GitHub Username":active.demo==="dictionary"?"Englisches Wort":active.demo==="recipe"?"Rezept oder Zutat":active.demo==="currency"?"Basis EUR (optional)":active.demo==="qr"?"Text oder URL":active.demo==="httpcat"?"HTTP-Status, z. B. 404":active.demo==="itunes"?"Artist oder Song":"Suche…"} /> }<button className="av-primary-btn" onClick={()=>void runDemo()} disabled={demoLoading}>{demoLoading?<span className="av-spinner"/>:<Play size={14}/>} {demoLoading?"Lädt …":"API ausführen"}</button></div>{demoError&&<div className="av-demo-error"><CircleHelp size={16}/><div><strong>Anfrage hat nicht geklappt</strong><span>{demoError}</span><small>Der Dienst kann vorübergehend down sein, Limits haben oder Browserzugriff blockieren.</small></div></div>}{demoResult&&<div className="av-demo-results">{demoResult.kind==="weather"&&<><div className="av-result-title"><CloudSun size={17}/><strong>{demoResult.place}</strong></div><div className="av-weather-metrics"><div><small>JETZT</small><strong>{Math.round(demoResult.data.current.temperature_2m)}°C</strong><span>Temperatur</span></div><div><small>GEFÜHLT</small><strong>{Math.round(demoResult.data.current.apparent_temperature)}°C</strong><span>Gefühlte Temp.</span></div><div><small>WIND</small><strong>{Math.round(demoResult.data.current.wind_speed_10m)} km/h</strong><span>Luftbewegung</span></div></div><div className="av-json-mini">{JSON.stringify(demoResult.data.daily,null,2)}</div></>}
+    {active&&<div className="av-modal-overlay" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setActive(null)}}><section className="av-modal" role="dialog" aria-modal="true" aria-labelledby="av-modal-title"><header className="av-modal-header"><div className="av-modal-icon" style={{"--api-tint":active.color} as CSSProperties}>{active.icon}</div><div className="av-modal-title"><div className="av-modal-kicker">{active.category} / {active.subcategory}</div><h2 id="av-modal-title">{active.name}</h2><p>{active.description}</p></div><button className="av-icon-btn" onClick={()=>setActive(null)} aria-label="Schließen"><X size={19}/></button></header><div className="av-modal-body"><div className="av-modal-badges"><span className={active.auth==="Keine"?"green": "amber"}>{active.auth==="Keine"?"✓ Kein API-Key nötig":active.auth==="OAuth"?"OAuth erforderlich":active.auth==="Optional"?"Key je nach Endpunkt":"API-Key erforderlich"}</span><span>{active.cors==="Ja"?"✓ Browserzugriff laut Quelle":active.cors==="Nein"?"Browserzugriff eingeschränkt":"? CORS bitte prüfen"}</span>{active.demo&&<span className="cyan">⚡ Live-Demo verfügbar</span>}</div><div className="av-detail-grid"><div><label>ENDPOINT / BEISPIEL</label><code>{active.endpoint}</code><button className="av-copy-btn" onClick={()=>copyEndpoint(active)}>{copied?<Check size={13}/>:<Copy size={13}/>} {copied?"Kopiert":"Endpoint kopieren"}</button></div><div><label>ZUGANG & HINWEISE</label><p>{active.auth==="Keine"?"Laut Eintrag ohne API-Key nutzbar. Limits und Nutzungsbedingungen des Anbieters beachten.":active.auth==="API-Key"?"Dieser Dienst erwartet typischerweise einen eigenen Schlüssel. Niemals private Schlüssel in eine öffentliche Website oder ein GitHub-Repository committen.":active.auth==="OAuth"?"Authentifizierung über OAuth kann je nach Funktion nötig sein.": "Einige Funktionen sind offen, andere können einen Schlüssel oder ein Konto voraussetzen."}</p><a className="av-doc-link" href={active.docs} target="_blank" rel="noreferrer">Offizielle Dokumentation öffnen <ExternalLink size={13}/></a></div></div><div className="av-endpoint-code"><div><span/><span/><span/><label>REQUEST PREVIEW</label><button onClick={()=>copyEndpoint(active)}><Copy size={12}/> Kopieren</button></div><pre>GET {active.endpoint}</pre></div>
+          <section className="av-key-panel" aria-label="API-Key verwalten">
+            <div className="av-key-panel-heading"><div><span className="av-demo-live"><Terminal size={12}/> API-KEY MANAGER</span><h3>Dein Schlüssel. Deine Regeln.</h3><p>Für jede API getrennt konfigurierbar. Gespeichert wird nur in deinem Browser.</p></div><span className={"av-key-status "+(apiKeys[active.id]?.value?"saved":"")}>{apiKeys[active.id]?.value?"● Gespeichert":"○ Kein Key"}</span></div>
+            <label className="av-key-label" htmlFor="av-api-key">API-Key / Token</label>
+            <div className="av-key-secret-row"><input id="av-api-key" type={keyVisible?"text":"password"} autoComplete="new-password" spellCheck={false} value={keyDraft} onChange={e=>{setKeyDraft(e.target.value);setKeyNotice("");}} placeholder="API-Key hier einfügen …"/><button type="button" className="av-key-visibility" onClick={()=>setKeyVisible(v=>!v)}>{keyVisible?"Verbergen":"Anzeigen"}</button></div>
+            <div className="av-key-config-grid">
+              <label><span>ÜBERTRAGUNG</span><select value={keyMode} onChange={e=>{const next=e.target.value as KeyMode;const oldDefaults=getKeyDefaults(active.id);setKeyMode(next);if(!keyField||keyField===oldDefaults.field)setKeyField(next==="query"?"api_key":"Authorization");if(next==="query")setKeyPrefix("");}}><option value="header">HTTP-Header</option><option value="query">Query-Parameter</option></select></label>
+              <label><span>{keyMode==="header"?"HEADER-NAME":"PARAMETER-NAME"}</span><input value={keyField} onChange={e=>setKeyField(e.target.value)} placeholder={keyMode==="header"?"Authorization":"api_key"}/></label>
+              {keyMode==="header"&&<label><span>WERT-PRÄFIX (OPTIONAL)</span><input value={keyPrefix} onChange={e=>setKeyPrefix(e.target.value)} placeholder="z. B. Bearer "/></label>}
+            </div>
+            <div className="av-key-actions"><button type="button" className="av-primary-btn" onClick={saveApiKey}><Check size={14}/> Schlüssel lokal speichern</button><button type="button" className="av-key-remove" onClick={removeApiKey}><X size={13}/> Entfernen</button>{keyNotice&&<span role="status">{keyNotice}</span>}</div>
+            <p className="av-key-warning"><CircleHelp size={13}/> Schlüssel werden nicht an APIverse-Server oder GitHub gesendet. Sie bleiben in localStorage dieses Browsers. Andere Skripte derselben Website könnten sie auslesen. Verwende daher keine Admin- oder Zahlungs-Schlüssel; achte auf Berechtigungen und API-Limits.</p>
+          </section>
+          <details className="av-custom-request"><summary><Terminal size={14}/> Eigenen Endpoint mit diesem Key testen <ChevronDown size={14}/></summary><div className="av-custom-request-body"><label htmlFor="av-custom-endpoint">HTTP- oder HTTPS-Endpoint</label><input id="av-custom-endpoint" value={customEndpoint} onChange={e=>setCustomEndpoint(e.target.value)} spellCheck={false} placeholder="https://api.example.com/v1/data"/><button type="button" className="av-primary-btn" onClick={()=>void runCustomRequest()} disabled={customLoading}>{customLoading?<span className="av-spinner"/>:<Play size={13}/>} {customLoading?"Anfrage läuft …":"GET-Anfrage senden"}</button>{customError&&<div className="av-custom-error" role="alert">{customError}</div>}{customResult!==null&&<><div className="av-custom-success"><Check size={12}/> Antwort empfangen</div><pre className="av-json-mini">{typeof customResult==="string"?customResult:JSON.stringify(customResult,null,2)}</pre></>}</div></details>
+          {active.demo?<div className="av-demo-panel"><div className="av-demo-head"><div><span className="av-demo-live"><Activity size={12}/> INTERAKTIVE DEMO</span><h3>Probier es direkt aus.</h3></div><span className="av-browser-badge">Browser · Fetch API</span></div><div className="av-demo-form">{!["dog","catfact","nasa","swapi","randomuser"].includes(active.demo)&&<input value={demoInput} onChange={e=>setDemoInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")void runDemo()}} placeholder={active.demo==="weather"?"z. B. Berlin":active.demo==="brawl"?"Optional: wird ignoriert":active.demo==="pokemon"?"Pokémon-Name oder ID":active.demo==="tvmaze"?"Serienname":active.demo==="country"?"Land, z. B. Germany":active.demo==="jikan"?"Anime-Titel":active.demo==="github"?"GitHub Username":active.demo==="dictionary"?"Englisches Wort":active.demo==="recipe"?"Rezept oder Zutat":active.demo==="currency"?"Basis EUR (optional)":active.demo==="qr"?"Text oder URL":active.demo==="httpcat"?"HTTP-Status, z. B. 404":active.demo==="itunes"?"Artist oder Song":"Suche…"} /> }<button className="av-primary-btn" onClick={()=>void runDemo()} disabled={demoLoading}>{demoLoading?<span className="av-spinner"/>:<Play size={14}/>} {demoLoading?"Lädt …":"API ausführen"}</button></div>{demoError&&<div className="av-demo-error"><CircleHelp size={16}/><div><strong>Anfrage hat nicht geklappt</strong><span>{demoError}</span><small>Der Dienst kann vorübergehend down sein, Limits haben oder Browserzugriff blockieren.</small></div></div>}{demoResult&&<div className="av-demo-results">{demoResult.kind==="weather"&&<><div className="av-result-title"><CloudSun size={17}/><strong>{demoResult.place}</strong></div><div className="av-weather-metrics"><div><small>JETZT</small><strong>{Math.round(demoResult.data.current.temperature_2m)}°C</strong><span>Temperatur</span></div><div><small>GEFÜHLT</small><strong>{Math.round(demoResult.data.current.apparent_temperature)}°C</strong><span>Gefühlte Temp.</span></div><div><small>WIND</small><strong>{Math.round(demoResult.data.current.wind_speed_10m)} km/h</strong><span>Luftbewegung</span></div></div><div className="av-json-mini">{JSON.stringify(demoResult.data.daily,null,2)}</div></>}
               {demoResult.kind==="cards"&&<><div className="av-result-title"><Check size={15}/><strong>{demoResult.title}</strong><span>{demoResult.items.length} Treffer</span></div><div className="av-result-cards">{demoResult.items.map((it:any,i:number)=><div className="av-result-card" key={i}>{it.image&&<img src={it.image} alt="" loading="lazy"/>}<strong>{it.title}</strong>{it.subtitle&&<small>{it.subtitle}</small>}{it.description&&<p>{it.description}</p>}{it.url&&<a href={it.url} target="_blank" rel="noreferrer">Mehr ansehen <ArrowUpRight size={11}/></a>}</div>)}</div></>}
               {demoResult.kind==="pokemon"&&<div className="av-pokemon-result"><img src={demoResult.data.sprites?.other?.["official-artwork"]?.front_default||demoResult.data.sprites?.front_default} alt={demoResult.data.name}/><div><div className="av-result-title"><strong>{demoResult.data.name.charAt(0).toUpperCase()+demoResult.data.name.slice(1)}</strong><span>#{String(demoResult.data.id).padStart(3,"0")}</span></div><div className="av-poke-tags">{demoResult.data.types.map((t:any)=><span key={t.type.name}>{t.type.name}</span>)}</div><p>Größe: {demoResult.data.height/10} m · Gewicht: {demoResult.data.weight/10} kg</p><small>Fähigkeiten: {demoResult.data.abilities.map((a:any)=>a.ability.name).join(", ")}</small></div></div>}
               {demoResult.kind==="fact"&&<div className="av-fact"><Sparkles size={20}/><h4>{demoResult.title}</h4><p>{demoResult.text}</p><small>{demoResult.meta}</small></div>}
