@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ChangeEvent, type Dispatch, type SetStateAction } from "react";
 import {
-  ArrowRight, ArrowUpRight, Bookmark, Check, ChevronRight, CircleCheck,
+  ArrowRight, ArrowUpRight, Blocks, Bookmark, Check, ChevronRight, CircleCheck,
   Clock3, Copy, Download, ExternalLink, FileJson, Heart, History,
   Lightbulb, ListChecks, Palette, Play, Plus, RefreshCw, RotateCcw,
   Save, Search, Shuffle, Sparkles, Target, Timer, Trash2, Trophy,
