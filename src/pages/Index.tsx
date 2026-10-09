@@ -81,6 +81,11 @@ function getKeyDefaults(apiId: string): Omit<ApiKeyConfig, "value"> {
   if (apiId === "github") return { mode: "header", field: "Authorization", prefix: "Bearer " };
   return { mode: "header", field: "Authorization", prefix: "" };
 }
+function getKeyFieldForMode(apiId: string, mode: KeyMode): string {
+  const defaults = getKeyDefaults(apiId);
+  if (mode === defaults.mode) return defaults.field;
+  return mode === "query" ? "api_key" : "Authorization";
+}
 function readSaved(key:string, fallback:string[]) {
   try { const value = localStorage.getItem(key); return value ? JSON.parse(value) as string[] : fallback; }
   catch { return fallback; }
@@ -387,7 +392,7 @@ function ApiVerse() {
             <label className="av-key-label" htmlFor="av-api-key">API-Key / Token</label>
             <div className="av-key-secret-row"><input id="av-api-key" type={keyVisible?"text":"password"} autoComplete="new-password" spellCheck={false} value={keyDraft} onChange={e=>{setKeyDraft(e.target.value);setKeyNotice("");}} placeholder="API-Key hier einfügen …"/><button type="button" className="av-key-visibility" onClick={()=>setKeyVisible(v=>!v)}>{keyVisible?"Verbergen":"Anzeigen"}</button></div>
             <div className="av-key-config-grid">
-              <label><span>ÜBERTRAGUNG</span><select value={keyMode} onChange={e=>{const next=e.target.value as KeyMode;const oldDefaults=getKeyDefaults(active.id);setKeyMode(next);if(!keyField||keyField===oldDefaults.field)setKeyField(next==="query"?"api_key":"Authorization");if(next==="query")setKeyPrefix("");}}><option value="header">HTTP-Header</option><option value="query">Query-Parameter</option></select></label>
+              <label><span>ÜBERTRAGUNG</span><select value={keyMode} onChange={e=>{const next=e.target.value as KeyMode;const currentDefault=getKeyFieldForMode(active.id,keyMode);setKeyMode(next);if(!keyField||keyField===currentDefault)setKeyField(getKeyFieldForMode(active.id,next));setKeyPrefix(next==="header"?getKeyDefaults(active.id).prefix:"");}}><option value="header">HTTP-Header</option><option value="query">Query-Parameter</option></select></label>
               <label><span>{keyMode==="header"?"HEADER-NAME":"PARAMETER-NAME"}</span><input value={keyField} onChange={e=>setKeyField(e.target.value)} placeholder={keyMode==="header"?"Authorization":"api_key"}/></label>
               {keyMode==="header"&&<label><span>WERT-PRÄFIX (OPTIONAL)</span><input value={keyPrefix} onChange={e=>setKeyPrefix(e.target.value)} placeholder="z. B. Bearer "/></label>}
             </div>
