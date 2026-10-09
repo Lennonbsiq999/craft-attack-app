@@ -196,10 +196,6 @@ function ApiVerse() {
           const r=await fetch("https://www.swapi.tech/api/people/1"); if(!r.ok) throw new Error("Star Wars API gerade nicht erreichbar.");
           const d=await r.json(); result={kind:"json",data:d.result||d}; break;
         }
-        case "cocktail": {
-          const r=await fetch("https://www.thecocktaildb.com/api/json/v1/1/search.php?s="+encodeURIComponent(q||"mojito")); if(!r.ok) throw new Error("CocktailDB nicht erreichbar.");
-          const d=await r.json(); result={kind:"cards",title:"Getränke-Treffer",items:(d.drinks||[]).slice(0,6).map((m:any)=>({title:m.strDrink,subtitle:m.strCategory,image:m.strDrinkThumb,description:m.strInstructions?.slice(0,180)}))}; if(!result.items.length) throw new Error("Nichts gefunden."); break;
-        }
         case "randomuser": {
           const r=await fetch("https://randomuser.me/api/"); if(!r.ok) throw new Error("Random User API nicht erreichbar.");
           const d=(await r.json()).results?.[0]; result={kind:"profile",title:d.name.first+" "+d.name.last,subtitle:d.email,image:d.picture.large,description:"Demo-Profil aus synthetischen Daten.",stats:[["Land",d.location.country],["Alter",d.dob.age],["Telefon",d.phone]],meta:d.location.city}; break;
