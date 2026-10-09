@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import HubLab, { type HubCreator } from "@/components/HubLab";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -24,15 +25,7 @@ import {
   X,
 } from "lucide-react";
 
-type Creator = {
-  name: string;
-  channel: string;
-  initials: string;
-  seasons: string;
-  tag: "longtime" | "new";
-  tone: string;
-  blurb: string;
-};
+type Creator = HubCreator;
 
 const creators: Creator[] = [
   { name: "Paluten", channel: "paluten", initials: "PA", seasons: "Seit Staffel 8", tag: "longtime", tone: "#d39a48", blurb: "Abenteuer, Projekte und jede Menge Chaos auf einer gemeinsamen Minecraft-Welt." },
@@ -361,6 +354,17 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        <HubLab
+          creators={creators}
+          favorites={favorites}
+          onToggleFavorite={(creator) => toggleFavorite(creator)}
+          onReplaceFavorites={(channels) => setFavorites(channels)}
+          onToast={(message) => {
+            setToast(message);
+            window.setTimeout(() => setToast(""), 2400);
+          }}
+        />
 
         <section className="closing-cta section-wrap">
           <div className="closing-emblem"><Blocks size={30} /></div>
