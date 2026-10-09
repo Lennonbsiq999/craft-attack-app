@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080b14">
+<meta name="description" content="APIverse: Entdecke, filtere und teste kostenlose APIs aus Gaming, KI, Wetter, Medien, Wissenschaft und mehr.">
+<title>APIverse — APIs, die etwas können</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#080b14;--panel:#101522;--panel2:#141b2b;--line:#232c40;--muted:#8a94ab;--text:#eff3ff;--purple:#9c7bff;--cyan:#53e5d5;--green:#8ce7a5;--pink:#ff83bd;--yellow:#ffd782;--shadow:0 24px 70px #0007}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(900px 500px at 75% -12%,#24326b48,transparent 70%),radial-gradient(700px 430px at 12% 18%,#5637a21c,transparent 65%),var(--bg);color:var(--text);font-family:Manrope,system-ui,sans-serif;min-height:100vh}button,input,select{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}.app{display:grid;grid-template-columns:254px minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;overflow:auto;border-right:1px solid var(--line);background:#0b0f19eF;padding:24px 15px 22px;z-index:20;backdrop-filter:blur(20px)}.brand{display:flex;align-items:center;gap:12px;padding:0 10px 25px}.brand-mark{width:41px;height:41px;border-radius:14px;display:grid;place-items:center;font-size:20px;background:linear-gradient(135deg,#9879ff,#4cdbcb);box-shadow:0 8px 28px #7160ff45;color:#080b14}.brand-name{font-weight:800;font-size:17px;letter-spacing:-.6px}.brand-name span{color:var(--cyan)}.brand-sub{font:10px 'DM Mono',monospace;color:var(--muted);margin-top:3px;letter-spacing:1.1px;text-transform:uppercase}.nav-caption{padding:17px 11px 8px;color:#65718c;font:10px 'DM Mono',monospace;letter-spacing:1.6px;text-transform:uppercase}.nav-item,.nav-cat,.subcat{width:100%;display:flex;align-items:center;gap:10px;border:1px solid transparent;background:none;color:#aeb8ce;padding:10px 11px;border-radius:11px;text-align:left;font-size:12px;transition:.18s}.nav-item:hover,.nav-cat:hover,.subcat:hover{background:#ffffff08;color:var(--text)}.nav-item.active,.nav-cat.active,.subcat.active{background:linear-gradient(95deg,#9c7bff20,#53e5d50b);border-color:#9c7bff35;color:#fff}.nav-emoji{width:19px;text-align:center;font-size:15px;flex:0 0 19px}.nav-count{margin-left:auto;color:#68738c;font:10px 'DM Mono',monospace}.category-nav{margin-top:0}.cat-group{margin:1px 0}.cat-head{display:flex;align-items:center;gap:5px}.cat-head .nav-cat{flex:1}.cat-expand{border:0;background:transparent;color:#67728b;padding:9px 8px;border-radius:8px;font-size:10px}.subcats{margin:0 0 7px 40px;padding-left:10px;border-left:1px solid #273149;display:none}.cat-group.expanded .subcats{display:block}.subcat{font-size:11px;padding:7px 8px;gap:7px;border-radius:8px}.sidebar-bottom{margin-top:22px;border-top:1px solid var(--line);padding:15px 10px 0;color:#68738c;font-size:10px;line-height:1.6}.mono{font-family:'DM Mono',monospace}.side-pill{display:inline-block;border:1px solid #27344a;border-radius:5px;padding:2px 5px;color:#a9b5cb;font:9px 'DM Mono',monospace}.main{min-width:0;padding:0 34px 60px;max-width:1600px;width:100%;margin:0 auto}.topbar{height:77px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #20283a;margin-bottom:32px}.crumb{font-size:12px;color:var(--muted)}.crumb strong{color:#fff;font-weight:700}.top-actions{display:flex;align-items:center;gap:10px}.search-wrap{position:relative;width:min(380px,34vw)}.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#7c87a3;font-size:15px}.search{width:100%;background:#101624;border:1px solid #293249;color:#fff;border-radius:12px;padding:11px 42px 11px 38px;font-size:12px;transition:.2s}.search:focus{border-color:#8a77ff;box-shadow:0 0 0 3px #9c7bff15;outline:0}.shortcut{position:absolute;right:10px;top:50%;transform:translateY(-50%);font:10px 'DM Mono',monospace;border:1px solid #303950;border-radius:5px;padding:3px 5px;color:#72809b}.icon-btn{width:38px;height:38px;display:grid;place-items:center;border:1px solid #293249;background:#101624;border-radius:11px;color:#c5cde0;transition:.18s}.icon-btn:hover{border-color:#8b7cff;color:white;transform:translateY(-1px)}.mobile-menu{display:none}.hero{position:relative;overflow:hidden;padding:38px 40px 34px;border:1px solid #343351;border-radius:25px;background:linear-gradient(117deg,#17182d 0%,#121b2c 49%,#102a33 100%);box-shadow:var(--shadow);margin-bottom:28px}.hero:before,.hero:after{content:"";position:absolute;border-radius:50%;pointer-events:none}.hero:before{width:400px;height:400px;right:-80px;top:-210px;background:radial-gradient(circle,#a68bff38,transparent 67%)}.hero:after{width:320px;height:320px;right:90px;bottom:-280px;background:radial-gradient(circle,#53e5d52c,transparent 70%)}.hero-content{position:relative;z-index:1;max-width:720px}.eyebrow{display:inline-flex;align-items:center;gap:7px;border:1px solid #b7a7ff3c;background:#a38eff12;padding:6px 10px;border-radius:99px;font:10px 'DM Mono',monospace;color:#c9bdff;letter-spacing:.7px;text-transform:uppercase}.pulse{width:7px;height:7px;background:var(--green);box-shadow:0 0 12px #8ce7a5;border-radius:50%}.hero h1{margin:19px 0 12px;max-width:650px;font-size:clamp(30px,3.6vw,52px);line-height:1.07;letter-spacing:-2.2px}.hero h1 em{font-style:normal;background:linear-gradient(90deg,#b39bff,#63eadd);background-clip:text;-webkit-background-clip:text;color:transparent}.hero p{max-width:595px;font-size:13px;line-height:1.8;color:#aeb8d0;margin:0}.hero-actions{display:flex;gap:11px;flex-wrap:wrap;margin-top:23px}.btn-primary,.btn-secondary,.btn-soft{border:1px solid transparent;border-radius:11px;padding:11px 15px;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.2s}.btn-primary{background:linear-gradient(100deg,#9e83ff,#65ded7);color:#08111b;box-shadow:0 8px 24px #7769ee2a}.btn-primary:hover{filter:brightness(1.1);transform:translateY(-2px)}.btn-secondary{background:#ffffff08;border-color:#41445e;color:#e9ecfb}.btn-secondary:hover{background:#ffffff12;border-color:#8384b7}.btn-soft{background:#20273a;border-color:#313b52;color:#d7def1;padding:8px 11px}.btn-soft:hover{border-color:#9c7bff;color:#fff}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:33px}.stat{background:linear-gradient(140deg,#101522,#0c111b);border:1px solid var(--line);border-radius:15px;padding:17px 18px;min-width:0}.stat-top{display:flex;align-items:center;justify-content:space-between;color:#7e89a3;font-size:10px}.stat-icon{font-size:15px}.stat-value{font-size:25px;font-weight:800;letter-spacing:-1px;margin-top:9px}.stat-label{font-size:10px;color:#8691aa;margin-top:2px}.stat-trend{font:9px 'DM Mono',monospace;color:var(--green);margin-top:9px}.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin:0 0 15px}.section-kicker{font:10px 'DM Mono',monospace;letter-spacing:1.4px;text-transform:uppercase;color:#8f82ff;margin-bottom:7px}.section-title{font-size:21px;letter-spacing:-.6px;font-weight:800;margin:0}.section-desc{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.6}.link-btn{background:none;border:0;color:#b5a6ff;font-size:11px;font-weight:700;padding:7px}.link-btn:hover{color:#fff}.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:34px}.feature{position:relative;overflow:hidden;min-height:147px;border:1px solid var(--line);border-radius:16px;background:#101522;padding:18px;cursor:pointer;transition:.2s}.feature:hover{transform:translateY(-3px);border-color:#61578d;box-shadow:0 15px 32px #0002}.feature:after{content:"";position:absolute;width:135px;height:135px;right:-50px;top:-60px;border-radius:50%;background:var(--feature-color,#9c7bff);opacity:.14;filter:blur(6px)}.feature-row{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}.feature-icon{width:38px;height:38px;border:1px solid #ffffff14;border-radius:12px;display:grid;place-items:center;font-size:20px;background:#ffffff08}.feature-arrow{color:#77829d}.feature h3{font-size:13px;margin:16px 0 5px;position:relative;z-index:1}.feature p{margin:0;color:#8f9ab3;font-size:10px;line-height:1.6;max-width:260px;position:relative;z-index:1}.section-spacer{margin-top:32px}.browser-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:19px 0 14px}.filters{display:flex;gap:7px;flex-wrap:wrap}.filter-chip{border:1px solid #293249;background:#101522;border-radius:8px;padding:8px 11px;color:#9ca7bf;font-size:10px;transition:.15s}.filter-chip:hover{border-color:#6f66b5;color:#fff}.filter-chip.active{background:#8d7aff20;border-color:#8573ff80;color:#d4caff}.sort-select{background:#101522;color:#aab5ca;border:1px solid #293249;border-radius:8px;padding:8px 10px;font-size:10px}.results-line{font:10px 'DM Mono',monospace;color:#72809c;margin-bottom:12px}.api-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.api-card{position:relative;background:linear-gradient(145deg,#121827,#0e1320);border:1px solid #252f44;border-radius:16px;padding:17px;display:flex;flex-direction:column;min-height:225px;transition:transform .18s,border-color .18s,box-shadow .18s;min-width:0}.api-card:hover{transform:translateY(-3px);border-color:#7166b0;box-shadow:0 15px 36px #0003}.card-top{display:flex;align-items:flex-start;gap:11px}.api-icon{width:43px;height:43px;flex:0 0 43px;border-radius:13px;display:grid;place-items:center;font-size:21px;border:1px solid #ffffff13;background:var(--tint,#8d7aff18)}.api-head{min-width:0;flex:1}.api-title{font-size:12px;font-weight:800;line-height:1.45;margin:2px 0 5px;white-space:normal}.api-subtitle{font:9px 'DM Mono',monospace;color:#8290a9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.star-btn{border:0;background:none;color:#58657f;font-size:17px;line-height:1;padding:3px}.star-btn:hover,.star-btn.favorited{color:#ffcf72}.card-desc{font-size:10px;color:#9aa6bd;line-height:1.65;margin:14px 0 13px;flex:1}.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}.tag{font:9px 'DM Mono',monospace;padding:5px 7px;border:1px solid #2b354b;background:#171e2e;border-radius:6px;color:#9eabc4}.tag.good{color:#8ee4b5;border-color:#24513e;background:#11271e}.tag.key{color:#f6d08a;border-color:#514427;background:#292113}.tag.live{color:#76e6d9;border-color:#23524f;background:#102522}.card-bottom{border-top:1px solid #232c40;padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:8px}.category-small{font-size:9px;color:#72809c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.card-actions{display:flex;gap:6px;align-items:center;flex-shrink:0}.small-btn{border:1px solid #2e3850;background:#171e2e;color:#d8e0f5;border-radius:8px;padding:7px 9px;font-size:9px;font-weight:800}.small-btn:hover{border-color:#9c7bff;color:#fff}.small-btn.primary{background:#a48cff1d;border-color:#8570db6b;color:#d3c6ff}.empty-state{border:1px dashed #39445c;border-radius:16px;text-align:center;padding:55px 20px;color:#8793ac;grid-column:1/-1}.empty-state strong{display:block;color:#e0e7f5;font-size:14px;margin:12px 0 5px}.empty-state span{font-size:11px}.lab-section{margin-top:42px;border:1px solid #30334f;border-radius:21px;padding:22px;background:linear-gradient(140deg,#131629,#101a25);position:relative;overflow:hidden}.lab-section:after{content:"";position:absolute;right:-120px;top:-190px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,#53e5d51b,transparent 70%);pointer-events:none}.lab-head{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:18px}.lab-badge{font:9px 'DM Mono',monospace;color:#7ce5d7;border:1px solid #33706a;background:#112b2a;padding:6px 8px;border-radius:7px}.lab-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.lab-tile{border:1px solid #2b3549;background:#111827;border-radius:13px;padding:14px;text-align:left;transition:.18s;color:var(--text)}.lab-tile:hover{border-color:#61c9c0;background:#15252c;transform:translateY(-2px)}.lab-tile .tile-icon{font-size:22px;display:block;margin-bottom:12px}.lab-tile strong{font-size:11px;display:block;margin-bottom:5px}.lab-tile small{font-size:9px;color:#8290aa;line-height:1.5;display:block}.footer{margin-top:50px;padding:22px 0;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;color:#6e7a94;font-size:10px;line-height:1.7}.footer a{color:#a5b2ce}.footer a:hover{color:#fff}.footer-brand{font-weight:800;letter-spacing:-.3px;color:#d9e2f9}.footer-brand span{color:var(--cyan)}.modal-backdrop{position:fixed;inset:0;background:#030610c9;backdrop-filter:blur(12px);z-index:100;display:none;align-items:center;justify-content:center;padding:22px}.modal-backdrop.open{display:flex}.modal{width:min(850px,100%);max-height:min(89vh,900px);overflow:auto;background:#0f1523;border:1px solid #36425a;border-radius:22px;box-shadow:0 40px 120px #000a;animation:modal-in .18s ease-out}.modal-head{display:flex;align-items:flex-start;gap:15px;padding:22px 24px 19px;border-bottom:1px solid #293249;background:linear-gradient(100deg,#1a2032,#111827);position:sticky;top:0;z-index:5}.modal-title-wrap{flex:1;min-width:0}.modal h2{margin:0 0 6px;font-size:20px;letter-spacing:-.7px}.modal-lead{font-size:11px;line-height:1.7;color:#a3aec5;margin:0}.close-btn{width:32px;height:32px;border:1px solid #36425a;background:#1b2334;color:#dce4f8;border-radius:9px;font-size:17px}.close-btn:hover{border-color:#aa93ff}.modal-body{padding:23px 24px 26px}.detail-badges{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:19px}.detail-item{background:#151d2b;border:1px solid #2b3549;border-radius:11px;padding:12px;min-width:0}.detail-label{font:9px 'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:#74829d;margin-bottom:7px}.detail-value{font-size:11px;color:#e2e8f8;word-break:break-word}.detail-value a{color:#b8a9ff}.detail-actions{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0 23px}.codebox{border:1px solid #2b3549;border-radius:12px;background:#090e18;overflow:hidden;margin:13px 0 21px}.codehead{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid #252f42;color:#8290aa;font:9px 'DM Mono',monospace}.codebox pre{font:10px/1.8 'DM Mono',monospace;color:#a3eed5;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;padding:14px}.demo-box{border:1px solid #3d4167;border-radius:15px;background:linear-gradient(145deg,#17192d,#111d29);padding:17px;margin-top:20px}.demo-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.demo-header h3{margin:0;font-size:13px}.demo-header span{font:9px 'DM Mono',monospace;color:var(--cyan)}.demo-form{display:flex;gap:8px;flex-wrap:wrap}.demo-input{flex:1;min-width:160px;background:#0b111e;border:1px solid #333e56;border-radius:9px;padding:10px 12px;color:#f4f6ff;font-size:11px}.demo-result{margin-top:13px;font-size:11px;color:#aebbd3;line-height:1.75}.demo-result:empty{display:none}.demo-error{color:#ffaaa9}.demo-loading{color:#70e3d5}.demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-top:14px}.demo-result-card{min-width:0;padding:11px;border:1px solid #344054;background:#121b2b;border-radius:11px;overflow:hidden}.demo-result-card strong{display:block;color:#eff3ff;margin-bottom:5px;font-size:11px;overflow-wrap:anywhere}.demo-result-card small{color:#93a1bd;font-size:9px;line-height:1.5}.demo-result-card img{max-width:100%;width:82px;height:82px;object-fit:contain;display:block;margin:0 auto 8px}.weather-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:13px}.weather-summary .demo-result-card{padding:13px}.weather-summary .big-number{font-size:22px;font-weight:800;color:#fff;letter-spacing:-1px}.modal-note{font-size:10px;line-height:1.7;color:#7e8aa5;padding:10px 0 0}.category-banner{display:none;margin-bottom:20px;border:1px solid #2e3850;background:#111827;border-radius:13px;padding:15px 17px}.category-banner strong{font-size:13px}.category-banner p{color:#8f9bb4;font-size:10px;line-height:1.5;margin:6px 0 0}.toast{position:fixed;z-index:200;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;background:#182436;border:1px solid #42536d;color:#edf4ff;padding:11px 15px;border-radius:11px;font-size:11px;box-shadow:var(--shadow);pointer-events:none;transition:.25s}.toast.show{opacity:1;transform:translate(-50%,0)}.theme-light{--bg:#edf1fa;--panel:#fff;--panel2:#f4f6ff;--line:#d6ddeb;--muted:#64718b;--text:#151a2c;--shadow:0 24px 70px #38415b17;color-scheme:light;background:radial-gradient(900px 500px at 75% -12%,#c5cfff75,transparent 70%),#eef2fa}.theme-light .sidebar{background:#f8faffed}.theme-light .topbar{border-color:#d9e0ef}.theme-light .search,.theme-light .icon-btn,.theme-light .stat,.theme-light .api-card,.theme-light .filter-chip,.theme-light .sort-select,.theme-light .feature,.theme-light .lab-tile{background:#fff;border-color:#d6deec;color:#1c2440}.theme-light .api-title,.theme-light .section-title,.theme-light .stat-value{color:#151a2c}.theme-light .hero{background:linear-gradient(117deg,#ddd9ff,#d8f3f1);border-color:#b7bfe1}.theme-light .hero p{color:#454f6f}.theme-light .hero h1{color:#151a2c}.theme-light .hero h1 em{background-image:linear-gradient(90deg,#6748d8,#088a86)}.theme-light .hero .btn-secondary{color:#242b45;border-color:#a9b6d1}.theme-light .modal-backdrop{background:#c3cad9bd}.theme-light .modal{background:#f6f8fc;border-color:#cfd8e9}.theme-light .modal-head{background:#eef2fb;border-color:#d4ddec}.theme-light .modal h2,.theme-light .detail-value,.theme-light .demo-header h3{color:#151a2c}.theme-light .detail-item,.theme-light .demo-box,.theme-light .demo-result-card{background:#eaf0fa;border-color:#d0daea;color:#222d4a}.theme-light .codebox{background:#101627}.theme-light .demo-input{background:#fff;color:#222d4a;border-color:#c7d1e3}.theme-light .demo-result-card strong{color:#151a2c}
+@keyframes modal-in{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}@media(max-width:1200px){.api-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.main{padding-inline:25px}.lab-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.feature-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{position:fixed;left:-280px;top:0;width:254px;transition:left .25s;box-shadow:var(--shadow)}.sidebar.open{left:0}.mobile-menu{display:grid}.main{padding-inline:20px}.topbar{height:68px;margin-bottom:22px}.search-wrap{width:min(380px,54vw)}.hero{padding:28px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.feature-grid{grid-template-columns:1fr}.feature{min-height:120px}.feature h3{margin-top:11px}.feature p{max-width:520px}}@media(max-width:560px){.main{padding-inline:13px}.topbar{gap:8px}.crumb{display:none}.top-actions{width:100%;justify-content:flex-end}.search-wrap{width:100%;flex:1}.hero{padding:24px 19px;border-radius:18px}.hero h1{font-size:33px;letter-spacing:-1.6px}.hero p{font-size:12px}.stats{gap:8px}.stat{padding:12px}.stat-value{font-size:22px}.stat-label{line-height:1.5}.api-grid{grid-template-columns:1fr}.api-card{min-height:206px}.lab-grid{grid-template-columns:1fr 1fr}.lab-section{padding:15px}.section-title{font-size:19px}.browser-toolbar{align-items:flex-start}.modal-backdrop{padding:8px}.modal{max-height:94vh;border-radius:16px}.modal-head{padding:16px}.modal-body{padding:16px}.detail-grid{grid-template-columns:1fr}.weather-summary{grid-template-columns:1fr 1fr}.footer{flex-direction:column;align-items:flex-start}.footer > div:last-child{max-width:100%}.hero-actions .btn-primary,.hero-actions .btn-secondary{flex:1}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <a href="#" class="brand" aria-label="APIverse Startseite">
+    <div class="brand-mark">✳</div>
+    <div><div class="brand-name">API<span>verse</span></div><div class="brand-sub">The public API playground</div></div>
+  </a>
+  <div class="nav-caption">Workspace</div>
+  <button class="nav-item active" data-view="discover"><span class="nav-emoji">◈</span> Entdecken <span class="nav-count" id="nav-total">40+</span></button>
+  <button class="nav-item" data-view="lab"><span class="nav-emoji">⚡</span> Live Playground <span class="nav-count">LIVE</span></button>
+  <button class="nav-item" data-view="favorites"><span class="nav-emoji">☆</span> Meine Favoriten <span class="nav-count" id="fav-count">0</span></button>
+  <div class="nav-caption">Kategorien & Unterkategorien</div>
+  <nav class="category-nav" id="category-nav"></nav>
+  <div class="sidebar-bottom">
+    <div style="margin-bottom:9px"><span class="side-pill">OPEN SOURCE</span> <span class="side-pill">FREE TO BROWSE</span></div>
+    Kuratierte Entdeckungen aus öffentlichen API-Verzeichnissen. Jede API hat ihre eigenen Regeln, Limits und Bedingungen.
+  </div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:11px;min-width:0">
+      <button class="icon-btn mobile-menu" id="menu-toggle" aria-label="Menü öffnen">☰</button>
+      <div class="crumb"><span style="color:#68748d">APIverse</span> &nbsp;/&nbsp; <strong id="crumb-current">Entdecken</strong></div>
+    </div>
+    <div class="top-actions">
+      <div class="search-wrap"><span class="search-icon">⌕</span><input class="search" id="search" type="search" placeholder="APIs, Kategorien, Tags suchen …" autocomplete="off" aria-label="APIs suchen"><span class="shortcut">/</span></div>
+      <button class="icon-btn" id="theme-toggle" title="Hell/Dunkel umschalten" aria-label="Theme umschalten">☼</button>
+      <a class="icon-btn" href="https://github.com/Lennonbsiq999/craft-attack-app/tree/main/api-hub" title="Quellcode auf GitHub" aria-label="GitHub" target="_blank" rel="noreferrer">⌘</a>
+    </div>
+  </header>
+
+  <section id="hero-section" class="hero">
+    <div class="hero-content">
+      <span class="eyebrow"><span class="pulse"></span> 40+ APIs · viele ohne API-Key</span>
+      <h1>Eine Welt voller APIs.<br><em>Ein Playground.</em></h1>
+      <p>Finde Datenquellen für deine nächsten Projekte. Von Brawl Stars und Pokémon über Wetter und Musik bis zu KI, Büchern und Entwickler-Tools. Entdecken, vergleichen und direkt im Browser ausprobieren.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" id="explore-btn">APIs entdecken <span>↗</span></button>
+        <button class="btn-secondary" id="hero-lab-btn">⚡ Live-Demos öffnen</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats" id="stats-section" aria-label="Statistik">
+    <div class="stat"><div class="stat-top">Kuratierte APIs <span class="stat-icon">◈</span></div><div class="stat-value" id="stat-apis">40+</div><div class="stat-label">Aus vielen Themenbereichen</div><div class="stat-trend">↗ laufend erweiterbar</div></div>
+    <div class="stat"><div class="stat-top">Hauptkategorien <span class="stat-icon">▦</span></div><div class="stat-value" id="stat-cats">12</div><div class="stat-label">Mit Unterkategorien</div><div class="stat-trend">↗ nicht nur Gaming</div></div>
+    <div class="stat"><div class="stat-top">Ohne Schlüssel <span class="stat-icon">♧</span></div><div class="stat-value" id="stat-keyless">—</div><div class="stat-label">Laut API-Dokumentation</div><div class="stat-trend">✓ einfacher Einstieg</div></div>
+    <div class="stat"><div class="stat-top">Live-Demos <span class="stat-icon">⚡</span></div><div class="stat-value" id="stat-demos">10</div><div class="stat-label">Direkt im Browser testbar</div><div class="stat-trend">✓ echtes API-Fetching</div></div>
+  </section>
+
+  <section id="featured-section">
+    <div class="section-head"><div><div class="section-kicker">Quick launch</div><h2 class="section-title">Starte mit etwas Spannendem</h2><div class="section-desc">Ein Klick und echte Daten kommen rein. Kein Login für diese Demos nötig.</div></div><button class="link-btn" id="all-demos-btn">Alle Demos ansehen ↗</button></div>
+    <div class="feature-grid">
+      <article class="feature" data-api-open="brawlapi" style="--feature-color:#bca0ff"><div class="feature-row"><div class="feature-icon">🎮</div><span class="feature-arrow">↗</span></div><h3>Brawl Stars Explorer</h3><p>Brawler, Seltenheiten und Klassen aus einer Community-Daten-API durchsuchen.</p></article>
+      <article class="feature" data-api-open="openmeteo" style="--feature-color:#53e5d5"><div class="feature-row"><div class="feature-icon">🌦️</div><span class="feature-arrow">↗</span></div><h3>Live Weather</h3><p>Suche einen Ort und hol dir die aktuelle Wetterlage aus Open-Meteo.</p></article>
+      <article class="feature" data-api-open="dogceo" style="--feature-color:#ffc881"><div class="feature-row"><div class="feature-icon">🐕</div><span class="feature-arrow">↗</span></div><h3>Random Dog Machine</h3><p>Generiere Hundebilder direkt aus einer offenen Bilder-API.</p></article>
+    </div>
+  </section>
+
+  <section id="browser-section" class="section-spacer">
+    <div class="section-head"><div><div class="section-kicker">API directory</div><h2 class="section-title" id="browser-title">Entdecke APIs</h2><div class="section-desc" id="browser-desc">Finde genau die API, die zu deinem Projekt passt.</div></div><button class="btn-soft" id="clear-filter">↺ Zurücksetzen</button></div>
+    <div class="category-banner" id="category-banner"><strong id="banner-title">Kategorie</strong><p id="banner-desc">Alle APIs aus diesem Themenbereich.</p></div>
+    <div class="browser-toolbar">
+      <div class="filters">
+        <button class="filter-chip active" data-filter="all">Alle APIs</button>
+        <button class="filter-chip" data-filter="keyless">♧ Ohne Key</button>
+        <button class="filter-chip" data-filter="cors">↗ Browserfähig</button>
+        <button class="filter-chip" data-filter="demo">⚡ Mit Demo</button>
+      </div>
+      <select class="sort-select" id="sort-select" aria-label="Sortierung"><option value="featured">Empfohlen</option><option value="name">Name A–Z</option><option value="category">Kategorie</option></select>
+    </div>
+    <div class="results-line" id="results-line">Lade Katalog …</div>
+    <div class="api-grid" id="api-grid"></div>
+  </section>
+
+  <section class="lab-section" id="lab-section">
+    <div class="lab-head"><div><div class="section-kicker">Hands-on</div><h2 class="section-title">Live Playground ⚡</h2><div class="section-desc">Kleine API-Tools mit echten Requests. Die Ergebnisse kommen erst, wenn du ein Demo startest.</div></div><span class="lab-badge">CLIENT-SIDE FETCH</span></div>
+    <div class="lab-grid">
+      <button class="lab-tile" data-api-open="brawlapi"><span class="tile-icon">🎮</span><strong>Brawl Stars</strong><small>Brawler suchen und Infos entdecken</small></button>
+      <button class="lab-tile" data-api-open="openmeteo"><span class="tile-icon">🌦️</span><strong>Wetter-Scanner</strong><small>Live-Wetter nach Ort</small></button>
+      <button class="lab-tile" data-api-open="pokeapi"><span class="tile-icon">⚡</span><strong>Pokédex</strong><small>Pokémon-Stats und Artwork</small></button>
+      <button class="lab-tile" data-api-open="jikan"><span class="tile-icon">🌸</span><strong>Anime-Suche</strong><small>Suche in Anime-Daten</small></button>
+      <button class="lab-tile" data-api-open="dogceo"><span class="tile-icon">🐕</span><strong>Dog Generator</strong><small>Ein neues Hundebild laden</small></button>
+      <button class="lab-tile" data-api-open="jokeapi"><span class="tile-icon">😅</span><strong>Joke Machine</strong><small>Ein zufälliger Safe-Mode-Witz</small></button>
+      <button class="lab-tile" data-api-open="githubapi"><span class="tile-icon">⌘</span><strong>GitHub Finder</strong><small>Open-Source-Repos suchen</small></button>
+      <button class="lab-tile" data-api-open="dictionary"><span class="tile-icon">📚</span><strong>Dictionary</strong><small>Englische Wortdefinition suchen</small></button>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div><div class="footer-brand">API<span>verse</span> <span style="color:#66728c;font-weight:500">/ built to explore</span></div><div>Ein unabhängiges Community-Projekt von Toastomat.</div></div>
+    <div>Kuratiert mit Inspiration aus <a href="https://apivault.dev/" target="_blank" rel="noreferrer">APIVault</a> · <a href="https://github.com/Lennonbsiq999/craft-attack-app/tree/main/api-hub" target="_blank" rel="noreferrer">GitHub-Quellcode ↗</a><br>APIs gehören ihren jeweiligen Betreibern. Verfügbarkeit, Kosten und Limits können sich ändern.</div>
+  </footer>
+</main>
+</div>
+
+<div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+ <section class="modal" id="modal">
+  <div class="modal-head"><div class="api-icon" id="modal-icon">◈</div><div class="modal-title-wrap"><h2 id="modal-title">API-Details</h2><p class="modal-lead" id="modal-lead"></p></div><button class="close-btn" id="modal-close" aria-label="Schließen">×</button></div>
+  <div class="modal-body" id="modal-body"></div>
+ </section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+'use strict';
+const categories = [
+ {name:'Games & Gaming',icon:'🎮',desc:'Spielerdaten, Games, Brawler, Pokémon und Server-Tools.',subs:['Brawl Stars','Minecraft','Pokémon','PC Gaming','Game Data']},
+ {name:'KI & Machine Learning',icon:'🧠',desc:'Modelle, Textverarbeitung, Generierung und intelligente Tools.',subs:['Text & Chat','Modelle','Vision & Bild']},
+ {name:'Wetter & Karten',icon:'🌦️',desc:'Wetter, Geocoding, Länder und geografische Daten.',subs:['Wetter','Geocoding','Länder & Orte']},
+ {name:'Anime & Entertainment',icon:'🌸',desc:'Anime, Serien, Filmwissen, Fun Facts und Unterhaltung.',subs:['Anime','Filme & Serien','Fun & Random']},
+ {name:'Tiere & Natur',icon:'🐾',desc:'Tierbilder, Fakten und Naturdaten.',subs:['Hunde','Katzen','Naturdaten']},
+ {name:'Musik & Medien',icon:'🎧',desc:'Musiksuche, Medienkataloge und Metadaten.',subs:['Musiksuche','Audio & Medien']},
+ {name:'Bücher & Wissen',icon:'📚',desc:'Bücher, Wörterbücher, freie Texte und Wissen.',subs:['Bücher','Wörterbuch','Wissen']},
+ {name:'Food & Lifestyle',icon:'🍜',desc:'Rezepte, Lebensmittel und praktische Alltagsdaten.',subs:['Rezepte','Lebensmittel','Alltag']},
+ {name:'Developer Tools',icon:'⌘',desc:'GitHub, Testdaten, JSON, QR-Codes und Entwicklerhelfer.',subs:['GitHub','Testdaten','Tools & Utilities']},
+ {name:'Finanzen & Daten',icon:'📈',desc:'Wechselkurse, Krypto und öffentliche Datensätze.',subs:['Währungen','Krypto','Open Data']},
+ {name:'Wissenschaft & Space',icon:'🪐',desc:'NASA, Weltall, Museen und wissenschaftliche Datensätze.',subs:['Weltraum','Forschung & Daten']},
+ {name:'Security & Internet',icon:'🛡️',desc:'Netzwerkdienste, DNS und praktische Internet-Utilities.',subs:['Netzwerk','DNS & Domains']}
+];
+const APIs = [
+ {id:'brawlapi',name:'Brawl Stars Data',category:'Games & Gaming',sub:'Brawl Stars',icon:'⭐',color:'#f7b94a',desc:'Community-API für Brawler, Karten, Spielmodi und Game-Assets. Ideal für Brawler-Finder und kleine Fan-Dashboards.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://api.brawlapi.com/v1',docs:'https://brawlapi.com/',website:'https://brawlapi.com/',demo:'brawl',featured:1,tags:['Brawler','Daten','Community'],note:'Diese Demo nutzt eine inoffizielle, statische Community-Daten-API. Sie liefert keine privaten Spielerprofile und ist nicht die offizielle Supercell-Player-API.'},
+ {id:'pokeapi',name:'PokéAPI',category:'Games & Gaming',sub:'Pokémon',icon:'⚡',color:'#ffcc55',desc:'Riesige Pokémon-Datenbank mit Stats, Fähigkeiten, Typen, Items und Artwork.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://pokeapi.co/api/v2',docs:'https://pokeapi.co/docs/v2',website:'https://pokeapi.co/',demo:'pokemon',featured:2,tags:['Pokédex','RPG','Stats']},
+ {id:'mcsrvstat',name:'Minecraft Server Status',category:'Games & Gaming',sub:'Minecraft',icon:'⛏️',color:'#86d87b',desc:'Prüfe Status, Spielerzahl, MOTD und Version eines Minecraft-Servers.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://api.mcsrvstat.us/3',docs:'https://api.mcsrvstat.us/',website:'https://mcsrvstat.us/',demo:null,featured:4,tags:['Minecraft','Server','Status'],note:'Drittanbieter-Service. Limits und Erreichbarkeit können variieren.'},
+ {id:'steamapi',name:'Steam Web API',category:'Games & Gaming',sub:'PC Gaming',icon:'🕹️',color:'#85a7ff',desc:'Steam-Profile, Spiele, Achievements und öffentliche Community-Daten.',auth:'API-Key',access:'Key erforderlich',cors:false,base:'https://api.steampowered.com',docs:'https://steamcommunity.com/dev',website:'https://steamcommunity.com/dev',demo:null,featured:9,tags:['Steam','PC','Profile']},
+ {id:'opendota',name:'OpenDota',category:'Games & Gaming',sub:'Game Data',icon:'🛡️',color:'#e98c87',desc:'Offene Dota-2-Daten für Matches, Spielerstatistiken und Analysen.',auth:'Teilweise',access:'Frei nutzbar · Limits',cors:true,base:'https://api.opendota.com/api',docs:'https://docs.opendota.com/',website:'https://www.opendota.com/',demo:null,featured:11,tags:['Dota 2','Stats','Esports']},
+ {id:'openmeteo',name:'Open-Meteo',category:'Wetter & Karten',sub:'Wetter',icon:'🌦️',color:'#59d8c9',desc:'Wettervorhersage und aktuelle Messwerte mit Geocoding. Ohne Login und API-Key für nicht-kommerzielle Nutzung.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://api.open-meteo.com/v1/forecast',docs:'https://open-meteo.com/en/docs',website:'https://open-meteo.com/',demo:'weather',featured:1,tags:['Live-Daten','Forecast','Geocoding'],note:'Die API hat Nutzungsbedingungen und gesonderte Regeln für kommerzielle Nutzung.'},
+ {id:'restcountries',name:'REST Countries',category:'Wetter & Karten',sub:'Länder & Orte',icon:'🌍',color:'#62d7a0',desc:'Länderinfos: Flaggen, Hauptstädte, Regionen, Sprachen, Währungen und Bevölkerungsdaten.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://restcountries.com/v3.1',docs:'https://restcountries.com/',website:'https://restcountries.com/',demo:'country',featured:5,tags:['Länder','Flaggen','Daten']},
+ {id:'nominatim',name:'OpenStreetMap Nominatim',category:'Wetter & Karten',sub:'Geocoding',icon:'📍',color:'#78bcff',desc:'Wandelt Ortsnamen und Adressen in geografische Koordinaten um.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://nominatim.openstreetmap.org',docs:'https://nominatim.org/release-docs/latest/api/Overview/',website:'https://www.openstreetmap.org/',demo:null,featured:12,tags:['Geocoding','OpenStreetMap'],note:'Hat eine strenge öffentliche Nutzungspolitik. Für größere Anwendungen eigene Instanz oder Anbieter prüfen.'},
+ {id:'jikan',name:'Jikan API',category:'Anime & Entertainment',sub:'Anime',icon:'🌸',color:'#ff90c5',desc:'Inoffizielle MyAnimeList-API: Anime, Manga, Figuren, Staffeln und Suchergebnisse.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://api.jikan.moe/v4',docs:'https://docs.api.jikan.moe/',website:'https://jikan.moe/',demo:'anime',featured:1,tags:['Anime','Manga','Suche']},
+ {id:'tvmaze',name:'TVmaze',category:'Anime & Entertainment',sub:'Filme & Serien',icon:'📺',color:'#a4a0ff',desc:'Serien- und Episodendaten, Staffeln, Besetzungen sowie TV-Programminfos.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://api.tvmaze.com',docs:'https://www.tvmaze.com/api',website:'https://www.tvmaze.com/',demo:null,featured:10,tags:['Serien','Episoden','TV']},
+ {id:'ghibli',name:'Studio Ghibli API',category:'Anime & Entertainment',sub:'Filme & Serien',icon:'🍃',color:'#7acb9b',desc:'Filme, Figuren, Orte und Fahrzeuge aus Studio-Ghibli-Filmen.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://ghibliapi.vercel.app',docs:'https://ghibliapi.vercel.app/',website:'https://www.ghibli.jp/',demo:null,featured:20,tags:['Filme','Animation','Studio Ghibli']},
+ {id:'jokeapi',name:'JokeAPI',category:'Anime & Entertainment',sub:'Fun & Random',icon:'😅',color:'#f1cb73',desc:'Programmierer- und Alltagswitze mit Kategorie- und Safe-Mode-Filtern.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://v2.jokeapi.dev',docs:'https://jokeapi.dev/',website:'https://jokeapi.dev/',demo:'joke',featured:3,tags:['Witze','Fun','Safe Mode']},
+ {id:'uselessfacts',name:'Useless Facts',category:'Anime & Entertainment',sub:'Fun & Random',icon:'🧠',color:'#c5a2ff',desc:'Zufällige Wissenshäppchen zum Staunen und für kleine Fun-Fact-Projekte.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://uselessfacts.jsph.pl/api/v2',docs:'https://uselessfacts.jsph.pl/',website:'https://uselessfacts.jsph.pl/',demo:'facts',featured:18,tags:['Facts','Random','Wissen']},
+ {id:'dogceo',name:'Dog CEO API',category:'Tiere & Natur',sub:'Hunde',icon:'🐕',color:'#e8b678',desc:'Zufällige Hundefotos sowie Rassenlisten. Perfekt für Bildgeneratoren und kleine Tierseiten.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://dog.ceo/api',docs:'https://dog.ceo/dog-api/',website:'https://dog.ceo/',demo:'dog',featured:1,tags:['Hunde','Bilder','Random']},
+ {id:'catfact',name:'Cat Facts',category:'Tiere & Natur',sub:'Katzen',icon:'🐈',color:'#f7a4bb',desc:'Kurze, zufällige Fakten über Katzen.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://catfact.ninja',docs:'https://catfact.ninja/',website:'https://catfact.ninja/',demo:'catfact',featured:8,tags:['Katzen','Facts','Random']},
+ {id:'thecatapi',name:'The Cat API',category:'Tiere & Natur',sub:'Katzen',icon:'🐱',color:'#f4b2cd',desc:'Katzenbilder, Rasseninfos und Suchoptionen. Für manche Funktionen ist ein Schlüssel erforderlich.',auth:'Optionaler Key',access:'Teilweise frei',cors:true,base:'https://api.thecatapi.com/v1',docs:'https://docs.thecatapi.com/',website:'https://thecatapi.com/',demo:null,featured:14,tags:['Katzen','Bilder','Rassen']},
+ {id:'fishwatch',name:'FishWatch',category:'Tiere & Natur',sub:'Naturdaten',icon:'🐠',color:'#7ed5e6',desc:'Öffentliche Informationen und Bilder zu Fischarten und nachhaltiger Fischerei.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://www.fishwatch.gov/api',docs:'https://www.fishwatch.gov/',website:'https://www.fishwatch.gov/',demo:null,featured:21,tags:['Natur','Fische','Daten']},
+ {id:'huggingface',name:'Hugging Face Inference',category:'KI & Machine Learning',sub:'Modelle',icon:'🤗',color:'#ffd782',desc:'Inference für veröffentlichte Machine-Learning-Modelle, je nach Modell und aktuellem Tarif.',auth:'Token',access:'Token / Tarif abhängig',cors:true,base:'https://router.huggingface.co',docs:'https://huggingface.co/docs/inference-providers/index',website:'https://huggingface.co/',demo:null,featured:4,tags:['KI','Modelle','Inference'],note:'Ein Token gehört nicht in öffentlichen Frontend-Code. Nutze für geheime Schlüssel einen Server oder Proxy.'},
+ {id:'openrouter',name:'OpenRouter',category:'KI & Machine Learning',sub:'Text & Chat',icon:'🪄',color:'#b8a0ff',desc:'Ein einheitlicher API-Zugang zu vielen Sprachmodellen. Preise, Kontingente und kostenlose Modelle wechseln.',auth:'API-Key',access:'Tarifabhängig',cors:true,base:'https://openrouter.ai/api/v1',docs:'https://openrouter.ai/docs',website:'https://openrouter.ai/',demo:null,featured:6,tags:['LLM','Chat','Text'],note:'Key niemals in eine statische GitHub-Pages-Website schreiben.'},
+ {id:'stability',name:'Stability AI',category:'KI & Machine Learning',sub:'Vision & Bild',icon:'🎨',color:'#e89dff',desc:'Werkzeuge für Bildgenerierung und Bildbearbeitung. Konto und API-Zugang nötig.',auth:'API-Key',access:'Key / Tarif',cors:false,base:'https://api.stability.ai',docs:'https://platform.stability.ai/docs',website:'https://stability.ai/',demo:null,featured:18,tags:['Bild','Generierung','KI']},
+ {id:'itunes',name:'iTunes Search API',category:'Musik & Medien',sub:'Musiksuche',icon:'🎵',color:'#ff91b8',desc:'Suche nach Musik, Künstlern, Alben, Hörbüchern, Podcasts und Apps im Apple-Katalog.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://itunes.apple.com/search',docs:'https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/',website:'https://www.apple.com/itunes/',demo:'music',featured:5,tags:['Musik','Podcasts','Suche']},
+ {id:'musicbrainz',name:'MusicBrainz',category:'Musik & Medien',sub:'Audio & Medien',icon:'🎼',color:'#9ec8ff',desc:'Offene Musik-Metadaten für Künstler, Alben, Aufnahmen und Veröffentlichungen.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://musicbrainz.org/ws/2',docs:'https://musicbrainz.org/doc/MusicBrainz_API',website:'https://musicbrainz.org/',demo:null,featured:14,tags:['Musik','Metadaten','Open Data'],note:'Beachte die Rate-Limits und User-Agent-Regeln des Dienstes.'},
+ {id:'openlibrary',name:'Open Library',category:'Bücher & Wissen',sub:'Bücher',icon:'📖',color:'#e9bb8a',desc:'Suche Buchdaten, Autoren und Cover aus einem offenen Bibliothekskatalog.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://openlibrary.org',docs:'https://openlibrary.org/developers/api',website:'https://openlibrary.org/',demo:'book',featured:3,tags:['Bücher','Autoren','Cover']},
+ {id:'gutendex',name:'Gutendex / Project Gutenberg',category:'Bücher & Wissen',sub:'Bücher',icon:'📜',color:'#c4a477',desc:'Suche in frei verfügbaren E-Books aus Project Gutenberg.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://gutendex.com/books',docs:'https://gutendex.com/',website:'https://www.gutenberg.org/',demo:null,featured:15,tags:['E-Books','Klassiker','Literatur']},
+ {id:'dictionary',name:'Free Dictionary API',category:'Bücher & Wissen',sub:'Wörterbuch',icon:'🔤',color:'#83c6f5',desc:'Englische Wortdefinitionen, Aussprache, Bedeutungen und Beispielsätze.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://api.dictionaryapi.dev/api/v2/entries/en',docs:'https://dictionaryapi.dev/',website:'https://dictionaryapi.dev/',demo:'dictionary',featured:2,tags:['Wörterbuch','Sprache','Lernen']},
+ {id:'wikipedia',name:'Wikipedia REST API',category:'Bücher & Wissen',sub:'Wissen',icon:'🌐',color:'#b5bfce',desc:'Kurzbeschreibungen und Seitenmetadaten aus Wikipedia.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://en.wikipedia.org/api/rest_v1',docs:'https://en.wikipedia.org/api/rest_v1/',website:'https://www.wikipedia.org/',demo:null,featured:8,tags:['Wissen','Artikel','Bildung']},
+ {id:'themealdb',name:'TheMealDB',category:'Food & Lifestyle',sub:'Rezepte',icon:'🍜',color:'#ffad83',desc:'Rezepte, Zutaten, Zubereitungsanleitungen und Essenskategorien.',auth:'Freier Testzugang',access:'Kostenloser Test-Key',cors:true,base:'https://www.themealdb.com/api/json/v1/1',docs:'https://www.themealdb.com/api.php',website:'https://www.themealdb.com/',demo:'meal',featured:6,tags:['Rezepte','Essen','Zutaten'],note:'Die hier verwendete öffentliche Test-ID ist Teil der kostenlosen Demo. Für produktive Nutzung Bedingungen prüfen.'},
+ {id:'openfoodfacts',name:'Open Food Facts',category:'Food & Lifestyle',sub:'Lebensmittel',icon:'🥫',color:'#a8d66b',desc:'Offene Lebensmitteldaten mit Zutatenlisten, Nährwerten und Produktbildern.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://world.openfoodfacts.org/api/v2',docs:'https://openfoodfacts.github.io/openfoodfacts-server/api/',website:'https://world.openfoodfacts.org/',demo:null,featured:9,tags:['Lebensmittel','Barcode','Daten']},
+ {id:'githubapi',name:'GitHub REST API',category:'Developer Tools',sub:'GitHub',icon:'⌘',color:'#c5d0e8',desc:'Open-Source-Repositories, Issues, Nutzerprofile und öffentliche Projektmetadaten durchsuchen.',auth:'Für öffentliche Suche optional',access:'Public Endpoints',cors:true,base:'https://api.github.com',docs:'https://docs.github.com/en/rest',website:'https://github.com/',demo:'github',featured:1,tags:['GitHub','Open Source','Code']},
+ {id:'jsonplaceholder',name:'JSONPlaceholder',category:'Developer Tools',sub:'Testdaten',icon:'{}',color:'#a8b4ff',desc:'Fake-REST-API für Posts, Kommentare, Nutzer und schnelle Frontend-Prototypen.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://jsonplaceholder.typicode.com',docs:'https://jsonplaceholder.typicode.com/',website:'https://jsonplaceholder.typicode.com/',demo:null,featured:2,tags:['Testdaten','REST','Prototyping']},
+ {id:'dummyjson',name:'DummyJSON',category:'Developer Tools',sub:'Testdaten',icon:'🧪',color:'#b3a0ff',desc:'Testdaten zu Produkten, Nutzern, Rezepten und mehr für Demo-Apps und UI-Prototypen.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://dummyjson.com',docs:'https://dummyjson.com/docs',website:'https://dummyjson.com/',demo:null,featured:7,tags:['Testdaten','Produkte','REST']},
+ {id:'httpbin',name:'httpbin',category:'Developer Tools',sub:'Tools & Utilities',icon:'⇄',color:'#8de4d1',desc:'Teste HTTP-Methoden, Header, Cookies, Statuscodes und Request-Payloads.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://httpbin.org',docs:'https://httpbin.org/',website:'https://httpbin.org/',demo:null,featured:12,tags:['HTTP','Debug','Testing']},
+ {id:'qrserver',name:'QR Code API',category:'Developer Tools',sub:'Tools & Utilities',icon:'▦',color:'#a7dfbd',desc:'Erzeuge QR-Code-Bilder aus Text, URLs und anderen kurzen Inhalten.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://api.qrserver.com/v1/create-qr-code/',docs:'https://goqr.me/api/',website:'https://goqr.me/',demo:'qr',featured:4,tags:['QR','Generator','Utility']},
+ {id:'ipify',name:'ipify',category:'Security & Internet',sub:'Netzwerk',icon:'🌐',color:'#9ab6ff',desc:'Kleine API, die die öffentliche IP-Adresse der Anfrage zurückgibt.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://api.ipify.org?format=json',docs:'https://www.ipify.org/',website:'https://www.ipify.org/',demo:null,featured:13,tags:['IP','Netzwerk','Utility']},
+ {id:'dnsgoogle',name:'Google DNS over HTTPS',category:'Security & Internet',sub:'DNS & Domains',icon:'🔎',color:'#94c5ff',desc:'DNS-Abfragen über HTTPS, praktisch für Domain- und Netzwerktools.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://dns.google/resolve',docs:'https://developers.google.com/speed/public-dns/docs/doh',website:'https://developers.google.com/speed/public-dns',demo:null,featured:16,tags:['DNS','Domains','Internet']},
+ {id:'frankfurter',name:'Frankfurter Currency API',category:'Finanzen & Daten',sub:'Währungen',icon:'💱',color:'#7de0a0',desc:'Historische und aktuelle Wechselkurse von Referenzdaten der Europäischen Zentralbank.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://api.frankfurter.app',docs:'https://frankfurter.dev/',website:'https://frankfurter.dev/',demo:'currency',featured:3,tags:['Wechselkurse','EUR','Finanzen']},
+ {id:'coingecko',name:'CoinGecko API',category:'Finanzen & Daten',sub:'Krypto',icon:'🪙',color:'#a4d78b',desc:'Kryptowährungsdaten, Preise, Marktkapitalisierung und historische Daten. Zugriff kann Schlüssel oder Tarif erfordern.',auth:'Je nach Tarif',access:'Limits / Key möglich',cors:true,base:'https://api.coingecko.com/api/v3',docs:'https://docs.coingecko.com/',website:'https://www.coingecko.com/',demo:null,featured:11,tags:['Krypto','Preise','Marktdaten'],note:'Kostenloser Zugang und Rate-Limits ändern sich. Prüfe die aktuelle Tarifseite.'},
+ {id:'nasa',name:'NASA Open APIs',category:'Wissenschaft & Space',sub:'Weltraum',icon:'🪐',color:'#a79cff',desc:'Astronomiebild des Tages, Mars-Rover-Daten und weitere öffentliche Weltraum-Datensätze.',auth:'Demo-Key verfügbar',access:'Demo-Key / kostenlos registrierbar',cors:true,base:'https://api.nasa.gov',docs:'https://api.nasa.gov/',website:'https://www.nasa.gov/',demo:'nasa',featured:1,tags:['NASA','Astronomie','Bilder'],note:'Die Demo nutzt den öffentlichen DEMO_KEY mit strengem, gemeinsam genutztem Limit.'},
+ {id:'artic',name:'Art Institute of Chicago',category:'Wissenschaft & Space',sub:'Forschung & Daten',icon:'🖼️',color:'#e7ac83',desc:'Sammlungskunst, Künstlerbiografien und Metadaten aus einem öffentlichen Museumsarchiv.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://api.artic.edu/api/v1',docs:'https://api.artic.edu/docs/',website:'https://www.artic.edu/',demo:null,featured:10,tags:['Kunst','Museum','Open Data']},
+ {id:'advice',name:'Advice Slip',category:'Anime & Entertainment',sub:'Fun & Random',icon:'💡',color:'#f3d185',desc:'Zufällige kurze Ratschläge und Textideen für Mini-Apps.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://api.adviceslip.com',docs:'https://api.adviceslip.com/',website:'https://api.adviceslip.com/',demo:'advice',featured:17,tags:['Random','Texte','Fun']},
+ {id:'randomuser',name:'Random User Generator',category:'Developer Tools',sub:'Testdaten',icon:'👤',color:'#8eb8ff',desc:'Generiere zufällige Profil- und Kontaktdaten für Mockups und Tests.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://randomuser.me/api',docs:'https://randomuser.me/documentation',website:'https://randomuser.me/',demo:null,featured:9,tags:['Mockups','Nutzer','Testdaten']},
+ {id:'worldbank',name:'World Bank Open Data',category:'Finanzen & Daten',sub:'Open Data',icon:'🏦',color:'#7cc8ce',desc:'Internationale Entwicklungs-, Bevölkerungs- und Wirtschaftsdaten.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'https://api.worldbank.org/v2',docs:'https://datahelpdesk.worldbank.org/knowledgebase/topics/125589',website:'https://data.worldbank.org/',demo:null,featured:15,tags:['Wirtschaft','Statistik','Open Data']},
+ {id:'gutendex-extra',name:'Numbers API',category:'Bücher & Wissen',sub:'Wissen',icon:'🔢',color:'#b9c1ff',desc:'Interessante Fakten und Trivia über Zahlen, Daten und Berechnungen.',auth:'Kein Key',access:'Ohne API-Key',cors:true,base:'http://numbersapi.com',docs:'http://numbersapi.com/',website:'http://numbersapi.com/',demo:null,featured:19,tags:['Zahlen','Trivia','Facts'],note:'Der bekannte Endpunkt ist HTTP. HTTPS-Verfügbarkeit vor Verwendung prüfen.'}
+];
+const favs = new Set(JSON.parse(localStorage.getItem('apiverse:favs')||'[]'));
+let activeCategory='all',activeSub='all',activeView='discover',activeFilter='all',searchQuery='',sortMode='featured';
+const el = id=>document.getElementById(id);
+const esc = value=>String(value==null?'':value).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]});
+const validUrl = value=>{try{const u=new URL(value);return u.protocol==='https:'?u.href:'#'}catch(e){return '#'}};
+function categoryCount(name){return APIs.filter(a=>a.category===name).length}
+function renderNav(){
+ const nav=el('category-nav');
+ nav.innerHTML=categories.map(function(c){
+   const subs=c.subs.map(function(s){return '<button class="subcat '+(activeCategory===c.name&&activeSub===s?'active':'')+'" data-cat="'+esc(c.name)+'" data-sub="'+esc(s)+'"><span>›</span>'+esc(s)+'</button>'}).join('');
+   return '<div class="cat-group '+(activeCategory===c.name?'expanded':'')+'"><div class="cat-head"><button class="nav-cat '+(activeCategory===c.name&&activeSub==='all'?'active':'')+'" data-cat="'+esc(c.name)+'" data-sub="all"><span class="nav-emoji">'+c.icon+'</span>'+esc(c.name)+'<span class="nav-count">'+categoryCount(c.name)+'</span></button><button class="cat-expand" data-expand="'+esc(c.name)+'" aria-label="Unterkategorien umschalten">'+(activeCategory===c.name?'⌄':'›')+'</button></div><div class="subcats">'+subs+'</div></div>'
+ }).join('');
+}
+function updateStats(){
+ el('stat-apis').textContent=String(APIs.length);
+ el('stat-cats').textContent=String(categories.length);
+ el('stat-keyless').textContent=String(APIs.filter(a=>a.auth==='Kein Key').length);
+ el('stat-demos').textContent=String(APIs.filter(a=>a.demo).length);
+ el('nav-total').textContent=String(APIs.length);
+ el('fav-count').textContent=String(favs.size);
+}
+function getFiltered(){
+ let list=APIs.filter(function(a){
+   const searchHay=[a.name,a.category,a.sub,a.desc,a.auth,a.access].concat(a.tags||[]).join(' ').toLowerCase();
+   if(searchQuery&&!searchHay.includes(searchQuery.toLowerCase()))return false;
+   if(activeCategory!=='all'&&a.category!==activeCategory)return false;
+   if(activeSub!=='all'&&a.sub!==activeSub)return false;
+   if(activeView==='favorites'&&!favs.has(a.id))return false;
+   if(activeFilter==='keyless'&&a.auth!=='Kein Key')return false;
+   if(activeFilter==='cors'&&!a.cors)return false;
+   if(activeFilter==='demo'&&!a.demo)return false;
+   return true;
+ });
+ if(sortMode==='name')list.sort((a,b)=>a.name.localeCompare(b.name));
+ else if(sortMode==='category')list.sort((a,b)=>(a.category+' '+a.sub).localeCompare(b.category+' '+b.sub));
+ else list.sort((a,b)=>(b.featured||0)-(a.featured||0));
+ return list;
+}
+function renderCards(){
+ const grid=el('api-grid'),list=getFiltered();
+ if(activeView==='lab'){
+  el('browser-title').textContent='Live-Demos';
+  el('browser-desc').textContent='Filtere die APIs, die du direkt im Browser ausprobieren kannst.';
+ }else if(activeView==='favorites'){
+  el('browser-title').textContent='Meine Favoriten';
+  el('browser-desc').textContent='Deine lokal gespeicherten APIs, nur auf diesem Gerät.';
+ }else if(activeCategory!=='all'){
+  el('browser-title').textContent=activeSub==='all'?activeCategory:activeSub;
+  el('browser-desc').textContent=(categories.find(c=>c.name===activeCategory)||{}).desc||'Entdecke APIs in diesem Bereich.';
+ }else{
+  el('browser-title').textContent=searchQuery?'Suchergebnisse':'Entdecke APIs';
+  el('browser-desc').textContent='Finde genau die API, die zu deinem Projekt passt.';
+ }
+ const cat=categories.find(c=>c.name===activeCategory);
+ const banner=el('category-banner');
+ if(activeCategory!=='all'){banner.style.display='block';el('banner-title').textContent=(cat?cat.icon+' ':'')+(activeSub==='all'?activeCategory:activeSub);el('banner-desc').textContent=(cat?cat.desc:'')+' · '+categoryCount(activeCategory)+' APIs in dieser Kategorie.'}
+ else banner.style.display='none';
+ el('results-line').textContent='ZEIGE '+list.length+' VON '+APIs.length+' APIS'+(searchQuery?' · SUCHE: “'+searchQuery.toUpperCase()+'”':'');
+ if(!list.length){
+  grid.innerHTML='<div class="empty-state"><div style="font-size:30px">⌕</div><strong>Nichts gefunden.</strong><span>Suchbegriff oder Filter ändern. Sogar APIs haben manchmal Verstecken gelernt.</span><div style="margin-top:15px"><button class="btn-soft" id="empty-reset">Filter löschen</button></div></div>';
+  const reset=el('empty-reset');if(reset)reset.onclick=clearFilters;
+  return;
+ }
+ grid.innerHTML=list.map(function(a){
+  const isFav=favs.has(a.id);
+  const keyTag=a.auth==='Kein Key'?'<span class="tag good">✓ Ohne Key</span>':'<span class="tag key">⌑ '+esc(a.auth)+'</span>';
+  const demoTag=a.demo?'<span class="tag live">⚡ Live-Demo</span>':'';
+  const corsTag=a.cors?'<span class="tag">CORS</span>':'<span class="tag">Server nötig</span>';
+  return '<article class="api-card" style="--tint:'+a.color+'22" data-card="'+a.id+'"><div class="card-top"><div class="api-icon" style="--tint:'+a.color+'22;color:'+a.color+'">'+a.icon+'</div><div class="api-head"><h3 class="api-title">'+esc(a.name)+'</h3><div class="api-subtitle">'+esc(a.sub)+' · '+esc(a.category)+'</div></div><button class="star-btn '+(isFav?'favorited':'')+'" data-fav="'+a.id+'" title="'+(isFav?'Aus Favoriten entfernen':'Zu Favoriten hinzufügen')+'" aria-label="Favorit umschalten">'+(isFav?'★':'☆')+'</button></div><p class="card-desc">'+esc(a.desc)+'</p><div class="tag-row">'+keyTag+demoTag+corsTag+'</div><div class="card-bottom"><span class="category-small">'+esc(a.access)+'</span><div class="card-actions">'+(a.demo?'<button class="small-btn primary" data-api-demo="'+a.id+'">⚡ Testen</button>':'')+'<button class="small-btn" data-api-open="'+a.id+'">Details ↗</button></div></div></article>'
+ }).join('');
+}
+function setView(view){
+ activeView=view;activeCategory='all';activeSub='all';activeFilter=view==='lab'?'demo':'all';
+ document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+ document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===activeFilter));
+ el('crumb-current').textContent=view==='lab'?'Live Playground':view==='favorites'?'Favoriten':'Entdecken';
+ renderNav();renderCards();
+ if(view==='lab')document.getElementById('browser-section').scrollIntoView({behavior:'smooth',block:'start'});
+ else document.getElementById('browser-section').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function selectCategory(cat,sub){
+ activeView='discover';activeCategory=cat;activeSub=sub||'all';activeFilter='all';
+ document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view==='discover'));
+ document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter==='all'));
+ el('crumb-current').textContent=activeSub==='all'?cat:activeSub;
+ renderNav();renderCards();el('sidebar').classList.remove('open');
+ document.getElementById('browser-section').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function clearFilters(){
+ activeCategory='all';activeSub='all';activeView='discover';activeFilter='all';searchQuery='';sortMode='featured';
+ el('search').value='';el('sort-select').value='featured';
+ document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view==='discover'));
+ document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter==='all'));
+ renderNav();renderCards();
+}
+function toast(message){
+ const t=el('toast');t.textContent=message;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),2300);
+}
+function toggleFav(id){
+ if(favs.has(id)){favs.delete(id);toast('Aus Favoriten entfernt.')}
+ else{favs.add(id);toast('In Favoriten gespeichert.');}
+ localStorage.setItem('apiverse:favs',JSON.stringify(Array.from(favs)));updateStats();renderCards();
+}
+function codeExample(api){
+ if(api.id==='openmeteo')return 'GET https://api.open-meteo.com/v1/forecast?latitude=50.1&longitude=8.9&current=temperature_2m';
+ if(api.id==='brawlapi')return 'GET https://api.brawlapi.com/v1/brawlers';
+ if(api.id==='pokeapi')return 'GET https://pokeapi.co/api/v2/pokemon/pikachu';
+ if(api.id==='jikan')return 'GET https://api.jikan.moe/v4/anime?q=one%20piece&limit=5';
+ if(api.id==='githubapi')return 'GET https://api.github.com/search/repositories?q=vite&per_page=5';
+ return 'GET '+api.base;
+}
+function openApi(id,runDemo){
+ const api=APIs.find(a=>a.id===id);if(!api)return;
+ el('modal-icon').textContent=api.icon;el('modal-icon').style.color=api.color;el('modal-icon').style.setProperty('--tint',api.color+'22');
+ el('modal-title').textContent=api.name;el('modal-lead').textContent=api.desc;
+ const note=api.note?'<div class="modal-note">ℹ️ '+esc(api.note)+'</div>':'';
+ const tags=(api.tags||[]).map(t=>'<span class="tag">'+esc(t)+'</span>').join('');
+ el('modal-body').innerHTML='<div class="detail-badges">'+tags+'<span class="tag '+(api.auth==='Kein Key'?'good':'key')+'">'+esc(api.auth)+'</span><span class="tag '+(api.demo?'live':'')+'">'+(api.demo?'⚡ Live-Demo verfügbar':(api.cors?'Browser-Zugriff laut Katalog':'Server / Auth prüfen'))+'</span></div><div class="detail-grid"><div class="detail-item"><div class="detail-label">Hauptkategorie</div><div class="detail-value">'+esc(api.category)+' / '+esc(api.sub)+'</div></div><div class="detail-item"><div class="detail-label">Zugriff</div><div class="detail-value">'+esc(api.access)+'</div></div><div class="detail-item"><div class="detail-label">Basis-URL / Endpoint</div><div class="detail-value mono">'+esc(api.base)+'</div></div><div class="detail-item"><div class="detail-label">Dokumentation</div><div class="detail-value"><a href="'+validUrl(api.docs)+'" target="_blank" rel="noreferrer">Offizielle / verfügbare Doku öffnen ↗</a></div></div></div><div class="detail-actions"><a class="btn-primary" href="'+validUrl(api.docs)+'" target="_blank" rel="noreferrer">Dokumentation öffnen ↗</a><button class="btn-secondary" data-copy="'+esc(codeExample(api))+'">⌁ Beispiel kopieren</button><button class="btn-secondary" data-fav="'+api.id+'">'+(favs.has(api.id)?'★ Gespeichert':'☆ Favorit')+'</button></div><div class="codebox"><div class="codehead"><span>REQUEST BEISPIEL</span><button class="link-btn" data-copy="'+esc(codeExample(api))+'">Kopieren</button></div><pre>'+esc(codeExample(api))+'</pre></div>'+note+(api.demo?'<div class="demo-box" id="demo-box"><div class="demo-header"><h3>⚡ Live-Demo</h3><span>ECHTER REQUEST</span></div><div id="demo-content"></div></div>':'<div class="demo-box"><div class="demo-header"><h3>🧰 API Playground</h3><span>INFORMATION</span></div><div class="demo-result">Für diese API ist hier noch kein Direkt-Demo-Formular eingebaut. Die Doku und das Request-Beispiel oben sind der beste Startpunkt. Achte auf Authentifizierung, Limits und die Nutzungsbedingungen.</div></div>');
+ el('modal-backdrop').classList.add('open');document.body.style.overflow='hidden';
+ if(api.demo){renderDemo(api);if(runDemo&&['dog','joke','facts','catfact','nasa','advice'].includes(api.demo))setTimeout(()=>runDemoRequest(api),50)}
+}
+function closeModal(){el('modal-backdrop').classList.remove('open');document.body.style.overflow='';}
+function renderDemo(api){
+ const host=el('demo-content');if(!host)return;
+ const inputConfig={
+  brawl:{placeholder:'Brawler suchen …',value:'',button:'Suchen'},
+  weather:{placeholder:'Stadt suchen …',value:'Hanau',button:'Wetter abrufen'},
+  pokemon:{placeholder:'Pokémon-Name oder ID',value:'pikachu',button:'Pokédex öffnen'},
+  anime:{placeholder:'Anime suchen …',value:'One Piece',button:'Suchen'},
+  github:{placeholder:'Repository suchen …',value:'vite',button:'Repos finden'},
+  dictionary:{placeholder:'Englisches Wort',value:'hello',button:'Definition suchen'},
+  country:{placeholder:'Ländername (z. B. Germany)',value:'Germany',button:'Land suchen'},
+  book:{placeholder:'Buch oder Autor suchen …',value:'Harry Potter',button:'Bücher finden'},
+  music:{placeholder:'Künstler oder Track',value:'Daft Punk',button:'Musik suchen'},
+  currency:{placeholder:'Zielwährung (z. B. USD)',value:'USD',button:'Kurs abrufen'},
+  qr:{placeholder:'Text oder URL für den QR-Code',value:'https://apivault.dev/',button:'QR erzeugen'},
+  meal:{placeholder:'Gericht suchen …',value:'Arrabiata',button:'Rezepte suchen'}
+ };
+ const conf=inputConfig[api.demo];
+ if(conf){
+  host.innerHTML='<form class="demo-form" id="live-demo-form"><input class="demo-input" id="demo-input" value="'+esc(conf.value)+'" placeholder="'+esc(conf.placeholder)+'" aria-label="'+esc(conf.placeholder)+'"><button class="btn-primary" type="submit">'+esc(conf.button)+' ↗</button></form><div class="demo-result" id="demo-result" aria-live="polite"></div>';
+  el('live-demo-form').addEventListener('submit',function(e){e.preventDefault();runDemoRequest(api)});
+ }else{
+  const label=api.demo==='dog'?'Zufälliges Hundebild laden':api.demo==='joke'?'Sicheren Zufallswitz holen':api.demo==='facts'?'Neuen Fakt laden':api.demo==='catfact'?'Katzenfakt holen':api.demo==='nasa'?'Astronomiebild des Tages laden':'Zufälligen Ratschlag holen';
+  host.innerHTML='<button class="btn-primary" id="demo-run">'+label+' ↗</button><div class="demo-result" id="demo-result" aria-live="polite"></div>';
+  el('demo-run').addEventListener('click',()=>runDemoRequest(api));
+ }
+ if(api.demo==='dog'||api.demo==='joke'||api.demo==='facts'||api.demo==='catfact'||api.demo==='nasa'||api.demo==='advice'){setTimeout(()=>runDemoRequest(api),60)}
+}
+async function fetchJson(url){
+ const response=await fetch(url,{headers:{'Accept':'application/json'}});
+ if(!response.ok)throw new Error('Die API antwortet mit HTTP '+response.status+'. Prüfe die Doku oder versuche es später erneut.');
+ return response.json();
+}
+function showLoading(message){const result=el('demo-result');if(result)result.innerHTML='<span class="demo-loading">◌ '+esc(message||'Lade API-Daten …')+'</span>'}
+function showError(err){
+ const result=el('demo-result');if(!result)return;
+ result.innerHTML='<div class="demo-error">⚠ '+esc(err&&err.message?err.message:'Unbekannter Fehler')+'</div><div class="modal-note">Mögliche Gründe: API kurz offline, Rate-Limit, CORS oder ein geänderter Endpunkt. Die Website selbst braucht dafür keinen Server.</div>';
+}
+function resultCard(title,subtitle,image){
+ return '<div class="demo-result-card">'+(image&&validUrl(image)!=='#'?'<img loading="lazy" src="'+validUrl(image)+'" alt="">':'')+'<strong>'+esc(title)+'</strong><small>'+esc(subtitle||'')+'</small></div>';
+}
+async function runDemoRequest(api){
+ const result=el('demo-result');if(!result)return;
+ const input=el('demo-input');const value=input?input.value.trim():'';
+ if(input&&!value){result.innerHTML='<span class="demo-error">Bitte erst einen Suchbegriff eingeben.</span>';return}
+ showLoading('Request an '+api.name+' …');
+ try{
+  let data,html='';
+  switch(api.demo){
+   case 'brawl':{
+    data=await fetchJson('https://api.brawlapi.com/v1/brawlers');
+    const list=(data.list||data.items||data.brawlers||[]).filter(x=>x&&x.name);
+    const filtered=list.filter(x=>(x.name+' '+(x.class&&x.class.name||'')+' '+(x.rarity&&x.rarity.name||'')).toLowerCase().includes(value.toLowerCase())).slice(0,24);
+    html='<div class="demo-result">API geliefert: '+list.length+' Brawler. '+(value?'Treffer für „'+esc(value)+'“: ':'Erste Treffer: ') +filtered.length+'</div><div class="demo-grid">'+filtered.map(x=>resultCard(x.name,(x.rarity&&x.rarity.name||'')+' · '+(x.class&&x.class.name||'Brawler'),x.imageUrl2||x.imageUrl)).join('')+'</div>';
+    if(!filtered.length)html+='<div class="modal-note">Keine Treffer. Prüfe die Schreibweise oder such einen anderen Namen.</div>';
+    break;
+   }
+   case 'weather':{
+    const place=await fetchJson('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(value)+'&count=1&language=de&format=json');
+    if(!place.results||!place.results.length)throw new Error('Ort nicht gefunden. Probiere einen größeren Ort oder eine andere Schreibweise.');
+    const p=place.results[0],w=await fetchJson('https://api.open-meteo.com/v1/forecast?latitude='+p.latitude+'&longitude='+p.longitude+'&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m&timezone=auto');
+    const c=w.current||{};
+    html='<div class="demo-result">📍 '+esc([p.name,p.admin1,p.country].filter(Boolean).join(', '))+' · '+esc(c.time||'Aktuell')+'</div><div class="weather-summary"><div class="demo-result-card"><small>Temperatur</small><div class="big-number">'+esc(c.temperature_2m)+'°</div><small>Gefühlt '+esc(c.apparent_temperature)+'°C</small></div><div class="demo-result-card"><small>Wind</small><div class="big-number">'+esc(c.wind_speed_10m)+'</div><small>km/h</small></div><div class="demo-result-card"><small>Luftfeuchte</small><div class="big-number">'+esc(c.relative_humidity_2m)+'%</div><small>Relative Feuchtigkeit</small></div></div>';
+    break;
+   }
+   case 'pokemon':{
+    data=await fetchJson('https://pokeapi.co/api/v2/pokemon/'+encodeURIComponent(value.toLowerCase()));
+    const pic=data.sprites&&data.sprites.other&&data.sprites.other['official-artwork']&&data.sprites.other['official-artwork'].front_default||data.sprites.front_default;
+    html='<div class="demo-grid">'+resultCard('#'+String(data.id).padStart(3,'0')+' '+data.name,'Typen: '+data.types.map(t=>t.type.name).join(', '),pic)+resultCard('Größe: '+(data.height/10)+' m','Gewicht: '+(data.weight/10)+' kg')+resultCard('Basiswerte',data.stats.map(s=>s.stat.name+': '+s.base_stat).join(' · '))+'</div>';
+    break;
+   }
+   case 'anime':{
+    data=await fetchJson('https://api.jikan.moe/v4/anime?q='+encodeURIComponent(value)+'&limit=6&sfw=true');
+    html='<div class="demo-result">'+(data.data||[]).length+' Treffer für „'+esc(value)+'“</div><div class="demo-grid">'+(data.data||[]).map(a=>resultCard(a.title,(a.type||'Anime')+' · '+(a.year||'Jahr unbekannt')+' · Score '+(a.score||'–'),a.images&&a.images.jpg&&a.images.jpg.image_url)).join('')+'</div>';
+    break;
+   }
+   case 'github':{
+    data=await fetchJson('https://api.github.com/search/repositories?q='+encodeURIComponent(value)+'&sort=stars&order=desc&per_page=6');
+    html='<div class="demo-result">'+data.total_count+' Repositories gefunden · nach Stars sortiert</div><div class="demo-grid">'+data.items.map(r=>'<div class="demo-result-card"><strong><a href="'+validUrl(r.html_url)+'" target="_blank" rel="noreferrer">'+esc(r.full_name)+' ↗</a></strong><small>'+esc((r.description||'Keine Beschreibung').slice(0,120))+'<br>★ '+esc(r.stargazers_count)+' · '+esc(r.language||'unbekannte Sprache')+'</small></div>').join('')+'</div>';
+    break;
+   }
+   case 'dictionary':{
+    data=await fetchJson('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(value));
+    html=(data||[]).slice(0,1).map(entry=>'<div class="demo-result-card"><strong>'+esc(entry.word)+'</strong><small>'+esc((entry.phonetic||'')+' · '+entry.meanings.map(m=>m.partOfSpeech).join(', '))+'</small></div><div class="demo-grid">'+entry.meanings.slice(0,5).map(m=>resultCard(m.partOfSpeech,(m.definitions||[]).slice(0,2).map(d=>d.definition).join(' · '))).join('')+'</div>').join('');
+    break;
+   }
+   case 'country':{
+    data=await fetchJson('https://restcountries.com/v3.1/name/'+encodeURIComponent(value)+'?fields=name,capital,region,population,flags,currencies,languages');
+    const c=data[0];if(!c)throw new Error('Kein Land gefunden.');
+    html='<div class="demo-grid">'+resultCard(c.name.common,(c.capital||[]).join(', '),c.flags&&c.flags.png)+resultCard('Bevölkerung',Number(c.population||0).toLocaleString('de-DE'),null)+resultCard('Region',c.region||'–','')+resultCard('Sprachen',Object.values(c.languages||{}).join(', ')||'–','')+'</div>';
+    break;
+   }
+   case 'book':{
+    data=await fetchJson('https://openlibrary.org/search.json?q='+encodeURIComponent(value)+'&limit=6');
+    html='<div class="demo-result">'+data.numFound+' Bücher/Einträge gefunden</div><div class="demo-grid">'+data.docs.slice(0,6).map(b=>resultCard(b.title,(b.author_name||[]).slice(0,2).join(', ')+' · '+(b.first_publish_year||'Jahr –'),b.cover_i?'https://covers.openlibrary.org/b/id/'+b.cover_i+'-M.jpg':null)).join('')+'</div>';
+    break;
+   }
+   case 'music':{
+    data=await fetchJson('https://itunes.apple.com/search?term='+encodeURIComponent(value)+'&entity=song&limit=6');
+    html='<div class="demo-result">'+data.resultCount+' Ergebnisse</div><div class="demo-grid">'+data.results.map(t=>resultCard(t.trackName,t.artistName+' · '+t.collectionName,t.artworkUrl100)).join('')+'</div>';
+    break;
+   }
+   case 'currency':{
+    const code=value.toUpperCase();if(!/^[A-Z]{3}$/.test(code))throw new Error('Bitte einen dreistelligen Währungscode wie USD oder GBP eingeben.');
+    data=await fetchJson('https://api.frankfurter.app/latest?from=EUR&to='+encodeURIComponent(code));
+    html='<div class="weather-summary"><div class="demo-result-card"><small>Basis</small><div class="big-number">1 EUR</div><small>'+esc(data.date)+'</small></div><div class="demo-result-card"><small>Kurs</small><div class="big-number">'+esc(data.rates[code])+'</div><small>'+esc(code)+'</small></div></div><div class="modal-note">Referenzkurs. Kein verbindliches Kauf-/Verkaufsangebot.</div>';
+    break;
+   }
+   case 'qr':{
+    const src='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(value);
+    html='<div class="demo-result-card" style="max-width:260px"><img src="'+validUrl(src)+'" alt="QR Code" style="width:200px;height:200px"><strong>QR-Code erstellt</strong><small>'+esc(value)+'</small><div style="margin-top:10px"><a class="btn-soft" href="'+validUrl(src)+'" target="_blank" rel="noreferrer">Bild öffnen ↗</a></div></div>';
+    break;
+   }
+   case 'meal':{
+    data=await fetchJson('https://www.themealdb.com/api/json/v1/1/search.php?s='+encodeURIComponent(value));
+    html='<div class="demo-grid">'+((data.meals||[]).slice(0,6).map(m=>resultCard(m.strMeal,m.strArea+' · '+m.strCategory,m.strMealThumb))).join('')+'</div>';
+    if(!(data.meals||[]).length)html='<span>Keine Rezepte gefunden. Versuch einen anderen Begriff.</span>';
+    break;
+   }
+   case 'dog':{
+    data=await fetchJson('https://dog.ceo/api/breeds/image/random');
+    html='<div class="demo-result-card" style="max-width:340px"><img src="'+validUrl(data.message)+'" alt="Zufälliger Hund" style="width:100%;height:auto;max-height:310px;object-fit:contain"><strong>Frisch aus der Dog CEO API 🐾</strong><small><a href="'+validUrl(data.message)+'" target="_blank" rel="noreferrer">Bild in neuem Tab öffnen ↗</a></small></div>';
+    break;
+   }
+   case 'catfact':{
+    data=await fetchJson('https://catfact.ninja/fact?max_length=250');
+    html='<div class="demo-result-card"><strong>🐈 Cat fact</strong><small>'+esc(data.fact)+'</small></div>';break;
+   }
+   case 'joke':{
+    data=await fetchJson('https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit');
+    html='<div class="demo-result-card"><strong>😅 Zufallswitz</strong><small>'+esc(data.type==='single'?data.joke:(data.setup+' — '+data.delivery))+'</small></div>';break;
+   }
+   case 'facts':{
+    data=await fetchJson('https://uselessfacts.jsph.pl/api/v2/facts/random?language=en');
+    html='<div class="demo-result-card"><strong>🧠 Random fact</strong><small>'+esc(data.text)+'</small></div>';break;
+   }
+   case 'advice':{
+    data=await fetchJson('https://api.adviceslip.com/advice');
+    html='<div class="demo-result-card"><strong>💡 Kleiner Ratschlag</strong><small>'+esc(data.slip.advice)+'</small></div>';break;
+   }
+   case 'nasa':{
+    data=await fetchJson('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY');
+    html='<div class="demo-result-card" style="max-width:520px">'+(data.media_type==='image'?'<img src="'+validUrl(data.url)+'" alt="NASA APOD" style="width:100%;height:auto;max-height:320px">':'')+'<strong>'+esc(data.title)+'</strong><small>'+esc(data.date)+' · '+esc(data.explanation||'').slice(0,420)+'…</small></div>';
+    break;
+   }
+  }
+  result.innerHTML=html||'<div class="demo-result-card">Die API hat eine Antwort gesendet, aber kein darstellbares Ergebnis.</div>';
+ }catch(err){showError(err)}
+}
+function init(){
+ renderNav();updateStats();renderCards();
+ el('search').addEventListener('input',function(e){searchQuery=e.target.value;renderCards()});
+ el('sort-select').addEventListener('change',function(e){sortMode=e.target.value;renderCards()});
+ document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',function(){activeFilter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderCards()}));
+ document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+ document.getElementById('category-nav').addEventListener('click',function(e){
+  const expand=e.target.closest('[data-expand]');if(expand){const group=expand.closest('.cat-group');group.classList.toggle('expanded');expand.textContent=group.classList.contains('expanded')?'⌄':'›';return}
+  const btn=e.target.closest('[data-cat]');if(btn)selectCategory(btn.dataset.cat,btn.dataset.sub);
+ });
+ document.body.addEventListener('click',function(e){
+  const fav=e.target.closest('[data-fav]');if(fav){e.preventDefault();const id=fav.dataset.fav;toggleFav(id);if(el('modal-backdrop').classList.contains('open')){const api=APIs.find(a=>a.id===id);if(api)openApi(id,false)}return}
+  const copy=e.target.closest('[data-copy]');if(copy){navigator.clipboard&&navigator.clipboard.writeText(copy.dataset.copy).then(()=>toast('Beispiel kopiert!')).catch(()=>toast('Kopieren nicht verfügbar.'));return}
+  const demo=e.target.closest('[data-api-demo]');if(demo){openApi(demo.dataset.apiDemo,true);return}
+  const open=e.target.closest('[data-api-open]');if(open){openApi(open.dataset.apiOpen,false);return}
+ });
+ el('modal-close').addEventListener('click',closeModal);
+ el('modal-backdrop').addEventListener('click',e=>{if(e.target===el('modal-backdrop'))closeModal()});
+ document.addEventListener('keydown',function(e){
+  if(e.key==='Escape')closeModal();
+  if(e.key==='/'&& !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();el('search').focus()}
+ });
+ el('clear-filter').addEventListener('click',clearFilters);
+ el('explore-btn').addEventListener('click',()=>document.getElementById('browser-section').scrollIntoView({behavior:'smooth'}));
+ const lab=()=>{setView('lab');document.getElementById('lab-section').scrollIntoView({behavior:'smooth',block:'start'})};
+ el('hero-lab-btn').addEventListener('click',lab);el('all-demos-btn').addEventListener('click',lab);
+ el('theme-toggle').addEventListener('click',function(){document.body.classList.toggle('theme-light');localStorage.setItem('apiverse:light',document.body.classList.contains('theme-light')?'1':'0');this.textContent=document.body.classList.contains('theme-light')?'☾':'☼'});
+ if(localStorage.getItem('apiverse:light')==='1'){document.body.classList.add('theme-light');el('theme-toggle').textContent='☾'}
+ el('menu-toggle').addEventListener('click',()=>el('sidebar').classList.toggle('open'));
+}
+init();
+})();
+</script>
+</body>
+</html>
