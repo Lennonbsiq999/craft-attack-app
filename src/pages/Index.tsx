@@ -188,6 +188,7 @@ const Index = () => {
         <section className="hero section-wrap" id="start">
           <div className="hero-content">
             <div className="eyebrow"><span className="eyebrow-dot" /> INOFFIZIELLER FAN-HUB <span className="eyebrow-line" /></div>
+            <a className="season-announcement" href="https://craftattack.me/staffeln" target="_blank" rel="noreferrer"><span className="announcement-pulse" /><span><strong>CRAFTATTACK 14</strong><small>Startet am 10. Oktober 2026</small></span><ArrowUpRight size={16} /></a>
             <h1>Eine Welt.<br /><span>Unendlich</span> viele<br className="mobile-break" /> Geschichten.</h1>
             <p className="hero-lead">
               Entdecke die Creator, verfolge die Highlights und tauche tiefer in die Welt von CraftAttack ein.
@@ -247,9 +248,9 @@ const Index = () => {
         <section className="section-wrap creator-section section-block" id="creator">
           <div className="section-heading">
             <div>
-              <div className="eyebrow section-eyebrow">DIE MENSCHEN HINTER DEN BUILDS</div>
-              <h2>Creator <span>entdecken.</span></h2>
-              <p>Bekannte Gesichter aus Staffel 13 und ihre Kanäle auf einen Blick.</p>
+              <div className="eyebrow section-eyebrow">STAFFEL-13-ARCHIV · CREATOR ENTDECKEN</div>
+              <h2>Creator <span>Archiv.</span></h2>
+              <p>Die Teilnehmerübersicht zu Staffel 13. Die offiziellen Namen für Staffel 14 sind noch nicht bekannt.</p>
             </div>
             <div className="section-heading-side">
               <div className="saved-count"><Heart size={15} fill={favorites.length ? "currentColor" : "none"} /> {favorites.length} gespeichert</div>
@@ -290,7 +291,7 @@ const Index = () => {
           ) : (
             <div className="empty-state"><Search size={22} /><strong>Kein Creator gefunden</strong><span>Ändere den Suchbegriff oder setze die Filter zurück.</span><button className="text-button" onClick={() => { setCreatorSearch(""); setFilter("all"); }}>Filter zurücksetzen <ArrowRight size={15} /></button></div>
           )}
-          <div className="section-footnote"><span><span className="info-dot">i</span> Die Übersicht bezieht sich auf Staffel 13. Die Teilnehmerliste für neue Staffeln kann abweichen.</span><a href="https://craftattack.me/staffeln/13" target="_blank" rel="noreferrer">Quelle & Staffelinfos <ExternalLink size={13} /></a></div>
+          <div className="section-footnote"><span><span className="info-dot">i</span> Archivdaten aus Staffel 13. Teilnehmer für Staffel 14 bitte erst nach offizieller Bekanntgabe ergänzen.</span><a href="https://craftattack.me/staffeln/13" target="_blank" rel="noreferrer">Quelle & Staffelinfos <ExternalLink size={13} /></a></div>
         </section>
 
         <section className="video-section section-block" id="videos">
