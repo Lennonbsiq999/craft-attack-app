@@ -161,6 +161,7 @@ const Index = () => {
           <a href="#videos" onClick={() => setMobileOpen(false)}>Videos</a>
           <a href="#welt" onClick={() => setMobileOpen(false)}>Welt & Projekte</a>
           <a href="#infos" onClick={() => setMobileOpen(false)}>Infos</a>
+          <a href="#hub-lab" onClick={() => setMobileOpen(false)}>Hub Lab</a>
         </nav>
 
         <div className="header-actions">
