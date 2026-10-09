@@ -58,6 +58,13 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .eyebrow { font: 10px var(--mono); letter-spacing: .12em; color: #b7c5bc; display: flex; align-items: center; gap: 10px; }
 .eyebrow-dot, .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 12px #a7f36c88; flex-shrink: 0; }
 .eyebrow-line { width: 36px; height: 1px; background: #a7f36c60; margin-left: 2px; }
+.season-announcement { display: inline-flex; align-items: center; gap: 12px; margin-top: 20px; padding: 10px 13px; border: 1px solid #a7f36c32; border-radius: 12px; background: linear-gradient(110deg, #a7f36c12, #b8a2ff08); color: #eaf5e8; transition: border-color .2s, transform .2s; }
+.season-announcement:hover { border-color: #a7f36c80; transform: translateY(-2px); }
+.season-announcement > span:nth-child(2) { display: flex; flex-direction: column; gap: 4px; }
+.season-announcement strong { font: 10px var(--mono); letter-spacing: .1em; color: var(--green); }
+.season-announcement small { font-size: 10px; color: #b1c1b4; }
+.season-announcement > svg { color: var(--green); margin-left: 7px; }
+.announcement-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 5px #a7f36c16, 0 0 12px #a7f36c77; flex-shrink: 0; }
 .hero h1 { font: 700 clamp(43px, 5.25vw, 69px)/1.06 'Space Grotesk', sans-serif; letter-spacing: -.065em; margin: 25px 0 21px; max-width: 590px; }
 .hero h1 > span { color: var(--green); }
 .mobile-break { display: none; }
