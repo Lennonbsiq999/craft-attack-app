@@ -99,6 +99,7 @@ function ApiVerse() {
   const [subcategory,setSubcategory] = useState("");
   const [view,setView] = useState<"discover"|"favorites"|"playground"|"overlays">("discover");
   const [overlayApiId,setOverlayApiId] = useState("weather");
+  const [overlaySession,setOverlaySession] = useState(0);
   const [favorites,setFavorites] = useState<string[]>(() => readSaved("apiverse-favorites",[]));
   const [expanded,setExpanded] = useState<string[]>(["Gaming"]);
   const [active,setActive] = useState<ApiItem|null>(null);
@@ -145,7 +146,7 @@ function ApiVerse() {
   function chooseCategory(name:string) { setCategory(name); setSubcategory(""); setView("discover"); setMobile(false); }
   function chooseSub(name:string,sub:string) { setCategory(name); setSubcategory(sub); setView("discover"); setMobile(false); }
   function chooseView(next:"discover"|"favorites"|"playground"|"overlays") { setView(next); setCategory("Alle APIs"); setSubcategory(""); setMobile(false); }
-  function startOverlay(apiId:string) { setOverlayApiId(apiId); setView("overlays"); setActive(null); setCategory("Alle APIs"); setSubcategory(""); setMobile(false); window.scrollTo({top:0,behavior:"smooth"}); }
+  function startOverlay(apiId:string) { setOverlayApiId(apiId); setOverlaySession(n=>n+1); setView("overlays"); setActive(null); setCategory("Alle APIs"); setSubcategory(""); setMobile(false); window.scrollTo({top:0,behavior:"smooth"}); }
   function toggleFavorite(id:string) { setFavorites(old => old.includes(id) ? old.filter(x=>x!==id) : [...old,id]); }
   function openApi(api:ApiItem) {
     setActive(api);
@@ -365,7 +366,7 @@ function ApiVerse() {
         <div className="av-top-actions"><label className="av-search-wrap"><Search size={17}/><input id="apiverse-search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="APIs, Kategorien suchen …"/><kbd>⌘ K</kbd></label><button className="av-icon-btn" title={dark?"Hellmodus":"Dunkelmodus"} aria-label="Farbschema wechseln" onClick={()=>setDark(!dark)}>{dark?<Sun size={17}/>:<Moon size={17}/>}</button><a className="av-github-btn" href="https://github.com/Lennonbsiq999/craft-attack-app" target="_blank" rel="noreferrer"><Code2 size={15}/> <span>GitHub</span><ArrowUpRight size={13}/></a></div>
       </header>
       <div className="av-content">
-        <section className="av-overlay-studio-page" hidden={view!=="overlays"}><OverlayStudio initialApiId={overlayApiId} apiKeys={apiKeys}/></section>
+        <section className="av-overlay-studio-page" hidden={view!=="overlays"}><OverlayStudio key={overlayApiId+"-"+overlaySession} initialApiId={overlayApiId} apiKeys={apiKeys}/></section>
         {view==="discover"&&!search&&!subcategory&&category==="Alle APIs"&&<section className="av-hero">
           <div className="av-hero-copy"><div className="av-eyebrow"><span className="av-pulse"/> DEIN ZUGANG ZU DEN APIs</div><h1>Ideen rein.<br/><span>APIs entdecken.</span></h1><p>Die besten öffentlichen APIs für Games, KI, Wetter, Filme, Daten und verrückte Projekte. Finden, testen und direkt losbauen.</p><div className="av-hero-actions"><button className="av-primary-btn" onClick={()=>document.getElementById("av-catalog")?.scrollIntoView({behavior:"smooth"})}>APIs entdecken <ArrowRight size={16}/></button><button className="av-secondary-btn" onClick={()=>chooseView("playground")}><Play size={15}/> Live Playground</button></div><div className="av-hero-pills"><span><Check size={13}/> Kein Account nötig</span><span><Zap size={13}/> Live Demos</span><span><Bookmark size={13}/> Favoriten speichern</span></div></div>
           <div className="av-hero-art" aria-hidden="true"><div className="av-art-ring ring-one"/><div className="av-art-ring ring-two"/><div className="av-art-center"><Layers3 size={42}/></div><div className="av-float-chip chip-a"><Gamepad2 size={15}/> Games API</div><div className="av-float-chip chip-b"><CloudSun size={15}/> Wetter live</div><div className="av-float-chip chip-c"><Code2 size={15}/> REST / JSON</div><div className="av-art-dot dot-a"/><div className="av-art-dot dot-b"/></div>
@@ -390,7 +391,7 @@ function ApiVerse() {
         <footer className="av-footer"><div className="av-footer-brand"><div className="av-brand-mark"><Layers3 size={19}/></div><div><strong>APIverse</strong><span>Das offene API-Universum.</span></div></div><div className="av-footer-links"><a href="https://apivault.dev/" target="_blank" rel="noreferrer">Inspiration: APIVault <ExternalLink size={12}/></a><a href="https://github.com/Lennonbsiq999/craft-attack-app" target="_blank" rel="noreferrer">Open Source <ExternalLink size={12}/></a></div><p>APIs werden von Drittanbietern betrieben. Verfügbarkeit, Kontingente und Nutzungsbedingungen können sich ändern.</p></footer>
       </div>
     </main>
-    {active&&<div className="av-modal-overlay" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setActive(null)}}><section className="av-modal" role="dialog" aria-modal="true" aria-labelledby="av-modal-title"><header className="av-modal-header"><div className="av-modal-icon" style={{"--api-tint":active.color} as CSSProperties}>{active.icon}</div><div className="av-modal-title"><div className="av-modal-kicker">{active.category} / {active.subcategory}</div><h2 id="av-modal-title">{active.name}</h2><p>{active.description}</p></div><button className="av-icon-btn" onClick={()=>{setOverlayApiId(active.id);setActive(null);chooseView("overlays");}} title="OBS-Overlay erstellen" aria-label="OBS-Overlay erstellen"><MonitorPlay size={17}/></button><button className="av-icon-btn" onClick={()=>setActive(null)} aria-label="Schließen"><X size={19}/></button></header><div className="av-modal-body"><div className="av-modal-badges"><span className={active.auth==="Keine"?"green": "amber"}>{active.auth==="Keine"?"✓ Kein API-Key nötig":active.auth==="OAuth"?"OAuth erforderlich":active.auth==="Optional"?"Key je nach Endpunkt":"API-Key erforderlich"}</span><span>{active.cors==="Ja"?"✓ Browserzugriff laut Quelle":active.cors==="Nein"?"Browserzugriff eingeschränkt":"? CORS bitte prüfen"}</span>{active.demo&&<span className="cyan">⚡ Live-Demo verfügbar</span>}</div><div className="av-detail-grid"><div><label>ENDPOINT / BEISPIEL</label><code>{active.endpoint}</code><button className="av-copy-btn" onClick={()=>copyEndpoint(active)}>{copied?<Check size={13}/>:<Copy size={13}/>} {copied?"Kopiert":"Endpoint kopieren"}</button></div><div><label>ZUGANG & HINWEISE</label><p>{active.auth==="Keine"?"Laut Eintrag ohne API-Key nutzbar. Limits und Nutzungsbedingungen des Anbieters beachten.":active.auth==="API-Key"?"Dieser Dienst erwartet typischerweise einen eigenen Schlüssel. Niemals private Schlüssel in eine öffentliche Website oder ein GitHub-Repository committen.":active.auth==="OAuth"?"Authentifizierung über OAuth kann je nach Funktion nötig sein.": "Einige Funktionen sind offen, andere können einen Schlüssel oder ein Konto voraussetzen."}</p><a className="av-doc-link" href={active.docs} target="_blank" rel="noreferrer">Offizielle Dokumentation öffnen <ExternalLink size={13}/></a></div></div><div className="av-endpoint-code"><div><span/><span/><span/><label>REQUEST PREVIEW</label><button onClick={()=>copyEndpoint(active)}><Copy size={12}/> Kopieren</button></div><pre>GET {active.endpoint}</pre></div>
+    {active&&<div className="av-modal-overlay" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setActive(null)}}><section className="av-modal" role="dialog" aria-modal="true" aria-labelledby="av-modal-title"><header className="av-modal-header"><div className="av-modal-icon" style={{"--api-tint":active.color} as CSSProperties}>{active.icon}</div><div className="av-modal-title"><div className="av-modal-kicker">{active.category} / {active.subcategory}</div><h2 id="av-modal-title">{active.name}</h2><p>{active.description}</p></div><button className="av-icon-btn" onClick={()=>startOverlay(active.id)} title="OBS-Overlay erstellen" aria-label="OBS-Overlay erstellen"><MonitorPlay size={17}/></button><button className="av-icon-btn" onClick={()=>setActive(null)} aria-label="Schließen"><X size={19}/></button></header><div className="av-modal-body"><div className="av-modal-badges"><span className={active.auth==="Keine"?"green": "amber"}>{active.auth==="Keine"?"✓ Kein API-Key nötig":active.auth==="OAuth"?"OAuth erforderlich":active.auth==="Optional"?"Key je nach Endpunkt":"API-Key erforderlich"}</span><span>{active.cors==="Ja"?"✓ Browserzugriff laut Quelle":active.cors==="Nein"?"Browserzugriff eingeschränkt":"? CORS bitte prüfen"}</span>{active.demo&&<span className="cyan">⚡ Live-Demo verfügbar</span>}</div><div className="av-detail-grid"><div><label>ENDPOINT / BEISPIEL</label><code>{active.endpoint}</code><button className="av-copy-btn" onClick={()=>copyEndpoint(active)}>{copied?<Check size={13}/>:<Copy size={13}/>} {copied?"Kopiert":"Endpoint kopieren"}</button></div><div><label>ZUGANG & HINWEISE</label><p>{active.auth==="Keine"?"Laut Eintrag ohne API-Key nutzbar. Limits und Nutzungsbedingungen des Anbieters beachten.":active.auth==="API-Key"?"Dieser Dienst erwartet typischerweise einen eigenen Schlüssel. Niemals private Schlüssel in eine öffentliche Website oder ein GitHub-Repository committen.":active.auth==="OAuth"?"Authentifizierung über OAuth kann je nach Funktion nötig sein.": "Einige Funktionen sind offen, andere können einen Schlüssel oder ein Konto voraussetzen."}</p><a className="av-doc-link" href={active.docs} target="_blank" rel="noreferrer">Offizielle Dokumentation öffnen <ExternalLink size={13}/></a></div></div><div className="av-endpoint-code"><div><span/><span/><span/><label>REQUEST PREVIEW</label><button onClick={()=>copyEndpoint(active)}><Copy size={12}/> Kopieren</button></div><pre>GET {active.endpoint}</pre></div>
           <section className="av-key-panel" aria-label="API-Key verwalten">
             <div className="av-key-panel-heading"><div><span className="av-demo-live"><Terminal size={12}/> API-KEY MANAGER</span><h3>Dein Schlüssel. Deine Regeln.</h3><p>Für jede API getrennt konfigurierbar. Gespeichert wird nur in deinem Browser.</p></div><span className={"av-key-status "+(apiKeys[active.id]?.value?"saved":"")}>{apiKeys[active.id]?.value?"● Gespeichert":"○ Kein Key"}</span></div>
             <label className="av-key-label" htmlFor="av-api-key">API-Key / Token</label>
@@ -420,7 +421,6 @@ function ApiVerse() {
   </div>;
 }
 
-export default ApiVerse;
 
 type OverlayMode = "cards" | "ticker" | "banner" | "stats" | "minimal" | "terminal";
 type OverlayConfig = {
@@ -636,6 +636,7 @@ function OverlayStudio({initialApiId,apiKeys}:{initialApiId:string;apiKeys:Recor
     return <label className="av-studio-check" key={String(field)}><input type="checkbox" checked={Boolean(config[field])} onChange={e=>update(field,e.target.checked as any)}/><span>{label}</span></label>;
   }
   const previewRows=overlayPreviewRows(api);
+  const previewScale=Math.min(1,520/config.width,310/config.height);
   return <div className="av-studio-shell">
     <div className="av-studio-heading">
       <div><div className="av-studio-kicker"><span/> STREAM TOOLKIT / 01</div><h1>OBS Overlay <em>Studio</em></h1><p>Mach aus jeder API eine eigene Browser-Source. Pixelgenau anpassen, live ansehen, URL kopieren und in OBS oder Streamlabs einfügen.</p></div>
@@ -696,7 +697,7 @@ function OverlayStudio({initialApiId,apiKeys}:{initialApiId:string;apiKeys:Recor
         <div className="av-studio-preview-card">
           <div className="av-studio-preview-head"><div><span className="av-studio-label">CANVAS PREVIEW</span><h3>So sieht's im Stream aus</h3></div><span className="av-studio-live"><i/> LIVE PREVIEW</span></div>
           <div className="av-studio-canvas" style={{backgroundImage:config.transparent?"linear-gradient(45deg,#161c29 25%,transparent 25%),linear-gradient(-45deg,#161c29 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#161c29 75%),linear-gradient(-45deg,transparent 75%,#161c29 75%)":"none",backgroundSize:config.transparent?"20px 20px":"auto",backgroundPosition:config.transparent?"0 0,0 10px,10px -10px,-10px 0":"0 0",backgroundColor:config.transparent?"#0b101a":config.background}}>
-            <div className="av-studio-canvas-scale"><OverlayWidget api={api} config={config} rows={previewRows} preview/></div>
+            <div className="av-studio-preview-frame" style={{width:config.width*previewScale,height:config.height*previewScale,position:"relative",flexShrink:0}}><div className="av-studio-canvas-scale" style={{position:"absolute",top:0,left:0,width:config.width,height:config.height,transform:"scale("+previewScale+")",transformOrigin:"top left"}}><OverlayWidget api={api} config={config} rows={previewRows} preview/></div></div>
           </div>
           <div className="av-studio-preview-meta"><span><MonitorPlay size={13}/> {config.width} × {config.height}px</span><span><RefreshCcw size={12}/> Update: {config.refresh}s</span><span><Activity size={12}/> {config.mode.toUpperCase()}</span></div>
         </div>
@@ -727,6 +728,14 @@ function StandaloneOverlay() {
   const [error,setError]=useState("");
   const [updated,setUpdated]=useState("");
   const [loading,setLoading]=useState(false);
+  useEffect(()=>{
+    const previous={htmlBackground:document.documentElement.style.background,bodyBackground:document.body.style.background,bodyMargin:document.body.style.margin,bodyOverflow:document.body.style.overflow};
+    document.documentElement.style.background="transparent";
+    document.body.style.background="transparent";
+    document.body.style.margin="0";
+    document.body.style.overflow="hidden";
+    return ()=>{document.documentElement.style.background=previous.htmlBackground;document.body.style.background=previous.bodyBackground;document.body.style.margin=previous.bodyMargin;document.body.style.overflow=previous.bodyOverflow;};
+  },[]);
   useEffect(()=>{
     let alive=true;
     let busy=false;
@@ -768,7 +777,7 @@ function StandaloneOverlay() {
     return ()=>{alive=false;window.clearInterval(interval);controller?.abort();};
   },[apiId,config.endpoint,config.refresh,config.apiKey,config.keyMode,config.keyField,config.keyPrefix]);
   const rows=overlayToRows(data,config);
-  return <div className="av-stream-page" style={{background:"transparent"}}><OverlayWidget api={api} config={config} rows={rows} error={error} updated={updated}/><div className="av-stream-debug" aria-live="polite">{error?"API ERROR":loading&&!data?"CONNECTING":updated?"LIVE · "+new Date(updated).toLocaleTimeString("de-DE"):"WAITING"}</div></div>;
+  return <div className="av-stream-page" style={{background:"transparent"}}><OverlayWidget api={api} config={config} rows={rows} error={error} updated={updated}/></div>;
 }
 
 function Index() {
