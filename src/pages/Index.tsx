@@ -421,3 +421,360 @@ function ApiVerse() {
 }
 
 export default ApiVerse;
+
+type OverlayMode = "cards" | "ticker" | "banner" | "stats" | "minimal" | "terminal";
+type OverlayConfig = {
+  title: string; endpoint: string; mode: OverlayMode; width: number; height: number;
+  accent: string; textColor: string; background: string; transparent: boolean; opacity: number;
+  fontSize: number; fontFamily: string; padding: number; radius: number; gap: number;
+  columns: number; refresh: number; maxItems: number; align: "left" | "center" | "right";
+  showTitle: boolean; showIcon: boolean; showTimestamp: boolean; showDetails: boolean;
+  showBorder: boolean; glow: boolean; animation: boolean; jsonPath: string; includeKeyInUrl: boolean;
+  apiKey?: string; keyMode?: KeyMode; keyField?: string; keyPrefix?: string;
+};
+type OverlayRow = { title: string; value?: string; detail?: string; image?: string };
+const overlayFonts = [
+  {label:"Manrope",value:"Manrope, sans-serif"},
+  {label:"Space Grotesk",value:"'Space Grotesk', sans-serif"},
+  {label:"Inter",value:"Inter, Arial, sans-serif"},
+  {label:"Monospace",value:"'DM Mono', monospace"},
+  {label:"Arial",value:"Arial, sans-serif"}
+];
+function defaultOverlayConfig(api:ApiItem):OverlayConfig {
+  const endpoints:Record<string,string> = {
+    weather:"https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.405&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&timezone=Europe%2FBerlin",
+    brawl:"https://api.brawlapi.com/v1/brawlers",
+    pokeapi:"https://pokeapi.co/api/v2/pokemon/pikachu",
+    countries:"https://restcountries.com/v3.1/name/germany?fields=name,capital,region,population,flags,currencies,languages",
+    tvmaze:"https://api.tvmaze.com/search/shows?q=doctor",
+    jikan:"https://api.jikan.moe/v4/anime?q=one%20piece&limit=8",
+    nasa:"https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY",
+    github:"https://api.github.com/users/octocat",
+    recipe:"https://www.themealdb.com/api/json/v1/1/search.php?s=chicken",
+    itunes:"https://itunes.apple.com/search?term=daft%20punk&entity=song&limit=8",
+    dog:"https://dog.ceo/api/breeds/image/random",
+    catfact:"https://catfact.ninja/fact",
+    jokes:"https://v2.jokeapi.dev/joke/Programming?safe-mode",
+    randomfacts:"https://uselessfacts.jsph.pl/api/v2/facts/random?language=en",
+    currency:"https://api.frankfurter.dev/v1/latest?base=EUR",
+    randomuser:"https://randomuser.me/api/"
+  };
+  return {
+    title:api.name, endpoint:endpoints[api.id]||api.endpoint, mode:"cards",
+    width:800,height:450,accent:"#8f7cff",textColor:"#f3f5ff",background:"#101522",
+    transparent:true,opacity:92,fontSize:18,fontFamily:"Manrope, sans-serif",
+    padding:18,radius:16,gap:10,columns:2,refresh:30,maxItems:6,align:"left",
+    showTitle:true,showIcon:true,showTimestamp:true,showDetails:true,showBorder:true,
+    glow:true,animation:true,jsonPath:"",includeKeyInUrl:false
+  };
+}
+function readOverlayConfigs():Record<string,OverlayConfig> {
+  try { const v=localStorage.getItem("apiverse-overlay-configs-v1"); return v?JSON.parse(v) as Record<string,OverlayConfig>:{}; }
+  catch { return {}; }
+}
+function encodeOverlayConfig(value:unknown):string {
+  const bytes=new TextEncoder().encode(JSON.stringify(value));
+  let binary="";
+  for(let i=0;i<bytes.length;i++) binary+=String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
+}
+function decodeOverlayConfig(value:string):any {
+  const safe=value.replace(/-/g,"+").replace(/_/g,"/");
+  const padded=safe+"=".repeat((4-safe.length%4)%4);
+  const binary=atob(padded);
+  const bytes=Uint8Array.from(binary,ch=>ch.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+function createOverlayUrl(api:ApiItem,config:OverlayConfig,key?:ApiKeyConfig):string {
+  const payload:any={...config,apiId:api.id,apiKey:"",keyMode:"header",keyField:"Authorization",keyPrefix:""};
+  if(config.includeKeyInUrl && key?.value) {
+    payload.apiKey=key.value;
+    payload.keyMode=key.mode;
+    payload.keyField=key.field;
+    payload.keyPrefix=key.prefix;
+  }
+  const base=window.location.origin+window.location.pathname;
+  return base+"#overlay="+encodeURIComponent(api.id)+"&cfg="+encodeURIComponent(encodeOverlayConfig(payload));
+}
+function overlayReadPath(data:any,path:string):any {
+  if(!path.trim()) return data;
+  return path.trim().split(".").filter(Boolean).reduce((v,key)=>{
+    if(v===undefined||v===null) return undefined;
+    if(Array.isArray(v)&&/^\d+$/.test(key)) return v[Number(key)];
+    return v[key];
+  },data);
+}
+function overlayString(value:any):string {
+  if(value===undefined||value===null) return "";
+  if(typeof value==="string"||typeof value==="number"||typeof value==="boolean") return String(value);
+  if(Array.isArray(value)) return value.map(overlayString).filter(Boolean).slice(0,4).join(", ");
+  return "";
+}
+function overlayImage(value:any):string|undefined {
+  const candidate=value?.imageUrl||value?.image||value?.icon||value?.picture?.large||value?.picture?.medium||value?.avatar_url||value?.strMealThumb||value?.artworkUrl100||value?.images?.jpg?.image_url||value?.sprites?.other?.["official-artwork"]?.front_default||value?.sprites?.front_default||value?.flags?.png||value?.image?.medium||value?.show?.image?.medium||value?.item?.image;
+  return typeof candidate==="string"&&/^https?:\/\//i.test(candidate)?candidate:undefined;
+}
+function overlayToRows(raw:any,config:OverlayConfig):OverlayRow[] {
+  let data=overlayReadPath(raw,config.jsonPath);
+  if(data===undefined||data===null) return [];
+  if(data&&typeof data==="object"&&!Array.isArray(data)) {
+    const arrayKeys=["list","items","results","brawlers","meals","drinks","tracks","records","data","pokemon"];
+    for(const key of arrayKeys) {
+      if(Array.isArray(data[key])) { data=data[key]; break; }
+    }
+  }
+  if(Array.isArray(data)) {
+    return data.slice(0,Math.max(1,config.maxItems)).map((v:any,index:number)=>{
+      const name=overlayString(v?.name?.common)||overlayString(v?.name)||overlayString(v?.title)||overlayString(v?.strMeal)||overlayString(v?.trackName)||overlayString(v?.show?.name)||overlayString(v?.login)||overlayString(v?.word)||overlayString(v?.species)||overlayString(v?.id)||("Element "+(index+1));
+      const value=overlayString(v?.value)||overlayString(v?.score)||overlayString(v?.rank)||overlayString(v?.population)||overlayString(v?.current_price)||overlayString(v?.rarity?.name)||overlayString(v?.class?.name);
+      const detail=overlayString(v?.subtitle)||overlayString(v?.status)||overlayString(v?.release_date)||overlayString(v?.description)||overlayString(v?.synopsis)||overlayString(v?.strCategory)||overlayString(v?.region)||overlayString(v?.genres)||overlayString(v?.types?.map?.((t:any)=>t.type?.name||t.name))||overlayString(v?.rarity?.name);
+      return {title:name,value,detail,image:overlayImage(v)};
+    });
+  }
+  if(typeof data==="string"||typeof data==="number"||typeof data==="boolean") return [{title:"Antwort",value:overlayString(data)}];
+  if(typeof data!=="object") return [];
+  if(data.current&&typeof data.current==="object") data=data.current;
+  if(data.rates&&typeof data.rates==="object") {
+    return Object.entries(data.rates).slice(0,Math.max(1,config.maxItems)).map(([k,v])=>({title:k,value:overlayString(v),detail:"Referenzkurs"}));
+  }
+  const title=overlayString(data.name?.common)||overlayString(data.name)||overlayString(data.title)||overlayString(data.strMeal)||overlayString(data.trackName)||overlayString(data.login)||overlayString(data.word)||overlayString(data.english_name)||overlayString(data.id);
+  const values:Array<{title:string;value?:string;detail?:string;image?:string}>=[];
+  const preferred=["temperature_2m","apparent_temperature","wind_speed_10m","relative_humidity_2m","capital","population","region","status","score","rank","price","value","count","followers","public_repos","date","base","fact","joke","explanation","description"];
+  for(const key of preferred) {
+    const v=data[key];
+    const textValue=overlayString(v);
+    if(textValue) values.push({title:key.replace(/_/g," ").replace(/\b\w/g,ch=>ch.toUpperCase()),value:textValue});
+  }
+  if(title) values.unshift({title,value:overlayString(data.value)||overlayString(data.id),detail:overlayString(data.subtitle)||overlayString(data.status)||overlayString(data.description)||overlayString(data.synopsis)||overlayString(data.fact)||overlayString(data.joke),image:overlayImage(data)});
+  if(!values.length) {
+    Object.entries(data).filter(([,v])=>typeof v==="string"||typeof v==="number"||typeof v==="boolean").slice(0,Math.max(1,config.maxItems)).forEach(([key,value])=>values.push({title:key.replace(/_/g," ").replace(/\b\w/g,ch=>ch.toUpperCase()),value:overlayString(value)}));
+  }
+  return values.slice(0,Math.max(1,config.maxItems));
+}
+function overlayPreviewRows(api:ApiItem):OverlayRow[] {
+  const samples:Record<string,OverlayRow[]> = {
+    brawl:[{title:"Spike",value:"Legendär",detail:"Schaden · Kontrolle"},{title:"Shelly",value:"Start-Brawler",detail:"Schrotflinte"},{title:"Leon",value:"Legendär",detail:"Assassine"}],
+    weather:[{title:"Temperatur",value:"18 °C",detail:"Berlin · aktuell"},{title:"Wind",value:"11 km/h",detail:"Nordwest"},{title:"Luftfeuchte",value:"64 %",detail:"Wetterdaten"}],
+    pokeapi:[{title:"Pikachu",value:"#025",detail:"Elektro",image:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"}],
+    tvmaze:[{title:"The Mandalorian",value:"Serie",detail:"Sci-Fi · Abenteuer"},{title:"Doctor Who",value:"Seit 1963",detail:"Science-Fiction"},{title:"Arcane",value:"Drama",detail:"Animation"}],
+    github:[{title:"octocat",value:"8 Repos",detail:"GitHub-Profil"}],
+    countries:[{title:"Deutschland",value:"Berlin",detail:"83 Mio. Einwohner · Europa",image:"https://flagcdn.com/w320/de.png"}],
+    nasa:[{title:"Bild des Tages",value:"NASA · APOD",detail:"Entdecke das Universum"}],
+    catfact:[{title:"Katzen-Fakt",value:"Katzen schlafen einen großen Teil des Tages.",detail:"Zufälliger Fakt"}],
+    dog:[{title:"Zufälliger Hund",value:"Foto",detail:"Dog CEO API",image:"https://images.dog.ceo/breeds/shiba/shiba-12.jpg"}],
+    currency:[{title:"USD",value:"1.08",detail:"pro EUR"},{title:"JPY",value:"162.4",detail:"pro EUR"}],
+    jokes:[{title:"Programmier-Humor",value:"Warum mögen Entwickler die Natur?",detail:"Da sind weniger Bugs als im Code."}],
+    recipe:[{title:"Chicken Bowl",value:"Rezept",detail:"Zutaten · Anleitung"}],
+    itunes:[{title:"Musik entdecken",value:"Daft Punk",detail:"Track · Artist"}]
+  };
+  return samples[api.id]||[{title:api.name,value:"Live-Daten folgen",detail:"Verbinde den Endpoint, um echte API-Daten anzuzeigen."},{title:"Konfigurierbar",value:"100 %",detail:"Layout, Farben und Felder frei anpassen."}];
+}
+function overlayHexRgba(hex:string,opacity:number):string {
+  const safe=/^#[0-9a-f]{6}$/i.test(hex)?hex:"#101522";
+  const n=parseInt(safe.slice(1),16);
+  return "rgba("+((n>>16)&255)+","+((n>>8)&255)+","+(n&255)+","+Math.max(0,Math.min(100,opacity))/100+")";
+}
+function OverlayWidget({api,config,rows,error,updated,preview=false}:{api:ApiItem;config:OverlayConfig;rows:OverlayRow[];error?:string;updated?:string;preview?:boolean}) {
+  const stageStyle:CSSProperties={width:config.width,height:config.height,maxWidth:"100%",fontFamily:config.fontFamily,fontSize:config.fontSize,color:config.textColor};
+  const panelStyle:CSSProperties={
+    padding:config.padding,borderRadius:config.radius,background:config.transparent?"transparent":overlayHexRgba(config.background,config.opacity),
+    border:config.showBorder?"1px solid "+overlayHexRgba(config.accent,54):"1px solid transparent",
+    boxShadow:config.glow?"0 0 35px "+overlayHexRgba(config.accent,24):"none",textAlign:config.align,gap:config.gap
+  };
+  return <div className="av-stream-stage" style={stageStyle}>
+    <div className={"av-stream-widget av-stream-"+config.mode+(config.animation?" av-stream-animated":"")} style={panelStyle}>
+      {config.showTitle&&<div className="av-stream-heading">
+        <div className="av-stream-heading-main">{config.showIcon&&<span className="av-stream-api-icon">{api.icon}</span>}<span className="av-stream-title">{config.title||api.name}</span></div>
+        {config.showTimestamp&&<span className="av-stream-time">{updated?new Date(updated).toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}):preview?"LIVE":"VERBINDE…"}</span>}
+      </div>}
+      {error&&<div className="av-stream-error">API-Verbindung fehlgeschlagen · {error}</div>}
+      <div className="av-stream-rows" style={{gridTemplateColumns:config.mode==="ticker"?"repeat("+Math.max(2,rows.length)+", minmax(160px, 1fr))":"repeat("+config.columns+", minmax(0, 1fr))",gap:config.gap}}>
+        {rows.slice(0,config.maxItems).map((row,i)=><article className="av-stream-row" key={i} style={{borderRadius:Math.max(5,config.radius-5),border:config.mode==="minimal"||!config.showBorder?"1px solid transparent":"1px solid "+overlayHexRgba(config.accent,25),background:config.mode==="minimal"?"transparent":overlayHexRgba(config.background,config.transparent?30:Math.min(100,config.opacity+3))}}>
+          {row.image&&config.mode!=="terminal"&&<img className="av-stream-image" src={row.image} alt="" />}
+          <div className="av-stream-row-copy">
+            <div className="av-stream-row-title">{row.title}</div>
+            {config.showDetails&&row.detail&&<div className="av-stream-row-detail">{row.detail}</div>}
+            {config.showDetails&&row.value&&<div className="av-stream-row-value" style={{color:config.accent}}>{row.value}</div>}
+          </div>
+        </article>)}
+        {!rows.length&&!error&&<div className="av-stream-empty">{preview?"Live-Daten werden hier angezeigt":"Warte auf API-Daten…"}</div>}
+      </div>
+      {config.mode==="terminal"&&<div className="av-stream-terminal-line"><span>●</span> {preview?"PREVIEW READY":"ENDPOINT CONNECTED"}</div>}
+      {config.mode==="banner"&&<div className="av-stream-banner-caption">{preview?"STREAM WIDGET · "+api.category.toUpperCase():"LIVE API DATA · "+api.category.toUpperCase()}</div>}
+    </div>
+  </div>;
+}
+function OverlayStudio({initialApiId,apiKeys}:{initialApiId:string;apiKeys:Record<string,ApiKeyConfig>}) {
+  const [selectedId,setSelectedId]=useState(initialApiId);
+  const [configs,setConfigs]=useState<Record<string,OverlayConfig>>(()=>readOverlayConfigs());
+  const [copied,setCopied]=useState(false);
+  const [preset,setPreset]=useState("custom");
+  const api=apis.find(a=>a.id===selectedId)||apis[0];
+  const config=configs[selectedId]||defaultOverlayConfig(api);
+  useEffect(()=>{setSelectedId(initialApiId);},[initialApiId]);
+  useEffect(()=>{try{localStorage.setItem("apiverse-overlay-configs-v1",JSON.stringify(configs));}catch{}},[configs]);
+  const update = <K extends keyof OverlayConfig,>(field:K,value:OverlayConfig[K])=>setConfigs(old=>({...old,[selectedId]:{...(old[selectedId]||defaultOverlayConfig(api)),[field]:value}}));
+  const sourceUrl=createOverlayUrl(api,config,apiKeys[selectedId]);
+  const savedKey=apiKeys[selectedId];
+  async function copySource(){
+    try{await navigator.clipboard.writeText(sourceUrl);setCopied(true);window.setTimeout(()=>setCopied(false),1300);}
+    catch{window.prompt("OBS Browser Source URL kopieren:",sourceUrl);}
+  }
+  function applyPreset(name:string) {
+    setPreset(name);
+    const base=configs[selectedId]||defaultOverlayConfig(api);
+    const presets:Record<string,Partial<OverlayConfig>>={
+      neon:{mode:"cards",accent:"#8f7cff",textColor:"#f3f5ff",background:"#101522",transparent:true,opacity:95,glow:true,showBorder:true,animation:true,radius:16,padding:18,fontSize:18,columns:2},
+      minimal:{mode:"minimal",accent:"#ffffff",textColor:"#ffffff",background:"#080b12",transparent:true,opacity:0,glow:false,showBorder:false,animation:false,radius:4,padding:8,fontSize:16,columns:1},
+      broadcast:{mode:"banner",accent:"#53e5d5",textColor:"#ffffff",background:"#0b101a",transparent:false,opacity:94,glow:true,showBorder:true,animation:true,radius:12,padding:20,fontSize:24,columns:2},
+      ticker:{mode:"ticker",accent:"#a88bff",textColor:"#f4f6ff",background:"#0b101a",transparent:false,opacity:93,glow:false,showBorder:true,animation:true,radius:9,padding:10,fontSize:15,columns:3},
+      terminal:{mode:"terminal",accent:"#80ffb0",textColor:"#c8ffdf",background:"#050b08",transparent:false,opacity:95,glow:true,showBorder:true,animation:false,radius:8,padding:16,fontSize:15,columns:2}
+    };
+    setConfigs(old=>({...old,[selectedId]:{...base,...(presets[name]||{}),title:base.title}}));
+  }
+  function check(label:string,field:keyof OverlayConfig){
+    return <label className="av-studio-check" key={String(field)}><input type="checkbox" checked={Boolean(config[field])} onChange={e=>update(field,e.target.checked as any)}/><span>{label}</span></label>;
+  }
+  const previewRows=overlayPreviewRows(api);
+  return <div className="av-studio-shell">
+    <div className="av-studio-heading">
+      <div><div className="av-studio-kicker"><span/> STREAM TOOLKIT / 01</div><h1>OBS Overlay <em>Studio</em></h1><p>Mach aus jeder API eine eigene Browser-Source. Pixelgenau anpassen, live ansehen, URL kopieren und in OBS oder Streamlabs einfügen.</p></div>
+      <div className="av-studio-heading-badge"><MonitorPlay size={21}/><span>OBS READY</span><small>Browser Source</small></div>
+    </div>
+    <div className="av-studio-steps"><div><b>01</b><span>API auswählen</span></div><ArrowRight size={14}/><div><b>02</b><span>Overlay designen</span></div><ArrowRight size={14}/><div><b>03</b><span>URL in OBS einfügen</span></div></div>
+    <div className="av-studio-api-select">
+      <div><span className="av-studio-label">WIDGET QUELLE</span><h2>Welches Overlay baust du?</h2><p>Jede API kann ein separates Overlay bekommen. Einstellungen bleiben pro API gespeichert.</p></div>
+      <div className="av-studio-api-select-control"><span className="av-studio-selected-icon">{api.icon}</span><select value={selectedId} onChange={e=>{setSelectedId(e.target.value);setPreset("custom");}}>{groups.map(g=><optgroup key={g.name} label={g.name}>{apis.filter(a=>a.category===g.name).map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</optgroup>)}</select><span className="av-studio-api-count">{apis.length} APIs</span></div>
+    </div>
+    <div className="av-studio-workspace">
+      <div className="av-studio-controls">
+        <div className="av-studio-card">
+          <div className="av-studio-card-head"><div><span className="av-studio-label">DESIGN SYSTEM</span><h3>Start mit einem Preset</h3></div><SlidersHorizontal size={18}/></div>
+          <div className="av-studio-presets">{[{id:"neon",title:"Neon Glass",sub:"Glow + Glas"},{id:"minimal",title:"Clean Minimal",sub:"Dezent"},{id:"broadcast",title:"Broadcast",sub:"Fette Grafik"},{id:"ticker",title:"Live Ticker",sub:"Laufband"},{id:"terminal",title:"Terminal",sub:"Tech Style"}].map(p=><button key={p.id} className={preset===p.id?"selected":""} onClick={()=>applyPreset(p.id)}><span className={"av-preset-swatch av-preset-"+p.id}></span><span><strong>{p.title}</strong><small>{p.sub}</small></span></button>)}</div>
+        </div>
+        <div className="av-studio-card">
+          <div className="av-studio-card-head"><div><span className="av-studio-label">CONTENT</span><h3>API & Datenquelle</h3></div><Database size={18}/></div>
+          <label className="av-studio-field"><span>Overlay-Titel</span><input value={config.title} onChange={e=>update("title",e.target.value)} maxLength={70} placeholder={api.name}/></label>
+          <label className="av-studio-field"><span>API-Endpoint (GET)</span><input value={config.endpoint} onChange={e=>update("endpoint",e.target.value)} spellCheck={false} placeholder="https://api.example.com/data"/></label>
+          <label className="av-studio-field"><span>JSON-Pfad (optional)</span><input value={config.jsonPath} onChange={e=>update("jsonPath",e.target.value)} placeholder="z. B. data.results oder current"/></label>
+          <p className="av-studio-help">JSON-Pfade zeigen nur den gewünschten Teil der Antwort. Wenn die API nicht direkt im Browser erreichbar ist (CORS) oder einen Key benötigt, kann die Live-Anzeige scheitern.</p>
+        </div>
+        <div className="av-studio-card">
+          <div className="av-studio-card-head"><div><span className="av-studio-label">LAYOUT</span><h3>Form & Aufbau</h3></div><Layers3 size={18}/></div>
+          <label className="av-studio-field"><span>Darstellung</span><select value={config.mode} onChange={e=>update("mode",e.target.value as OverlayMode)}><option value="cards">Cards · Karten</option><option value="ticker">Ticker · Laufband</option><option value="banner">Broadcast · Banner</option><option value="stats">Stats · Metriken</option><option value="minimal">Minimal · nur Text</option><option value="terminal">Terminal · Tech</option></select></label>
+          <div className="av-studio-two-fields"><label className="av-studio-field"><span>Spalten</span><select value={config.columns} onChange={e=>update("columns",Number(e.target.value))}><option value={1}>1 Spalte</option><option value={2}>2 Spalten</option><option value={3}>3 Spalten</option><option value={4}>4 Spalten</option></select></label><label className="av-studio-field"><span>Max. Items</span><select value={config.maxItems} onChange={e=>update("maxItems",Number(e.target.value))}>{[1,2,3,4,5,6,8,10,12,16].map(n=><option value={n} key={n}>{n} Items</option>)}</select></label></div>
+          <label className="av-studio-field"><span>Ausrichtung</span><select value={config.align} onChange={e=>update("align",e.target.value as OverlayConfig["align"])}><option value="left">Links</option><option value="center">Zentriert</option><option value="right">Rechts</option></select></label>
+        </div>
+        <div className="av-studio-card">
+          <div className="av-studio-card-head"><div><span className="av-studio-label">VISUAL TUNING</span><h3>Farben & Typografie</h3></div><Palette size={18}/></div>
+          <div className="av-studio-color-grid"><label><span>Akzentfarbe</span><input type="color" value={config.accent} onChange={e=>update("accent",e.target.value)}/></label><label><span>Textfarbe</span><input type="color" value={config.textColor} onChange={e=>update("textColor",e.target.value)}/></label><label><span>Panel-Farbe</span><input type="color" value={config.background} onChange={e=>update("background",e.target.value)}/></label></div>
+          <label className="av-studio-field"><span>Schrift</span><select value={config.fontFamily} onChange={e=>update("fontFamily",e.target.value)}>{overlayFonts.map(f=><option key={f.value} value={f.value}>{f.label}</option>)}</select></label>
+          <div className="av-studio-range"><label><span>Schriftgröße</span><b>{config.fontSize}px</b></label><input type="range" min="10" max="42" step="1" value={config.fontSize} onChange={e=>update("fontSize",Number(e.target.value))}/></div>
+          <div className="av-studio-range"><label><span>Panel-Deckkraft</span><b>{config.opacity}%</b></label><input type="range" min="0" max="100" step="1" value={config.opacity} onChange={e=>update("opacity",Number(e.target.value))}/></div>
+          <label className="av-studio-field"><span>Transparenz</span><select value={config.transparent?"on":"off"} onChange={e=>update("transparent",e.target.value==="on")}><option value="on">Transparenter Stream-Hintergrund</option><option value="off">Panel-Hintergrund anzeigen</option></select></label>
+        </div>
+        <div className="av-studio-card">
+          <div className="av-studio-card-head"><div><span className="av-studio-label">PIXEL CONTROL</span><h3>Spacing & Größe</h3></div><SlidersHorizontal size={18}/></div>
+          <div className="av-studio-two-fields"><label className="av-studio-field"><span>Breite (px)</span><input type="number" min="240" max="1920" value={config.width} onChange={e=>update("width",Math.min(1920,Math.max(240,Number(e.target.value)||240)))}/></label><label className="av-studio-field"><span>Höhe (px)</span><input type="number" min="120" max="1080" value={config.height} onChange={e=>update("height",Math.min(1080,Math.max(120,Number(e.target.value)||120)))}/></label></div>
+          <div className="av-studio-range"><label><span>Innenabstand</span><b>{config.padding}px</b></label><input type="range" min="0" max="48" value={config.padding} onChange={e=>update("padding",Number(e.target.value))}/></div>
+          <div className="av-studio-range"><label><span>Eckenrundung</span><b>{config.radius}px</b></label><input type="range" min="0" max="36" value={config.radius} onChange={e=>update("radius",Number(e.target.value))}/></div>
+          <div className="av-studio-range"><label><span>Abstände</span><b>{config.gap}px</b></label><input type="range" min="0" max="28" value={config.gap} onChange={e=>update("gap",Number(e.target.value))}/></div>
+        </div>
+        <div className="av-studio-card">
+          <div className="av-studio-card-head"><div><span className="av-studio-label">STREAM BEHAVIOR</span><h3>Update & Effekte</h3></div><RefreshCcw size={18}/></div>
+          <label className="av-studio-field"><span>Aktualisieren alle</span><select value={config.refresh} onChange={e=>update("refresh",Number(e.target.value))}>{[5,10,15,30,60,120,300].map(n=><option value={n} key={n}>{n<60?n+" Sekunden":n/60+" Minute"+(n===60?"":"n")}</option>)}</select></label>
+          <div className="av-studio-check-grid">{check("Overlay-Titel","showTitle")}{check("API-Icon","showIcon")}{check("Zeitstempel","showTimestamp")}{check("Details / Werte","showDetails")}{check("Border","showBorder")}{check("Glow / Neon","glow")}{check("Animation","animation")}</div>
+        </div>
+        <div className="av-studio-card av-studio-security">
+          <div className="av-studio-card-head"><div><span className="av-studio-label">AUTH & SECURITY</span><h3>API-Key für OBS</h3></div><CircleHelp size={18}/></div>
+          <p>Gespeicherte Schlüssel sind normalerweise nur in deinem Dashboard-Browser vorhanden. OBS hat eventuell einen getrennten Browser-Speicher.</p>
+          <label className="av-studio-embed-key"><input type="checkbox" checked={config.includeKeyInUrl} onChange={e=>update("includeKeyInUrl",e.target.checked)}/><span><strong>Gespeicherten Key in die Overlay-URL einbetten</strong><small>Nur aktivieren, wenn diese API ohne Key nicht funktioniert.</small></span></label>
+          {config.includeKeyInUrl&&<div className="av-key-url-warning"><CircleHelp size={14}/><span>{savedKey?.value?"Der Key wird in der URL mitgeführt. Base64 ist keine Verschlüsselung. Jeder, der die OBS-URL sieht, könnte den Key auslesen.":"Für diese API ist im Dashboard noch kein Key gespeichert. Speichere zuerst den Key in den API-Details."}</span></div>}
+        </div>
+      </div>
+      <div className="av-studio-preview-column">
+        <div className="av-studio-preview-card">
+          <div className="av-studio-preview-head"><div><span className="av-studio-label">CANVAS PREVIEW</span><h3>So sieht's im Stream aus</h3></div><span className="av-studio-live"><i/> LIVE PREVIEW</span></div>
+          <div className="av-studio-canvas" style={{backgroundImage:config.transparent?"linear-gradient(45deg,#161c29 25%,transparent 25%),linear-gradient(-45deg,#161c29 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#161c29 75%),linear-gradient(-45deg,transparent 75%,#161c29 75%)":"none",backgroundSize:config.transparent?"20px 20px":"auto",backgroundPosition:config.transparent?"0 0,0 10px,10px -10px,-10px 0":"0 0",backgroundColor:config.transparent?"#0b101a":config.background}}>
+            <div className="av-studio-canvas-scale"><OverlayWidget api={api} config={config} rows={previewRows} preview/></div>
+          </div>
+          <div className="av-studio-preview-meta"><span><MonitorPlay size={13}/> {config.width} × {config.height}px</span><span><RefreshCcw size={12}/> Update: {config.refresh}s</span><span><Activity size={12}/> {config.mode.toUpperCase()}</span></div>
+        </div>
+        <div className="av-studio-url-card">
+          <div className="av-studio-url-heading"><div><span className="av-studio-label">BROWSER SOURCE</span><h3>Deine persönliche Overlay-URL</h3><p>Die URL enthält Layout, Farben, Refresh-Rate und gewählte Felder. Für jede API wird eine eigene URL generiert.</p></div><span className="av-studio-url-icon"><Link2 size={20}/></span></div>
+          <div className="av-studio-url-code"><code>{sourceUrl}</code><button onClick={()=>void copySource()}>{copied?<Check size={14}/>:<Copy size={14}/>} {copied?"Kopiert":"URL kopieren"}</button></div>
+          <div className="av-studio-url-actions"><button className="av-primary-btn" onClick={()=>window.open(sourceUrl,"_blank","noopener,noreferrer")}><Eye size={14}/> Overlay separat öffnen</button><button className="av-secondary-btn" onClick={()=>{const next=defaultOverlayConfig(api);setConfigs(old=>({...old,[selectedId]:next}));setPreset("custom");}}><RefreshCcw size={13}/> API-Design zurücksetzen</button></div>
+          <div className="av-studio-checklist"><div><Check size={13}/><span>Einzelne Browser-Source pro API</span></div><div><Check size={13}/><span>Hintergrund transparent möglich</span></div><div><Check size={13}/><span>Design-Einstellungen lokal gespeichert</span></div></div>
+        </div>
+        <div className="av-studio-howto"><div className="av-studio-howto-icon"><MonitorPlay size={21}/></div><div><span className="av-studio-label">IN OBS / STREAMLABS</span><h3>So kommt das Overlay in deinen Stream</h3><ol><li>Klicke auf <b>URL kopieren</b>.</li><li>Füge in OBS eine <b>Browser-Quelle</b> hinzu und kopiere die URL hinein.</li><li>Setze Breite und Höhe auf <b>{config.width} × {config.height}</b>.</li><li>Bei Problemen: Browser-Quelle aktualisieren und prüfen, ob die API CORS sowie öffentliche Browser-Abfragen erlaubt.</li></ol></div></div>
+      </div>
+    </div>
+    <div className="av-studio-footer-note"><CircleHelp size={14}/><span><b>Wichtig:</b> Die Vorschau nutzt Beispieldaten und zeigt das aktuelle Design. Im echten OBS-Overlay werden Daten vom eingetragenen Endpoint geladen. Manche APIs verlangen Authentifizierung, blockieren Browserzugriff oder begrenzen Abfragen; der Overlay-Link kann keine Anbieter-Limits umgehen.</span></div>
+  </div>;
+}
+function StandaloneOverlay() {
+  const params=new URLSearchParams(window.location.hash.replace(/^#/,""));
+  const apiId=params.get("overlay")||new URLSearchParams(window.location.search).get("overlay")||"";
+  const api=apis.find(a=>a.id===apiId)||apis[0];
+  const [config] = useState<OverlayConfig>(()=> {
+    try {
+      const encoded=params.get("cfg")||new URLSearchParams(window.location.search).get("cfg");
+      const decoded=encoded?decodeOverlayConfig(encoded):{};
+      return {...defaultOverlayConfig(api),...decoded,endpoint:typeof decoded.endpoint==="string"?decoded.endpoint:defaultOverlayConfig(api).endpoint};
+    } catch { return defaultOverlayConfig(api); }
+  });
+  const [data,setData]=useState<any>(null);
+  const [error,setError]=useState("");
+  const [updated,setUpdated]=useState("");
+  const [loading,setLoading]=useState(false);
+  useEffect(()=>{
+    let alive=true;
+    let busy=false;
+    let controller:AbortController|null=null;
+    async function load(){
+      if(busy||!alive) return;
+      busy=true;setLoading(true);
+      if(controller) controller.abort();
+      controller=new AbortController();
+      try{
+        const endpoint=config.endpoint.trim();
+        const url=new URL(endpoint);
+        if(url.protocol!=="https:"&&url.protocol!=="http:") throw new Error("Endpoint muss HTTP oder HTTPS verwenden.");
+        let requestUrl=url.toString();
+        const headers=new Headers();
+        let key:ApiKeyConfig|undefined;
+        if(typeof config.apiKey==="string"&&config.apiKey) key={value:config.apiKey,mode:config.keyMode||"header",field:config.keyField||"Authorization",prefix:config.keyPrefix||""};
+        if(!key){
+          try{const saved=JSON.parse(localStorage.getItem("apiverse-api-keys-v1")||"{}");key=saved[apiId];}catch{}
+        }
+        if(key?.value){
+          if(key.mode==="query"){const parsed=new URL(requestUrl);parsed.searchParams.set(key.field||"api_key",key.value);requestUrl=parsed.toString();}
+          else headers.set(key.field||"Authorization",(key.prefix||"")+key.value);
+        }
+        const response=await fetch(requestUrl,{headers,signal:controller.signal,cache:"no-store",referrerPolicy:"no-referrer"});
+        const text=await response.text();
+        if(!response.ok) throw new Error("HTTP "+response.status+" "+response.statusText);
+        let parsed:any=text;
+        try{parsed=text?JSON.parse(text):null;}catch{}
+        if(alive){setData(parsed);setError("");setUpdated(new Date().toISOString());}
+      }catch(err){
+        if(alive&&!(err instanceof DOMException&&err.name==="AbortError")){
+          setError(err instanceof Error?err.message:"API nicht erreichbar. Prüfe CORS, Endpoint und Key.");
+        }
+      }finally{busy=false;if(alive)setLoading(false);}
+    }
+    void load();
+    const interval=window.setInterval(()=>void load(),Math.max(5,Number(config.refresh)||30)*1000);
+    return ()=>{alive=false;window.clearInterval(interval);controller?.abort();};
+  },[apiId,config.endpoint,config.refresh,config.apiKey,config.keyMode,config.keyField,config.keyPrefix]);
+  const rows=overlayToRows(data,config);
+  return <div className="av-stream-page" style={{background:"transparent"}}><OverlayWidget api={api} config={config} rows={rows} error={error} updated={updated}/><div className="av-stream-debug" aria-live="polite">{error?"API ERROR":loading&&!data?"CONNECTING":updated?"LIVE · "+new Date(updated).toLocaleTimeString("de-DE"):"WAITING"}</div></div>;
+}
+
+function Index() {
+  const hashParams=new URLSearchParams(window.location.hash.replace(/^#/,""));
+  const queryParams=new URLSearchParams(window.location.search);
+  if(hashParams.has("overlay")||queryParams.has("overlay")) return <StandaloneOverlay/>;
+  return <ApiVerse/>;
+}
+export default Index;
