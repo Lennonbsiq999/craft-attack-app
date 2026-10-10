@@ -428,8 +428,8 @@ type OverlayConfig = {
   accent: string; textColor: string; background: string; transparent: boolean; opacity: number;
   fontSize: number; fontFamily: string; padding: number; radius: number; gap: number;
   columns: number; refresh: number; maxItems: number; align: "left" | "center" | "right";
-  showTitle: boolean; showIcon: boolean; showTimestamp: boolean; showDetails: boolean;
-  showBorder: boolean; glow: boolean; animation: boolean; jsonPath: string; includeKeyInUrl: boolean;
+  showTitle: boolean; showIcon: boolean; showTimestamp: boolean; showDetails: boolean; showValues: boolean; showImages: boolean;
+  showBorder: boolean; glow: boolean; animation: boolean; jsonPath: string; titlePath: string; valuePath: string; detailPath: string; imagePath: string; includeKeyInUrl: boolean;
   apiKey?: string; keyMode?: KeyMode; keyField?: string; keyPrefix?: string;
 };
 type OverlayRow = { title: string; value?: string; detail?: string; image?: string };
@@ -464,8 +464,8 @@ function defaultOverlayConfig(api:ApiItem):OverlayConfig {
     width:800,height:450,accent:"#8f7cff",textColor:"#f3f5ff",background:"#101522",
     transparent:true,opacity:92,fontSize:18,fontFamily:"Manrope, sans-serif",
     padding:18,radius:16,gap:10,columns:2,refresh:30,maxItems:6,align:"left",
-    showTitle:true,showIcon:true,showTimestamp:true,showDetails:true,showBorder:true,
-    glow:true,animation:true,jsonPath:"",includeKeyInUrl:false
+    showTitle:true,showIcon:true,showTimestamp:true,showDetails:true,showValues:true,showImages:true,showBorder:true,
+    glow:true,animation:true,jsonPath:"",titlePath:"",valuePath:"",detailPath:"",imagePath:"",includeKeyInUrl:false
   };
 }
 function readOverlayConfigs():Record<string,OverlayConfig> {
@@ -525,10 +525,15 @@ function overlayToRows(raw:any,config:OverlayConfig):OverlayRow[] {
   }
   if(Array.isArray(data)) {
     return data.slice(0,Math.max(1,config.maxItems)).map((v:any,index:number)=>{
-      const name=overlayString(v?.name?.common)||overlayString(v?.name)||overlayString(v?.title)||overlayString(v?.strMeal)||overlayString(v?.trackName)||overlayString(v?.show?.name)||overlayString(v?.login)||overlayString(v?.word)||overlayString(v?.species)||overlayString(v?.id)||("Element "+(index+1));
-      const value=overlayString(v?.value)||overlayString(v?.score)||overlayString(v?.rank)||overlayString(v?.population)||overlayString(v?.current_price)||overlayString(v?.rarity?.name)||overlayString(v?.class?.name);
-      const detail=overlayString(v?.subtitle)||overlayString(v?.status)||overlayString(v?.release_date)||overlayString(v?.description)||overlayString(v?.synopsis)||overlayString(v?.strCategory)||overlayString(v?.region)||overlayString(v?.genres)||overlayString(v?.types?.map?.((t:any)=>t.type?.name||t.name))||overlayString(v?.rarity?.name);
-      return {title:name,value,detail,image:overlayImage(v)};
+      const mappedTitle=config.titlePath?overlayString(overlayReadPath(v,config.titlePath)):"";
+      const mappedValue=config.valuePath?overlayString(overlayReadPath(v,config.valuePath)):"";
+      const mappedDetail=config.detailPath?overlayString(overlayReadPath(v,config.detailPath)):"";
+      const mappedImage=config.imagePath?overlayString(overlayReadPath(v,config.imagePath)):"";
+      const name=mappedTitle||overlayString(v?.name?.common)||overlayString(v?.name)||overlayString(v?.title)||overlayString(v?.strMeal)||overlayString(v?.trackName)||overlayString(v?.show?.name)||overlayString(v?.login)||overlayString(v?.word)||overlayString(v?.species)||overlayString(v?.id)||("Element "+(index+1));
+      const value=mappedValue||overlayString(v?.value)||overlayString(v?.score)||overlayString(v?.rank)||overlayString(v?.population)||overlayString(v?.current_price)||overlayString(v?.rarity?.name)||overlayString(v?.class?.name);
+      const detail=mappedDetail||overlayString(v?.subtitle)||overlayString(v?.status)||overlayString(v?.release_date)||overlayString(v?.description)||overlayString(v?.synopsis)||overlayString(v?.strCategory)||overlayString(v?.region)||overlayString(v?.genres)||overlayString(v?.types?.map?.((t:any)=>t.type?.name||t.name))||overlayString(v?.rarity?.name);
+      const image=mappedImage&&/^https?:\/\//i.test(mappedImage)?mappedImage:overlayImage(v);
+      return {title:name,value,detail,image};
     });
   }
   if(typeof data==="string"||typeof data==="number"||typeof data==="boolean") return [{title:"Antwort",value:overlayString(data)}];
@@ -537,8 +542,15 @@ function overlayToRows(raw:any,config:OverlayConfig):OverlayRow[] {
   if(data.rates&&typeof data.rates==="object") {
     return Object.entries(data.rates).slice(0,Math.max(1,config.maxItems)).map(([k,v])=>({title:k,value:overlayString(v),detail:"Referenzkurs"}));
   }
-  const title=overlayString(data.name?.common)||overlayString(data.name)||overlayString(data.title)||overlayString(data.strMeal)||overlayString(data.trackName)||overlayString(data.login)||overlayString(data.word)||overlayString(data.english_name)||overlayString(data.id);
+  const mappedTitle=config.titlePath?overlayString(overlayReadPath(data,config.titlePath)):"";
+  const mappedValue=config.valuePath?overlayString(overlayReadPath(data,config.valuePath)):"";
+  const mappedDetail=config.detailPath?overlayString(overlayReadPath(data,config.detailPath)):"";
+  const mappedImage=config.imagePath?overlayString(overlayReadPath(data,config.imagePath)):"";
+  const title=mappedTitle||overlayString(data.name?.common)||overlayString(data.name)||overlayString(data.title)||overlayString(data.strMeal)||overlayString(data.trackName)||overlayString(data.login)||overlayString(data.word)||overlayString(data.english_name)||overlayString(data.id);
   const values:Array<{title:string;value?:string;detail?:string;image?:string}>=[];
+  if(config.titlePath||config.valuePath||config.detailPath||config.imagePath) {
+    return [{title:title||"API-Daten",value:mappedValue,detail:mappedDetail,image:mappedImage&&/^https?:\/\//i.test(mappedImage)?mappedImage:overlayImage(data)}].slice(0,Math.max(1,config.maxItems));
+  }
   const preferred=["temperature_2m","apparent_temperature","wind_speed_10m","relative_humidity_2m","capital","population","region","status","score","rank","price","value","count","followers","public_repos","date","base","fact","joke","explanation","description"];
   for(const key of preferred) {
     const v=data[key];
@@ -590,11 +602,11 @@ function OverlayWidget({api,config,rows,error,updated,preview=false}:{api:ApiIte
       {error&&<div className="av-stream-error">API-Verbindung fehlgeschlagen · {error}</div>}
       <div className="av-stream-rows" style={{gridTemplateColumns:config.mode==="ticker"?"repeat("+Math.max(2,rows.length)+", minmax(160px, 1fr))":"repeat("+config.columns+", minmax(0, 1fr))",gap:config.gap}}>
         {rows.slice(0,config.maxItems).map((row,i)=><article className="av-stream-row" key={i} style={{borderRadius:Math.max(5,config.radius-5),border:config.mode==="minimal"||!config.showBorder?"1px solid transparent":"1px solid "+overlayHexRgba(config.accent,25),background:config.mode==="minimal"?"transparent":overlayHexRgba(config.background,config.transparent?30:Math.min(100,config.opacity+3))}}>
-          {row.image&&config.mode!=="terminal"&&<img className="av-stream-image" src={row.image} alt="" />}
+          {config.showImages&&row.image&&config.mode!=="terminal"&&<img className="av-stream-image" src={row.image} alt="" />}
           <div className="av-stream-row-copy">
             <div className="av-stream-row-title">{row.title}</div>
             {config.showDetails&&row.detail&&<div className="av-stream-row-detail">{row.detail}</div>}
-            {config.showDetails&&row.value&&<div className="av-stream-row-value" style={{color:config.accent}}>{row.value}</div>}
+            {config.showValues&&row.value&&<div className="av-stream-row-value" style={{color:config.accent}}>{row.value}</div>}
           </div>
         </article>)}
         {!rows.length&&!error&&<div className="av-stream-empty">{preview?"Live-Daten werden hier angezeigt":"Warte auf API-Daten…"}</div>}
@@ -610,7 +622,7 @@ function OverlayStudio({initialApiId,apiKeys}:{initialApiId:string;apiKeys:Recor
   const [copied,setCopied]=useState(false);
   const [preset,setPreset]=useState("custom");
   const api=apis.find(a=>a.id===selectedId)||apis[0];
-  const config=configs[selectedId]||defaultOverlayConfig(api);
+  const config={...defaultOverlayConfig(api),...(configs[selectedId]||{})};
   useEffect(()=>{setSelectedId(initialApiId);},[initialApiId]);
   useEffect(()=>{try{localStorage.setItem("apiverse-overlay-configs-v1",JSON.stringify(configs));}catch{}},[configs]);
   const update = <K extends keyof OverlayConfig,>(field:K,value:OverlayConfig[K])=>setConfigs(old=>({...old,[selectedId]:{...(old[selectedId]||defaultOverlayConfig(api)),[field]:value}}));
@@ -657,8 +669,9 @@ function OverlayStudio({initialApiId,apiKeys}:{initialApiId:string;apiKeys:Recor
           <div className="av-studio-card-head"><div><span className="av-studio-label">CONTENT</span><h3>API & Datenquelle</h3></div><Database size={18}/></div>
           <label className="av-studio-field"><span>Overlay-Titel</span><input value={config.title} onChange={e=>update("title",e.target.value)} maxLength={70} placeholder={api.name}/></label>
           <label className="av-studio-field"><span>API-Endpoint (GET)</span><input value={config.endpoint} onChange={e=>update("endpoint",e.target.value)} spellCheck={false} placeholder="https://api.example.com/data"/></label>
-          <label className="av-studio-field"><span>JSON-Pfad (optional)</span><input value={config.jsonPath} onChange={e=>update("jsonPath",e.target.value)} placeholder="z. B. data.results oder current"/></label>
-          <p className="av-studio-help">JSON-Pfade zeigen nur den gewünschten Teil der Antwort. Wenn die API nicht direkt im Browser erreichbar ist (CORS) oder einen Key benötigt, kann die Live-Anzeige scheitern.</p>
+          <label className="av-studio-field"><span>JSON-Pfad (Startpunkt)</span><input value={config.jsonPath||""} onChange={e=>update("jsonPath",e.target.value)} placeholder="z. B. data.results oder current"/></label>
+          <div className="av-studio-mapping-grid"><label className="av-studio-field"><span>Titel-Feld</span><input value={config.titlePath||""} onChange={e=>update("titlePath",e.target.value)} placeholder="z. B. name oder show.name"/></label><label className="av-studio-field"><span>Wert-Feld</span><input value={config.valuePath||""} onChange={e=>update("valuePath",e.target.value)} placeholder="z. B. score oder stats.0.value"/></label><label className="av-studio-field"><span>Detail-Feld</span><input value={config.detailPath||""} onChange={e=>update("detailPath",e.target.value)} placeholder="z. B. description oder status"/></label><label className="av-studio-field"><span>Bild-URL-Feld</span><input value={config.imagePath||""} onChange={e=>update("imagePath",e.target.value)} placeholder="z. B. image.url oder thumbnail"/></label></div>
+          <p className="av-studio-help">Feld-Mapping pro Datenobjekt: Titel, Wert, Detail und Bild-URL können eigene JSON-Pfade bekommen. Beispiel: Bei einer Liste mit Brawlern ist name der Titel und rarity.name der Wert. Wenn eine API CORS blockiert, ist ein Browser-Overlay trotzdem nicht möglich.</p>
         </div>
         <div className="av-studio-card">
           <div className="av-studio-card-head"><div><span className="av-studio-label">LAYOUT</span><h3>Form & Aufbau</h3></div><Layers3 size={18}/></div>
@@ -684,7 +697,7 @@ function OverlayStudio({initialApiId,apiKeys}:{initialApiId:string;apiKeys:Recor
         <div className="av-studio-card">
           <div className="av-studio-card-head"><div><span className="av-studio-label">STREAM BEHAVIOR</span><h3>Update & Effekte</h3></div><RefreshCcw size={18}/></div>
           <label className="av-studio-field"><span>Aktualisieren alle</span><select value={config.refresh} onChange={e=>update("refresh",Number(e.target.value))}>{[5,10,15,30,60,120,300].map(n=><option value={n} key={n}>{n<60?n+" Sekunden":n/60+" Minute"+(n===60?"":"n")}</option>)}</select></label>
-          <div className="av-studio-check-grid">{check("Overlay-Titel","showTitle")}{check("API-Icon","showIcon")}{check("Zeitstempel","showTimestamp")}{check("Details / Werte","showDetails")}{check("Border","showBorder")}{check("Glow / Neon","glow")}{check("Animation","animation")}</div>
+          <div className="av-studio-check-grid">{check("Overlay-Titel","showTitle")}{check("API-Icon","showIcon")}{check("Zeitstempel","showTimestamp")}{check("Werte","showValues")}{check("Zusatzdetails","showDetails")}{check("Bilder / Icons","showImages")}{check("Border","showBorder")}{check("Glow / Neon","glow")}{check("Animation","animation")}</div>
         </div>
         <div className="av-studio-card av-studio-security">
           <div className="av-studio-card-head"><div><span className="av-studio-label">AUTH & SECURITY</span><h3>API-Key für OBS</h3></div><CircleHelp size={18}/></div>
