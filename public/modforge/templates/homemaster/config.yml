@@ -1,0 +1,5 @@
+# HomeMaster Ultra configuration
+max-homes: 3
+teleport-delay-seconds: 3
+teleport-cooldown-seconds: 5
+require-safe-location: true
