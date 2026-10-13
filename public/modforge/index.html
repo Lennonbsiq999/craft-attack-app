@@ -48,7 +48,7 @@ const role=c.kind==='plugin'
 return 'Erzeuge einen tatsächlich kompilierbaren Java-Code für '+role+'. Projektname: '+c.name+'. ID: '+c.id+'. Package: '+c.pkg+'. Beschreibung: '+c.desc+'. Nutzeridee: '+c.idea+'. Java-Ziel passend zu Minecraft wählen; ausschließlich JSON im Format {"summary":"...","files":[{"path":"src/main/java/paket/Klasse.java","content":"vollständiger Java-Quellcode"}]}. Optional sind einfache Textressourcen nur unter src/main/resources/ erlaubt. Gib KEINE build.gradle, settings.gradle, plugin.yml, fabric.mod.json, README, Prompts oder Binärdateien zurück; der Build erzeugt Gradle-Konfiguration und Minecraft-Metadaten selbst. Alle Klassen müssen vollständig sein, Imports müssen stimmen, keine Platzhalter oder TODOs. Keine absoluten Pfade, keine ".."-Pfade, keine versteckte Telemetrie, kein Credential-Diebstahl, keine destruktiven Funktionen, keine Verschleierung.';
 }
 function isHomeMasterRequest(c){
-return c.kind==='plugin'&&/set\\s*home|homemaster|home\\s*plugin|homes\\s+gui/i.test([c.name,c.id,c.idea].join(' '));
+return c.kind==='plugin'&&/set\s*home|homemaster|home\s*plugin|homes\s+gui/i.test([c.name,c.id,c.idea].join(' '));
 }
 async function homeMasterStarter(c){
 const pkgParts=c.pkg.split('.');
