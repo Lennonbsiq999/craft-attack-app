@@ -7,6 +7,7 @@ on:
       - "scripts/modforge_build_jar.py"
       - ".github/workflows/modforge-build-jar.yml"
       - ".github/workflows/modforge-e2e-test.yml"
+      - "public/modforge/templates/**"
   workflow_dispatch:
 
 permissions:
@@ -20,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kind: [fabric, paper]
+        kind: [fabric, paper, homemaster]
 
     steps:
       - name: Checkout repository
@@ -32,6 +33,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import base64, gzip, json, os
+          from pathlib import Path
           kind = os.environ["KIND"]
           if kind == "fabric":
               config = {
@@ -51,7 +53,7 @@ jobs:
               }
           }
           """
-          else:
+          elif kind == "paper":
               config = {
                   "name": "ModForgeSmokeTest", "id": "modforge_smoke_test",
                   "version": "1.21.11", "kind": "plugin", "platform": "paper",
@@ -69,7 +71,19 @@ jobs:
               }
           }
           """
-          payload = {"config": config, "files": {path: source}}
+          else:
+              config = {
+                  "name": "HomeMasterTemplateTest", "id": "homemaster_template_test",
+                  "version": "1.21.11", "kind": "plugin", "platform": "paper",
+                  "pkg": "de.toastomat.homemaster", "desc": "HomeMaster template compile test"
+              }
+              path = "src/main/java/de/toastomat/homemaster/HomeMaster.java"
+              source = Path("public/modforge/templates/homemaster/HomeMaster.java.template").read_text(encoding="utf-8")
+              source = source.replace("package __PACKAGE__;", "package de.toastomat.homemaster;")
+          files = {path: source}
+          if kind == "homemaster":
+              files["src/main/resources/config.yml"] = Path("public/modforge/templates/homemaster/config.yml").read_text(encoding="utf-8")
+          payload = {"config": config, "files": files}
           encoded = base64.b64encode(gzip.compress(json.dumps(payload, separators=(",", ":")).encode())).decode()
           if len(encoded) > 64000:
               raise SystemExit("Smoke-test payload unexpectedly exceeds GitHub's input limit")
@@ -105,10 +119,22 @@ jobs:
           jars = list(Path("dist").glob("*.jar"))
           if len(jars) != 1:
               raise SystemExit("Expected exactly one JAR in dist/")
-          required = "fabric.mod.json" if os.environ["KIND"] == "fabric" else "plugin.yml"
+          kind = os.environ["KIND"]
+          required = "fabric.mod.json" if kind == "fabric" else "plugin.yml"
           with zipfile.ZipFile(jars[0]) as archive:
-              if required not in archive.namelist():
+              members = set(archive.namelist())
+              if required not in members:
                   raise SystemExit("JAR is missing " + required)
+              if kind == "homemaster":
+                  if "config.yml" not in members:
+                      raise SystemExit("HomeMaster JAR is missing config.yml")
+                  plugin = archive.read("plugin.yml").decode("utf-8")
+                  for command in ("sethome", "home", "delhome", "homes", "renamehome", "back"):
+                      if f"  {command}:" not in plugin:
+                          raise SystemExit("HomeMaster plugin.yml is missing /" + command)
+                  for permission in ("homemaster.sethome", "homemaster.home", "homemaster.gui", "homemaster.back"):
+                      if permission not in plugin:
+                          raise SystemExit("HomeMaster plugin.yml is missing " + permission)
           print("Verified", jars[0].name, "with", required)
           PY
 
