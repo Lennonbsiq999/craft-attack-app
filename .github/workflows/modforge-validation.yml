@@ -6,6 +6,7 @@ on:
     paths:
       - "scripts/modforge_build_jar.py"
       - "public/modforge/index.html"
+      - "public/modforge-studio/index.html"
       - ".github/workflows/modforge-build-jar.yml"
       - ".github/workflows/modforge-validation.yml"
   workflow_dispatch:
@@ -33,7 +34,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          html = Path("public/modforge/index.html").read_text(encoding="utf-8")
+          html = Path("public/modforge-studio/index.html").read_text(encoding="utf-8")
           lib = '<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>'
           pos = html.index(lib) + len(lib)
           start = html.index("<script>", pos) + len("<script>")
