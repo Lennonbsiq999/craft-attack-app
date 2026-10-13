@@ -319,13 +319,57 @@ def build():
     try:
         import zipfile
         with zipfile.ZipFile(jar) as z:
+            members = set(z.namelist())
             required = "plugin.yml" if kind == "plugin" else "fabric.mod.json"
-            if required not in z.namelist():
+            if required not in members:
                 fail("Die JAR enthält keine gültigen Minecraft-Metadaten.")
+
+            metadata_text = z.read(required).decode("utf-8")
+            if kind == "plugin":
+                match = re.search(r"(?m)^main:\s*['\"]?([A-Za-z_$][A-Za-z0-9_$.]*)['\"]?\s*$", metadata_text)
+                if not match:
+                    fail("plugin.yml enthält keine gültige Hauptklasse.")
+                entrypoint = match.group(1)
+                command_names = set()
+                for source in (work / "src/main/java").rglob("*.java"):
+                    code = source.read_text(encoding="utf-8")
+                    command_names.update(re.findall(r"""getCommand\s*\(\s*["']([a-zA-Z0-9_-]+)["']\s*\)""", code))
+                if not command_names:
+                    command_names.add(slug(data["config"].get("id")))
+                lines = metadata_text.splitlines()
+                commands_index = next((i for i, line in enumerate(lines) if re.fullmatch(r"commands:\s*", line)), None)
+                declared = set()
+                if commands_index is not None:
+                    for line in lines[commands_index + 1:]:
+                        if line and not line[0].isspace():
+                            break
+                        command_match = re.match(r"^  ([a-z0-9_-]+):\s*$", line)
+                        if command_match:
+                            declared.add(command_match.group(1))
+                missing = sorted(command_names - declared)
+                if missing:
+                    fail("plugin.yml fehlen registrierte Befehle: " + ", ".join(missing[:8]))
+            else:
+                try:
+                    metadata = json.loads(metadata_text)
+                    main_entries = metadata.get("entrypoints", {}).get("main", [])
+                    if isinstance(main_entries, str):
+                        main_entries = [main_entries]
+                    if not isinstance(main_entries, list) or not main_entries or not all(isinstance(item, str) for item in main_entries):
+                        fail("fabric.mod.json enthält keinen gültigen Main-Entrypoint.")
+                    entrypoint = main_entries[0]
+                except SystemExit:
+                    raise
+                except Exception:
+                    fail("fabric.mod.json ist kein gültiges JSON.")
+
+            compiled_entrypoint = entrypoint.replace(".", "/") + ".class"
+            if compiled_entrypoint not in members:
+                fail("Die JAR enthält keine kompilierte Hauptklasse: " + entrypoint)
     except SystemExit:
         raise
     except Exception:
-        fail("Die erzeugte Datei ist keine gültige JAR.")
+        fail("Die erzeugte Datei ist keine gültige oder vollständig geprüfte JAR.")
     dist = Path(os.environ.get("GITHUB_WORKSPACE", str(work.parent))) / "dist"
     if dist.exists():
         shutil.rmtree(dist)
