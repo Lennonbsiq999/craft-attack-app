@@ -19,7 +19,7 @@
 <label for="model" style="margin-top:10px">Modell-ID</label><input class="input" id="model" value="openrouter/free">
 <button class="btn" id="testAI" type="button" style="margin-top:10px">KI-Verbindung testen</button>
 <p class="hint" id="aiDiag" aria-live="polite"></p>
-<p class="hint">Mit Key schreibt die KI deinen gewünschten Java-Code. Ohne Key wird eine einfache, kompilierbare Basis-JAR erstellt. Der OpenRouter-Key wird nicht gespeichert.</p>
+<p class="hint">Für SetHome/HomeMaster wird eine integrierte Vorlage genutzt: /sethome, /home, /homes und /homes gui, /delhome, /renamehome, /back, dauerhafte Speicherung, konfigurierbares Home-Limit, sichere Teleports, Verzögerung, Abbruch bei Bewegung/Schaden und Abklingzeit. Dafür brauchst du keinen OpenRouter-Key. Andere Plugin- und Mod-Ideen nutzen mit Key die KI-Generierung. Der OpenRouter-Key wird nicht gespeichert.</p>
 </div>
 <div class="keybox">
 <h2>🔐 GitHub-Build-Zugriff <span class="hint">erforderlich</span></h2>
@@ -46,6 +46,25 @@ const role=c.kind==='plugin'
 ?'Paper-Server-Plugin für Minecraft '+c.version+'. Die Hauptklasse MUSS org.bukkit.plugin.java.JavaPlugin erweitern und einen gültigen Konstruktor/OnEnable haben. Falls Befehle benötigt werden, registriere sie über getCommand("befehlsname") und implementiere onCommand. Nutze ausschließlich die Paper/Bukkit-API.'
 :'Fabric-Mod für Minecraft '+c.version+'. Mindestens eine Hauptklasse MUSS net.fabricmc.api.ModInitializer implementieren. Nutze Fabric Loader und falls kompatibel die Fabric API. Keine erfundenen Methoden oder nicht existierenden Events.';
 return 'Erzeuge einen tatsächlich kompilierbaren Java-Code für '+role+'. Projektname: '+c.name+'. ID: '+c.id+'. Package: '+c.pkg+'. Beschreibung: '+c.desc+'. Nutzeridee: '+c.idea+'. Java-Ziel passend zu Minecraft wählen; ausschließlich JSON im Format {"summary":"...","files":[{"path":"src/main/java/paket/Klasse.java","content":"vollständiger Java-Quellcode"}]}. Optional sind einfache Textressourcen nur unter src/main/resources/ erlaubt. Gib KEINE build.gradle, settings.gradle, plugin.yml, fabric.mod.json, README, Prompts oder Binärdateien zurück; der Build erzeugt Gradle-Konfiguration und Minecraft-Metadaten selbst. Alle Klassen müssen vollständig sein, Imports müssen stimmen, keine Platzhalter oder TODOs. Keine absoluten Pfade, keine ".."-Pfade, keine versteckte Telemetrie, kein Credential-Diebstahl, keine destruktiven Funktionen, keine Verschleierung.';
+}
+function isHomeMasterRequest(c){
+return c.kind==='plugin'&&/set\\s*home|homemaster|home\\s*plugin|homes\\s+gui/i.test([c.name,c.id,c.idea].join(' '));
+}
+async function homeMasterStarter(c){
+const pkgParts=c.pkg.split('.');
+const pkg=pkgParts.length&&pkgParts.every(part=>/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(part))?c.pkg:'de.toastomat.homemaster';
+const base='./templates/homemaster/';
+const [javaResponse,configResponse]=await Promise.all([
+fetch(base+'HomeMaster.java.template',{cache:'no-store'}),
+fetch(base+'config.yml',{cache:'no-store'})
+]);
+if(!javaResponse.ok||!configResponse.ok)throw new Error('Die integrierte HomeMaster-Vorlage konnte nicht geladen werden. Prüfe, ob die Website vollständig aktualisiert wurde.');
+let code=await javaResponse.text();
+const configText=await configResponse.text();
+code=code.replace('package __PACKAGE__;','package '+pkg+';');
+if(code.includes('__PACKAGE__'))throw new Error('Die HomeMaster-Vorlage enthält einen nicht ersetzten Package-Platzhalter.');
+const sourcePath='src/main/java/'+pkg.split('.').join('/')+'/HomeMaster.java';
+return {[sourcePath]:code,'src/main/resources/config.yml':configText};
 }
 function starter(c){
 const parts=c.pkg.split('.');
@@ -319,7 +338,11 @@ setStatus('Bereite Code vor…');
 try{
 const p=makePrompt(c);
 let files;
-if($('key').value.trim()){
+if(isHomeMasterRequest(c)){
+setStatus('Lade integrierte HomeMaster-Vorlage…');
+files=await homeMasterStarter(c);
+toast('HomeMaster-Vorlage aktiviert: Kernfunktionen werden ohne KI generiert und anschließend kompiliert.');
+}else if($('key').value.trim()){
 setStatus('KI schreibt Java-Code…');
 files=await makeAI(c,p);
 }else{
