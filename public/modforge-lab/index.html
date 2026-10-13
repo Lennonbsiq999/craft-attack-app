@@ -81,7 +81,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border
       <div class="section-top"><div><span class="section-tag">START HERE / 01</span><h2>Such dir ein Fundament.</h2><p>Die Vorlagen setzen Projekttyp, Paketname, Beschreibung und eine konkrete Spezifikation.</p></div><input id="templateSearch" class="search" placeholder="Vorlagen suchen …" aria-label="Vorlagen suchen"></div>
       <div class="filters"><button class="filter active" data-template-filter="all">Alle Vorlagen</button><button class="filter" data-template-filter="server">Server-Plugins</button><button class="filter" data-template-filter="client">Fabric-Mods</button><button class="filter" data-template-filter="starter">Starter</button></div>
       <div class="templates">
-        <button class="template-card" data-template-card data-template="homemaster" data-category="server"><span class="template-icon">⌂</span><strong>HomeMaster Ultra</strong><p>SetHome, GUI, /back und sichere Teleports mit echter integrierter Java-Vorlage.</p><span class="template-bottom"><span class="template-badge builtin">Ohne KI-Key</span><span class="template-arrow">↗</span></span></button>
+        <button class="template-card" id="homePreset" data-template-card data-template="homemaster" data-category="server"><span class="template-icon">⌂</span><strong>HomeMaster Ultra</strong><p>SetHome, GUI, /back und sichere Teleports mit echter integrierter Java-Vorlage.</p><span class="template-bottom"><span class="template-badge builtin">Ohne KI-Key</span><span class="template-arrow">↗</span></span></button>
         <button class="template-card" data-template-card data-template="moderator" data-category="server"><span class="template-icon">⛨</span><strong>GuardRail</strong><p>Warnungen, Freeze, Staffchat und saubere Moderationsrechte.</p><span class="template-bottom"><span class="template-badge">KI nötig</span><span class="template-arrow">↗</span></span></button>
         <button class="template-card" data-template-card data-template="economy" data-category="server"><span class="template-icon">◈</span><strong>CrispyEconomy</strong><p>Konten, Überweisungen, Kontostand und einfache Rangliste.</p><span class="template-bottom"><span class="template-badge">KI nötig</span><span class="template-arrow">↗</span></span></button>
         <button class="template-card" data-template-card data-template="teleport" data-category="server"><span class="template-icon">⌖</span><strong>WarpDeck</strong><p>Warps und Teleport-Anfragen mit Ablaufzeit und Permissions.</p><span class="template-bottom"><span class="template-badge">KI nötig</span><span class="template-arrow">↗</span></span></button>
@@ -547,7 +547,7 @@ function syncOverview(){
   {id:'checkId',ok:/^[a-z][a-z0-9_-]{0,47}$/.test(c.id),label:'Projekt-ID gültig'},
   {id:'checkPackage',ok:pkgValid,label:'Java-Package gültig'},
   {id:'checkIdea',ok:$('idea').value.trim().length>=30,label:'Projektidee ausreichend konkret'},
-  {id:'checkVersion',ok:/^\d+\.\d+(?:\.\d+)?$/.test(c.version),label:'Minecraft-Version erkannt'}
+  {id:'checkVersion',ok:/^\d+\.\d+(?:\.\d+)?$/.test(c.version)&&($("version").value!=="custom"||$("customVersion").value.trim().length>0),label:'Minecraft-Version erkannt'}
  ];
  let score=0;
  checks.forEach(ch=>{const el=$(ch.id);if(el){el.classList.toggle('ok',ch.ok);el.classList.toggle('no',!ch.ok);const symbol=el.querySelector('.check-icon');if(symbol)symbol.textContent=ch.ok?'✓':'!';const text=el.querySelector('.check-text');if(text)text.textContent=ch.label;}if(ch.ok)score+=1;});
@@ -691,7 +691,7 @@ $('generate').addEventListener('click',function validationCapture(e){
  if(activeTemplate&&activeTemplate!=='homemaster'&&!$('key').value.trim()){
   e.stopImmediatePropagation();toast('Diese Vorlage benötigt einen OpenRouter-Key, sonst würde nur ein leeres Starterprojekt gebaut.');$('key').focus();return;
  }
-});
+}, true);
 const oldPreset=$('homePreset');
 if(oldPreset){
  oldPreset.addEventListener('click',()=>{activeTemplate='homemaster';document.querySelectorAll('[data-template]').forEach(el=>el.classList.toggle('selected',el.dataset.template==='homemaster'));syncOverview();saveDraft();});
