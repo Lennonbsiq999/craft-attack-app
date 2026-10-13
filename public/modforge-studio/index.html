@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090b14">
+<meta name="description" content="ModForge Workshop: Erstelle Minecraft Fabric-Mods und Paper-Plugins und baue sie als echte JAR.">
+<title>ModForge V2 | Neon Forge Station</title>
+<style>
+:root{color-scheme:light;--paper:#f6f4ee;--white:#fffefa;--ink:#191c22;--ink2:#242832;--muted:#747982;--line:#e2dfd6;--blue:#2c55e8;--blue2:#dfe6ff;--orange:#ff7043;--orange2:#ffe5d9;--mint:#c4f36b;--radius:18px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:28px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.5}
+a{color:inherit;text-decoration:none}a:hover{text-decoration:underline}
+button,input,select,textarea{font:inherit}
+.app{display:grid;grid-template-columns:244px minmax(0,1fr);min-height:100vh}
+.rail{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;background:var(--ink);color:#f7f4ec;padding:25px 17px 19px;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:12px;padding:0 8px 29px;border-bottom:1px solid #ffffff18}
+.brandmark{height:42px;width:42px;display:grid;place-items:center;background:var(--orange);color:var(--ink);font-size:26px;font-weight:950;border-radius:12px;box-shadow:4px 4px 0 #ffffff13}
+.brandtitle{font-size:15px;font-weight:950;letter-spacing:.13em}
+.brandcaption{display:block;font-size:9px;color:#9ca4b0;letter-spacing:.19em;margin-top:3px;font-weight:750}
+.rail-label{padding:24px 10px 9px;color:#737d8b;font-size:9px;font-weight:900;letter-spacing:.17em;text-transform:uppercase}
+.nav{display:grid;gap:5px}
+.nav a,.nav button{width:100%;display:flex;align-items:center;gap:12px;border:1px solid transparent;border-radius:11px;padding:11px 12px;background:transparent;color:#c6cbd2;text-align:left;font-size:12px;font-weight:750;cursor:pointer}
+.nav a.active{color:#fff;background:#ffffff0d;border-color:#ffffff12}
+.nav a.active .nav-icon{color:var(--mint)}
+.nav a:hover,.nav button:hover{background:#ffffff0d;text-decoration:none}
+.nav-icon{width:20px;text-align:center;font-size:15px;color:#8f98a5}
+.rail-bottom{margin-top:auto}
+.rail-note{background:#232831;border:1px solid #ffffff13;border-radius:14px;padding:14px}
+.rail-note-head{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:850}
+.live-dot{height:7px;width:7px;border-radius:50%;background:#b9eb64;box-shadow:0 0 0 4px #b9eb6418}
+.rail-note p{font-size:10px;color:#aab1bc;line-height:1.55;margin:9px 0 12px}
+.rail-note a{color:var(--mint);font-size:10px;font-weight:850}
+.rail-footer{color:#697380;font-size:9px;letter-spacing:.08em;padding:17px 7px 0}
+.main{min-width:0;padding:0 0 40px}
+.topbar{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 clamp(20px,4vw,54px);background:#f8f6f0dd}
+.breadcrumb{font-size:10px;letter-spacing:.13em;font-weight:900;color:var(--muted);text-transform:uppercase}
+.breadcrumb strong{color:var(--ink)}
+.top-right{display:flex;align-items:center;gap:10px}
+.connection{display:flex;align-items:center;gap:7px;border:1px solid #d9decf;border-radius:99px;background:#fbfff4;padding:7px 11px;color:#4d622d;font-size:10px;font-weight:850}
+.connection .live-dot{height:6px;width:6px}
+.avatar{height:34px;width:34px;display:grid;place-items:center;background:var(--blue2);color:var(--blue);border-radius:11px;font-weight:950;font-size:11px}
+.content{max-width:1550px;margin:0 auto;padding:clamp(20px,3.6vw,48px) clamp(18px,4vw,54px)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 228px;gap:28px;align-items:center;margin-bottom:35px}
+.eyebrow{display:flex;align-items:center;gap:9px;color:var(--blue);font-size:10px;letter-spacing:.18em;font-weight:950;text-transform:uppercase}
+.eyebrow:before{content:"";width:26px;height:3px;background:var(--orange);border-radius:3px}
+h1{font-size:clamp(36px,5.25vw,68px);line-height:.99;letter-spacing:-.067em;margin:16px 0 17px;max-width:760px;font-weight:950}
+h1 span{color:var(--blue)}
+.lede{max-width:650px;margin:0;color:#666b73;font-size:14px;line-height:1.75}
+.hero-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:22px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #d9d7d0;border-radius:10px;padding:11px 14px;background:var(--white);color:var(--ink);font-size:11px;font-weight:900;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px);border-color:#abaeb4;text-decoration:none}
+.btn:disabled{opacity:.5;cursor:wait;transform:none}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:white;box-shadow:0 5px 0 #182c85}
+.btn.primary:hover{background:#2348d2}
+.btn.orange{background:var(--orange);border-color:var(--orange);color:#201a16;box-shadow:0 4px 0 #d94f27}
+.btn.ghost{background:transparent}
+.btn.small{padding:8px 10px;font-size:10px}
+.hero-stamp{position:relative;min-height:190px;background:var(--blue);border-radius:16px;color:#fff;padding:22px;overflow:hidden;box-shadow:7px 7px 0 #d7d0bf}
+.hero-stamp:after{content:"";position:absolute;right:-20px;bottom:-39px;width:150px;height:150px;border:1px solid #ffffff56;transform:rotate(45deg);box-shadow:0 0 0 14px #ffffff08,0 0 0 30px #ffffff08}
+.stamp-kicker{font-size:9px;letter-spacing:.17em;text-transform:uppercase;font-weight:950;color:#cbd5ff}
+.stamp-icon{font-size:40px;line-height:1;margin:17px 0 13px}
+.stamp-title{font-size:16px;font-weight:950;letter-spacing:-.03em}
+.stamp-copy{font-size:10px;color:#d7dfff;margin-top:5px}
+.meta-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.meta-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#fffdf8;color:#656a73;font-size:9px;font-weight:850;letter-spacing:.04em}
+.meta-chip b{color:var(--ink)}
+.grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(315px,.82fr);gap:20px;align-items:start}
+.stack{display:grid;gap:18px;min-width:0}
+.panel{min-width:0;background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 4px 16px #2b261108}
+.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:20px}
+.panel-overline{font-size:9px;text-transform:uppercase;letter-spacing:.16em;color:var(--blue);font-weight:950;margin-bottom:5px}
+.panel h2{font-size:16px;letter-spacing:-.035em;margin:0;font-weight:950}
+.panel-sub{font-size:11px;color:var(--muted);margin:5px 0 0;line-height:1.55}
+.stepno{height:30px;min-width:30px;display:grid;place-items:center;border-radius:9px;background:#f0eee7;border:1px solid #e6e2d8;color:#737780;font-size:10px;font-weight:950}
+.kindgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:7px;border:1px solid #e3e1db;background:#fbfaf6;border-radius:13px;padding:15px;text-align:left;cursor:pointer;min-height:112px;color:var(--ink)}
+.tile:hover{border-color:#b9c3ef}
+.tile.active{border:1.5px solid var(--blue);background:#eef1ff;box-shadow:inset 0 0 0 1px #2c55e80c}
+.tile-symbol{height:31px;width:35px;display:grid;place-items:center;border-radius:9px;background:white;border:1px solid #e2e1dd;font-size:18px}
+.tile.active .tile-symbol{background:var(--blue);border-color:var(--blue);color:white}
+.tile b{font-size:12px;font-weight:950}
+.tile small{font-size:10px;color:var(--muted);line-height:1.45}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.field{min-width:0}
+.field.full{grid-column:1/-1}
+label{display:block;font-size:10px;font-weight:900;margin-bottom:7px;color:#353a43}
+.input,select,textarea{width:100%;min-width:0;border:1px solid #dcdad3;border-radius:9px;background:#fffefa;padding:11px 12px;color:var(--ink);font-size:12px;outline:none;transition:border-color .15s,box-shadow .15s}
+.input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2c55e814}
+.input:disabled,select:disabled{background:#f2f0e9;color:#9699a0}
+textarea{min-height:150px;resize:vertical;line-height:1.6}
+.hint{color:#777b82;font-size:10px;font-weight:500;line-height:1.65}
+.hint strong{color:#383d46}
+.preset-card{display:grid;grid-template-columns:45px minmax(0,1fr) auto;align-items:center;gap:12px;padding:14px;border:1px solid #edd0c2;border-radius:13px;background:#fff6f1;margin-top:14px}
+.preset-mark{height:43px;width:43px;display:grid;place-items:center;background:var(--orange);border-radius:10px;font-size:21px}
+.preset-title{font-size:11px;font-weight:950}
+.preset-desc{font-size:10px;color:#806f68;margin-top:3px;line-height:1.5}
+.preset-action{padding:8px 10px;font-size:10px}
+.keybox{border:1px solid #e2dfd5;border-radius:13px;background:#f8f7f1;padding:15px;margin-top:15px}
+.keybox h3{font-size:12px;margin:0 0 12px;font-weight:950}
+.keybox .field+.field{margin-top:12px}
+.inline-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.divider{height:1px;background:var(--line);margin:18px 0}
+.fullbutton{width:100%;padding:15px}
+.status{display:inline-flex;align-items:center;gap:8px;border-radius:7px;padding:7px 10px;color:#4c632a;background:#f0f7df;border:1px solid #d8e6be;font-size:10px;font-weight:950;margin-bottom:14px}
+.status:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.status.error{color:#b52e28;background:#fff0ed;border-color:#ffd0c7}
+.resultempty{min-height:205px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;background:#f7f6f0;border:1px dashed #d9d6cc;border-radius:12px}
+.result-symbol{width:52px;height:52px;display:grid;place-items:center;margin-bottom:13px;background:#e8edff;color:var(--blue);border-radius:14px;font-size:25px}
+.resultempty b{font-size:12px;font-weight:950}
+.resultempty p{max-width:285px;font-size:10px;line-height:1.65;color:var(--muted);margin:6px 0 0}
+.buildresult{border:1px solid var(--line);border-radius:12px;padding:17px;background:#f8f7f2}
+.buildresult p{font-size:11px;line-height:1.7;color:#656a73;overflow-wrap:anywhere}
+.buildresult .btn{margin-top:5px}
+.outactions{display:none;gap:8px;flex-wrap:wrap;margin-top:12px}
+.outactions.show{display:flex}
+.preview{background:var(--ink);color:#f6f4ee;border-radius:15px;padding:17px;margin-top:14px}
+.preview-top{display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#99a2af;font-weight:900}
+.preview-light{color:var(--mint);font-size:9px}
+.preview-project{display:flex;gap:12px;align-items:center;padding:19px 0;border-bottom:1px solid #ffffff18}
+.preview-icon{width:44px;height:44px;display:grid;place-items:center;border-radius:11px;background:var(--orange);color:var(--ink);font-size:22px}
+.preview-name{font-size:15px;font-weight:950;overflow-wrap:anywhere}
+.preview-id{font-size:10px;color:#9ea7b3;margin-top:3px;overflow-wrap:anywhere}
+.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:15px}
+.preview-field{background:#ffffff0a;border:1px solid #ffffff12;padding:10px;border-radius:9px;min-width:0}
+.preview-field small{display:block;color:#99a2af;font-size:8px;text-transform:uppercase;letter-spacing:.14em;font-weight:900}
+.preview-field b{display:block;font-size:11px;margin-top:5px;overflow-wrap:anywhere}
+.checklist{display:grid;gap:13px;margin-top:17px}
+.checkrow{display:flex;align-items:flex-start;gap:10px;font-size:10px;color:#656a73;line-height:1.6}
+.checkmark{flex:0 0 auto;width:21px;height:21px;display:grid;place-items:center;background:#f0f7df;color:#59752b;border:1px solid #dce9c7;border-radius:7px;font-size:10px;font-weight:950}
+.info-row{padding:13px 0;border-bottom:1px solid var(--line)}
+.info-row:last-child{border-bottom:0;padding-bottom:0}
+.info-row b{display:block;font-size:10px;margin-bottom:4px}
+.info-row p{font-size:10px;color:var(--muted);line-height:1.7;margin:0}
+.mini-link{font-size:10px;color:var(--blue);font-weight:900}
+footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:30px;padding-top:17px;border-top:1px solid var(--line);color:#858991;font-size:9px;letter-spacing:.03em}
+footer a{color:#4c566a;font-weight:850}
+.toast{display:none;position:fixed;right:22px;bottom:22px;z-index:80;max-width:min(420px,calc(100vw - 30px));padding:14px 17px;background:var(--ink);color:#fff;border:1px solid #4a515d;border-radius:12px;box-shadow:0 20px 60px #0002;font-size:11px;line-height:1.6}
+.toast.show{display:block}
+@media(max-width:1120px){.app{grid-template-columns:205px minmax(0,1fr)}.rail{padding:21px 12px}.hero{grid-template-columns:minmax(0,1fr) 190px}.grid{grid-template-columns:minmax(0,1fr) 300px}.panel{padding:18px}.preset-card{grid-template-columns:40px minmax(0,1fr)}.preset-action{grid-column:2;justify-self:start}}
+@media(max-width:900px){.app{grid-template-columns:72px minmax(0,1fr)}.rail{padding:17px 9px;align-items:center}.brand{padding:0 0 24px;border-bottom:1px solid #ffffff18}.brand-copy,.rail-label,.nav-text,.rail-note,.rail-footer{display:none}.nav{width:100%;margin-top:22px}.nav a,.nav button{justify-content:center;padding:12px 5px}.nav-icon{font-size:18px;width:auto}.rail-bottom{width:100%}.grid{grid-template-columns:1fr}.hero{grid-template-columns:minmax(0,1fr) 190px}.rightcol{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:16px}.rightcol .panel{margin:0}}
+@media(max-width:620px){.app{display:block}.rail{position:relative;height:auto;display:block;padding:12px 16px}.brand{padding:0;border:0}.brandmark{height:35px;width:35px}.brand-copy{display:block}.brandcaption{display:none}.nav,.rail-label,.rail-bottom{display:none}.topbar{height:54px;padding:0 16px}.connection{font-size:9px;padding:6px 8px}.avatar{display:none}.content{padding:25px 14px}.hero{grid-template-columns:1fr;gap:22px;margin-bottom:25px}.hero-stamp{min-height:135px}.stamp-icon{position:absolute;right:21px;top:35px;font-size:34px}.stamp-title{font-size:14px}.hero-stamp:after{right:-10px;bottom:-65px}.lede{font-size:12px}.meta-strip{margin-bottom:18px}.panel{padding:16px;border-radius:15px}.kindgrid{gap:8px}.tile{padding:11px;min-height:105px}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.rightcol{display:block}.rightcol .panel{margin-bottom:15px}.preset-card{grid-template-columns:39px minmax(0,1fr)}.preset-action{grid-column:1/-1;width:100%}.toast{right:12px;bottom:12px}}
+
+/* Forge Station V2: intentionally new dark neon theme */
+:root{color-scheme:dark;--paper:#090b14;--white:#111625;--ink:#eff2ff;--ink2:#161b2b;--muted:#929bb7;--line:#293048;--blue:#9b8cff;--blue2:#272345;--orange:#37e5d2;--orange2:#153f42;--mint:#d3ff73}
+body{background:radial-gradient(ellipse at 78% -10%,#2a1d58 0,transparent 38%),radial-gradient(ellipse at 45% 70%,#092d35 0,transparent 47%),#090b14;color:#eff2ff}
+.rail{background:#05060d;border-right:1px solid #293048;color:#eff2ff}
+.brandmark{background:#37e5d2;color:#071215;box-shadow:0 0 26px #37e5d233}
+.brandcaption{color:#78829f}
+.rail-label{color:#68728e}
+.nav a,.nav button{color:#aab3d0}
+.nav a.active{background:#171b2a;border-color:#293048}
+.nav a.active .nav-icon{color:#37e5d2}
+.nav a:hover,.nav button:hover{background:#151a29}
+.rail-note{background:#111625;border-color:#293048}
+.rail-note p{color:#939db8}.rail-note a{color:#37e5d2}.rail-footer{color:#68728e}
+.topbar{background:#0c101d;border-color:#293048}
+.breadcrumb{color:#858eaa}.breadcrumb strong{color:#eff2ff}
+.connection{background:#101e22;border-color:#1f5551;color:#85f4e5}
+.avatar{background:#242042;color:#b8adff}
+.eyebrow{color:#37e5d2}.eyebrow:before{background:#9b8cff}
+h1 span{color:#a99aff}
+.lede{color:#a0aac7}
+.hero-stamp{background:linear-gradient(140deg,#252052,#111a32 75%);border:1px solid #514a90;box-shadow:6px 6px 0 #171b2b}
+.stamp-kicker{color:#b9afff}.stamp-copy{color:#b1bad7}
+.meta-chip{background:#111625;border-color:#293048;color:#9aa4c0}
+.meta-chip b{color:#eff2ff}
+.panel{background:linear-gradient(145deg,#121827,#0e1320);border-color:#293048;box-shadow:0 15px 44px #0003;color:#eff2ff}
+.panel-sub{color:#929bb7}.panel-overline{color:#a99aff}.stepno{background:#191d2f;border-color:#303650;color:#a9b2cd}
+.tile{background:#0c111d;border-color:#293048;color:#eff2ff}
+.tile:hover{border-color:#6259a4}
+.tile.active{border-color:#9b8cff;background:linear-gradient(135deg,#211d43,#101c2b);box-shadow:inset 0 0 0 1px #9b8cff18}
+.tile-symbol{background:#151b2b;border-color:#303650}
+.tile.active .tile-symbol{background:#9b8cff;border-color:#9b8cff;color:#080b13}
+label{color:#cdd4ee}
+.input,select,textarea{background:#080c16;border-color:#30364e;color:#eff2ff}
+.input:focus,select:focus,textarea:focus{border-color:#37e5d2;box-shadow:0 0 0 3px #37e5d218}
+.input:disabled,select:disabled{background:#111625;color:#727c9b}
+.hint{color:#929bb7}.hint strong{color:#e4e9ff}
+.preset-card{background:linear-gradient(115deg,#20172a,#111a27);border-color:#60415a}
+.preset-mark{background:#37e5d2;color:#061313}
+.preset-desc{color:#a9a2be}
+.keybox{background:#0c1720;border-color:#25414d}
+.keybox h3{color:#eff2ff}
+.btn{background:#141b2a;border-color:#353c56;color:#eff2ff}
+.btn:hover{border-color:#5d668c}
+.btn.primary{background:#9b8cff;border-color:#9b8cff;color:#090b14;box-shadow:0 5px 0 #5645a5}
+.btn.primary:hover{background:#b0a6ff}
+.btn.orange{background:#37e5d2;border-color:#37e5d2;color:#071414;box-shadow:0 4px 0 #188a85}
+.btn.ghost{background:transparent}
+.status{background:#18231b;border-color:#455c32;color:#d3ff73}
+.status.error{background:#2a131c;border-color:#693342;color:#ff9aaf}
+.resultempty{background:#0b111c;border-color:#343c56}
+.result-symbol{background:#242044;color:#b7acff}
+.resultempty p{color:#929bb7}
+.buildresult{background:#0b101b;border-color:#293048}
+.buildresult p{color:#a0aac7}
+.preview{background:#05070e;border:1px solid #293048}
+.preview-top{color:#828ca9}
+.preview-project{border-color:#293048}
+.preview-icon{background:#37e5d2;color:#071414}
+.preview-id{color:#939db8}
+.preview-field{background:#0f1422;border-color:#293048}
+.preview-field small{color:#818bad}.preview-field b{color:#eff2ff}
+.checkrow{color:#a2acc7}
+.checkmark{background:#162724;color:#7df4df;border-color:#2b625b}
+.info-row{border-color:#293048}.info-row p{color:#929bb7}
+.mini-link{color:#a99aff}
+footer{border-color:#293048;color:#7f89a6}footer a{color:#c2c8e6}
+.toast{background:#111625;color:#eff2ff;border-color:#3b4565;box-shadow:0 20px 60px #0008}
+@media(max-width:620px){.topbar{background:#0c101d}.hero-stamp{background:linear-gradient(140deg,#252052,#111a32)}}
+
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="rail">
+  <a href="#top" class="brand" aria-label="ModForge Startseite"><span class="brandmark">M</span><span class="brand-copy"><span class="brandtitle">MODFORGE</span><span class="brandcaption">NEON FORGE STATION</span></span></a>
+  <div class="rail-label">Arbeitsbereich</div>
+  <nav class="nav" aria-label="Hauptnavigation">
+    <a class="active" href="#project"><span class="nav-icon">▦</span><span class="nav-text">Projekt-Setup</span></a>
+    <a href="#idea"><span class="nav-icon">✳</span><span class="nav-text">Code-Werkstatt</span></a>
+    <a href="#buildaccess"><span class="nav-icon">⌘</span><span class="nav-text">Build-Zugriff</span></a>
+    <a href="#buildstatus"><span class="nav-icon">◷</span><span class="nav-text">Build-Status</span></a>
+  </nav>
+  <div class="rail-label">Direkt starten</div>
+  <nav class="nav">
+    <button type="button" onclick="document.getElementById('homePreset').click()"><span class="nav-icon">⌂</span><span class="nav-text">HomeMaster-Vorlage</span></button>
+    <a href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer"><span class="nav-icon">↗</span><span class="nav-text">Build-Verlauf</span></a>
+  </nav>
+  <div class="rail-bottom">
+    <div class="rail-note"><div class="rail-note-head"><span class="live-dot"></span> Build-System</div><p>Java wird auf GitHub kompiliert. Ein Download erscheint erst, wenn der Build erfolgreich war.</p><a href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">Actions ansehen ↗</a></div>
+    <div class="rail-footer">MODFORGE · WORKSHOP 01</div>
+  </div>
+</aside>
+<main class="main" id="top">
+  <header class="topbar"><div class="breadcrumb">Workspace <span style="padding:0 7px;color:#bab8b1">/</span> <strong>Neues Projekt</strong></div><div class="top-right"><span class="connection"><span class="live-dot"></span> BUILD PIPELINE AKTIV</span><span class="avatar">MF</span></div></header>
+  <div class="content">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">NEON FORGE STATION · V2</div>
+        <h1>Craft it.<br><span>Compile it.</span><br>Run it.</h1>
+        <p class="lede">Ein eigener Arbeitsplatz für Minecraft-Mods und Server-Plugins. Konfiguriere dein Projekt, generiere Java-Code und lass die JAR in einer echten Build-Umgebung kompilieren.</p>
+        <div class="hero-actions"><a class="btn primary" href="#project">Projekt konfigurieren <span>↓</span></a><a class="btn ghost" href="https://docs.papermc.io/" target="_blank" rel="noreferrer">Paper-Doku ↗</a><a class="btn ghost" href="https://docs.fabricmc.net/" target="_blank" rel="noreferrer">Fabric-Doku ↗</a></div>
+      </div>
+      <div class="hero-stamp"><div class="stamp-kicker">ModForge / 001</div><div class="stamp-icon">⚒</div><div class="stamp-title">FROM IDEA TO JAR</div><div class="stamp-copy">Java · Gradle · Minecraft</div></div>
+    </section>
+    <div class="meta-strip"><span class="meta-chip">TARGET <b id="stripVersion">1.21.11</b></span><span class="meta-chip">OUTPUT <b>.JAR ONLY</b></span><span class="meta-chip">BUILD <b>GITHUB ACTIONS</b></span><span class="meta-chip">SOURCE <b>JAVA</b></span></div>
+    <div class="grid">
+      <div class="stack">
+        <section class="panel" id="project">
+          <div class="panel-head"><div><div class="panel-overline">01 / Definition</div><h2>Projekt konfigurieren</h2><p class="panel-sub">Erst die Plattform, dann die Details. Die Zielplattform wird beim Build automatisch erkannt.</p></div><span class="stepno">01</span></div>
+          <div class="kindgrid">
+            <button class="tile active" data-kind="mod" type="button"><span class="tile-symbol">🧩</span><b>Fabric-Mod</b><small>Client oder Fabric-Server · Loader-basiert</small></button>
+            <button class="tile" data-kind="plugin" type="button"><span class="tile-symbol">⚙</span><b>Paper-Plugin</b><small>Paper / Purpur · keine Client-Mod erforderlich</small></button>
+          </div>
+          <div class="fields">
+            <div class="field"><label for="name">PROJEKTNAME</label><input class="input" id="name" value="ToasterTools" maxlength="48"></div>
+            <div class="field"><label for="id">PROJEKT-ID</label><input class="input" id="id" value="toastertools" maxlength="48"></div>
+            <div class="field"><label for="version">MINECRAFT-VERSION</label><select id="version"><option>26.2</option><option>26.1.2</option><option selected>1.21.11</option><option>1.21.10</option><option>1.21.8</option><option>1.21.4</option><option>1.21.1</option><option>1.20.6</option><option>1.20.4</option><option>1.20.1</option><option>1.19.4</option><option>1.18.2</option><option>1.16.5</option><option>1.12.2</option><option>1.8.8</option><option value="custom">Eigene Version</option></select><input class="input" id="customVersion" placeholder="Zum Beispiel 1.21.3" style="display:none;margin-top:8px"></div>
+            <div class="field"><label for="platform">LOADER / SERVER</label><select id="platform" disabled><option value="fabric">Fabric</option></select><p class="hint">Passt sich automatisch an den gewählten Projekttyp an.</p></div>
+            <div class="field"><label for="pkg">JAVA-PACKAGE</label><input class="input" id="pkg" value="de.toastomat.toastertools"></div>
+            <div class="field"><label for="desc">KURZBESCHREIBUNG</label><input class="input" id="desc" value="Toasterstarke Minecraft-Features" maxlength="180"></div>
+          </div>
+        </section>
+        <section class="panel" id="idea">
+          <div class="panel-head"><div><div class="panel-overline">02 / Implementation</div><h2>Die Code-Werkstatt</h2><p class="panel-sub">Beschreibe die Funktionen. Für die integrierte HomeMaster-Vorlage brauchst du keine externe KI.</p></div><span class="stepno">02</span></div>
+          <div class="field"><label for="idea">WAS SOLL DEIN PROJEKT KÖNNEN?</label><textarea id="idea" maxlength="6000">Erstelle ein Starterprojekt mit einem Beispiel-Feature, sauberer Struktur, Kommentaren und einer README mit Installations- und Build-Anleitung. IDs müssen konsistent sein.</textarea><p class="hint">Tipp: Nenne konkrete Befehle, Berechtigungen, Speicherverhalten und was bei Fehlern passieren soll.</p></div>
+          <div class="preset-card"><div class="preset-mark">⌂</div><div><div class="preset-title">HomeMaster / SetHome</div><div class="preset-desc">Homes, GUI, /back, sichere Teleports, Verzögerung und Cooldown vorkonfigurieren.</div></div><button class="btn orange preset-action" id="homePreset" type="button">Vorlage laden ↗</button></div>
+          <div class="keybox">
+            <h3>✳ KI-Codegenerierung <span style="color:#777;font-weight:600">/ optional</span></h3>
+            <div class="field"><label for="key">OPENROUTER API-KEY</label><input class="input" id="key" type="password" autocomplete="off" placeholder="sk-or-v1-…"><p class="hint">Nur für eigene KI-generierte Ideen. Der Key wird nicht gespeichert. Für HomeMaster leer lassen.</p></div>
+            <div class="field"><label for="model">MODELL-ID</label><input class="input" id="model" value="openrouter/free"></div>
+            <div class="inline-actions"><button class="btn small" id="testAI" type="button">Verbindung testen</button><span class="hint" id="aiDiag" aria-live="polite"></span></div>
+          </div>
+        </section>
+        <section class="panel" id="buildaccess">
+          <div class="panel-head"><div><div class="panel-overline">03 / Build-Freigabe</div><h2>Build-Zugriff</h2><p class="panel-sub">GitHub übernimmt die Kompilierung und stellt nur das fertige JAR-Artefakt bereit.</p></div><span class="stepno">03</span></div>
+          <div class="field"><label for="ghToken">GITHUB FINE-GRAINED TOKEN</label><input class="input" id="ghToken" type="password" autocomplete="off" placeholder="github_pat_…"></div>
+          <p class="hint">Erstelle einen Token nur für <strong>craft-attack-app</strong> mit <strong>Actions: Read and write</strong>. Er wird nur an die GitHub-API gesendet und weder an OpenRouter geschickt noch im Projekt gespeichert. Poste den Token nicht in Chats.</p>
+          <div class="inline-actions"><a class="btn ghost small" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noreferrer">Token erstellen ↗</a><a class="mini-link" href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">GitHub Actions ansehen</a></div>
+          <div class="divider"></div>
+          <button class="btn primary fullbutton" id="generate" type="button">⚡ Kompilieren & JAR herunterladen</button>
+          <p class="hint" style="margin:12px 0 0">Die JAR wird erst angeboten, wenn der Build erfolgreich abgeschlossen ist. Danach im <strong>mods</strong>- oder <strong>plugins</strong>-Ordner ablegen.</p>
+        </section>
+      </div>
+      <aside class="stack rightcol">
+        <section class="panel" id="buildstatus">
+          <div class="panel-head"><div><div class="panel-overline">04 / Pipeline</div><h2>Build-Konsole</h2><p class="panel-sub">Status und Ergebnis deines letzten Builds.</p></div><span class="stepno">04</span></div>
+          <span class="status" id="status">Bereit</span>
+          <div class="resultempty" id="empty"><div class="result-symbol">⌘</div><b>Kein Build gestartet</b><p>Konfiguriere dein Projekt, gib den GitHub-Token ein und starte die Kompilierung. Die echte JAR erscheint hier.</p></div>
+          <div class="buildresult" id="buildresult" style="display:none"><b id="resultTitle">Build abgeschlossen</b><p id="resultText"></p><a id="runlink" class="btn small" href="#" target="_blank" rel="noreferrer" style="display:none">Build-Details öffnen ↗</a></div>
+          <div class="preview">
+            <div class="preview-top"><span>Live-Projektkarte</span><span class="preview-light">● LOCAL PREVIEW</span></div>
+            <div class="preview-project"><div class="preview-icon">▦</div><div><div class="preview-name" id="previewName">ToasterTools</div><div class="preview-id" id="previewId">toastertools</div></div></div>
+            <div class="preview-grid"><div class="preview-field"><small>PROJEKTTYP</small><b id="previewKind">Fabric-Mod</b></div><div class="preview-field"><small>MINECRAFT</small><b id="previewVersion">1.21.11</b></div><div class="preview-field"><small>PLATTFORM</small><b id="previewPlatform">Fabric</b></div><div class="preview-field"><small>DATEIFORMAT</small><b>JAVA / JAR</b></div></div>
+          </div>
+          <div class="checklist"><div class="checkrow"><span class="checkmark">✓</span><span>Echte Java-Kompilierung auf GitHub Actions.</span></div><div class="checkrow"><span class="checkmark">✓</span><span>Automatisch erzeugte Minecraft-Metadaten für Mod oder Plugin.</span></div><div class="checkrow"><span class="checkmark">✓</span><span>Nur fertige JAR als Download, keine Projekt-ZIP nötig.</span></div></div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><div><div class="panel-overline">Hinweise</div><h2>Zwei Keys, zwei Aufgaben</h2></div></div>
+          <div class="info-row"><b>OpenRouter-Key</b><p>Optional. Nutzt ein KI-Modell, um Java für eigene Ideen zu schreiben. Der HomeMaster-Preset läuft ohne ihn.</p></div>
+          <div class="info-row"><b>GitHub-Token</b><p>Erforderlich, um den Build zu starten und das Artefakt über die GitHub-API abzurufen. Nicht öffentlich teilen.</p></div>
+          <div class="info-row"><b>Kompatibilität</b><p>Der Build prüft Kompilierung und Metadaten. Teste die fertige JAR zusätzlich auf deinem eigenen Server oder Client.</p></div>
+        </section>
+      </aside>
+    </div>
+    <footer><span>MODFORGE BUILD LAB · WORKSHOP 01</span><span><a href="https://github.com/Lennonbsiq999/craft-attack-app/tree/main/public/modforge" target="_blank" rel="noreferrer">Repository</a> · <a href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">Build-Verlauf</a></span></footer>
+  </div>
+</main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script>
+
+(function(){
+const $=id=>document.getElementById(id);let kind='mod';
+function toast(s){$('toast').textContent=s;$('toast').classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').classList.remove('show'),4000)}
+function slug(s){let v=s.toLowerCase().trim().replace(/[^a-z0-9_-]+/g,"-").replace(/^-+|-+$/g,"").slice(0,48)||"minecraft-project";return /^[a-z]/.test(v)?v:"project-"+v}
+function config(){let v=$('version').value;if(v==='custom')v=$('customVersion').value.trim();if(!v)v='1.21.11';return {name:$('name').value.trim()||'MinecraftProject',id:slug($('id').value),version:v,kind:kind,platform:$('platform').value,pkg:$('pkg').value.trim()||'de.toastomat.minecraft',desc:$('desc').value.trim(),idea:$('idea').value.trim()}}
+function makePrompt(c){
+const role=c.kind==='plugin'
+?'Paper-Server-Plugin für Minecraft '+c.version+'. Die Hauptklasse MUSS org.bukkit.plugin.java.JavaPlugin erweitern und einen gültigen Konstruktor/OnEnable haben. Falls Befehle benötigt werden, registriere sie über getCommand("befehlsname") und implementiere onCommand. Nutze ausschließlich die Paper/Bukkit-API.'
+:'Fabric-Mod für Minecraft '+c.version+'. Mindestens eine Hauptklasse MUSS net.fabricmc.api.ModInitializer implementieren. Nutze Fabric Loader und falls kompatibel die Fabric API. Keine erfundenen Methoden oder nicht existierenden Events.';
+return 'Erzeuge einen tatsächlich kompilierbaren Java-Code für '+role+'. Projektname: '+c.name+'. ID: '+c.id+'. Package: '+c.pkg+'. Beschreibung: '+c.desc+'. Nutzeridee: '+c.idea+'. Java-Ziel passend zu Minecraft wählen; ausschließlich JSON im Format {"summary":"...","files":[{"path":"src/main/java/paket/Klasse.java","content":"vollständiger Java-Quellcode"}]}. Optional sind einfache Textressourcen nur unter src/main/resources/ erlaubt. Gib KEINE build.gradle, settings.gradle, plugin.yml, fabric.mod.json, README, Prompts oder Binärdateien zurück; der Build erzeugt Gradle-Konfiguration und Minecraft-Metadaten selbst. Alle Klassen müssen vollständig sein, Imports müssen stimmen, keine Platzhalter oder TODOs. Keine absoluten Pfade, keine ".."-Pfade, keine versteckte Telemetrie, kein Credential-Diebstahl, keine destruktiven Funktionen, keine Verschleierung.';
+}
+function isHomeMasterRequest(c){
+return c.kind==='plugin'&&/set\s*home|homemaster|home\s*plugin|homes\s+gui/i.test([c.name,c.id,c.idea].join(' '));
+}
+async function homeMasterStarter(c){
+const pkgParts=c.pkg.split('.');
+const pkg=pkgParts.length&&pkgParts.every(part=>/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(part))?c.pkg:'de.toastomat.homemaster';
+const base='../modforge/templates/homemaster/';
+const [javaResponse,configResponse]=await Promise.all([
+fetch(base+'HomeMaster.java.template',{cache:'no-store'}),
+fetch(base+'config.yml',{cache:'no-store'})
+]);
+if(!javaResponse.ok||!configResponse.ok)throw new Error('Die integrierte HomeMaster-Vorlage konnte nicht geladen werden. Prüfe, ob die Website vollständig aktualisiert wurde.');
+let code=await javaResponse.text();
+const configText=await configResponse.text();
+code=code.replace('package __PACKAGE__;','package '+pkg+';');
+if(code.includes('__PACKAGE__'))throw new Error('Die HomeMaster-Vorlage enthält einen nicht ersetzten Package-Platzhalter.');
+const sourcePath='src/main/java/'+pkg.split('.').join('/')+'/HomeMaster.java';
+return {[sourcePath]:code,'src/main/resources/config.yml':configText};
+}
+function starter(c){
+const parts=c.pkg.split('.');
+const pkg=parts.length&&parts.every(part=>/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(part))?c.pkg:'de.toastomat.minecraft';
+const cls=c.kind==='plugin'?'Main':'ToasterMod';
+const lines=c.kind==='plugin'?[
+'package '+pkg+';',
+'',
+'import org.bukkit.plugin.java.JavaPlugin;',
+'',
+'public final class Main extends JavaPlugin {',
+'    @Override',
+'    public void onEnable() {',
+'        getLogger().info("ModForge starter plugin is ready.");',
+'    }',
+'}'
+]:[
+'package '+pkg+';',
+'',
+'import net.fabricmc.api.ModInitializer;',
+'',
+'public final class ToasterMod implements ModInitializer {',
+'    @Override',
+'    public void onInitialize() {',
+'        System.out.println("ModForge starter mod is ready.");',
+'    }',
+'}'
+];
+const code=lines.join(String.fromCharCode(10))+String.fromCharCode(10);
+const path='src/main/java/'+pkg.split('.').join('/')+'/'+cls+'.java';
+return {[path]:code};
+}
+function apiMessage(status, message) {
+  const raw = String(message || "").trim();
+  if (status === 401) return "API-Key ungültig oder widerrufen. Prüfe deinen Key im OpenRouter-Dashboard.";
+  if (status === 402) return "OpenRouter meldet ein Guthaben- oder Kontolimit. Prüfe dein Konto.";
+  if (status === 403) return "Zugriff verweigert. Prüfe Berechtigungen und Sicherheitsbeschränkungen.";
+  if (status === 404) return "Modell nicht gefunden. Nutze openrouter/free oder eine aktuell verfügbare Modell-ID.";
+  if (status === 408) return "Zeitüberschreitung. Bitte erneut versuchen.";
+  if (status === 413) return "Anfrage zu groß. Kürze deine Idee.";
+  if (status === 429) return "Limit erreicht. Kostenlose Modelle sind begrenzt. Warte etwas und versuche es erneut.";
+  if (status === 502 || status === 503) return "Das Modell oder die kostenlosen Anbieter sind gerade nicht verfügbar. Versuche es später oder wähle ein anderes Modell.";
+  if (status === 400) return "OpenRouter lehnt einen Anfrageparameter ab: " + raw;
+  return "OpenRouter-Fehler (" + status + "): " + (raw || "Keine weiteren Details.");
+}
+async function callOpenRouter(messages, maxTokens) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 150000);
+  let response;
+  try {
+    response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST", signal: controller.signal,
+      headers: {
+        "Authorization": "Bearer " + $("key").value.trim(),
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://lennonbsiq999.github.io/craft-attack-app/modforge-studio/",
+        "X-OpenRouter-Title": "ModForge AI"
+      },
+      body: JSON.stringify({
+        model: $("model").value.trim() || "openrouter/free",
+        messages: messages, max_tokens: maxTokens, temperature: 0.2,
+        response_format: { type: "json_object" }
+      })
+    });
+  } catch (error) {
+    if (error && error.name === "AbortError") throw new Error("Zeitüberschreitung nach 150 Sekunden. Das kostenlose Modell ist eventuell überlastet.");
+    throw new Error("API nicht erreichbar. Prüfe Internetverbindung, Browser-Erweiterungen und mögliche CORS-/Netzwerkblockaden. " + (error && error.message ? error.message : ""));
+  } finally { clearTimeout(timer); }
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok || body.error) {
+    const status = Number(response.status || (body.error && body.error.code) || 0);
+    const message = body.error && (body.error.message || (body.error.metadata && body.error.metadata.raw)) || body.message || "";
+    throw new Error(apiMessage(status, message));
+  }
+  const choice = body.choices && body.choices[0];
+  const content = choice && choice.message && choice.message.content;
+  if (typeof content !== "string" || !content.trim()) {
+    if (choice && choice.finish_reason === "length") throw new Error("Die KI-Antwort wurde abgeschnitten. Kürze die Idee oder reduziere den Umfang.");
+    throw new Error("Das Modell lieferte keine Textantwort. Modell: " + (body.model || "unbekannt") + ".");
+  }
+  return { text: content.trim(), model: body.model || "unbekannt", finishReason: choice.finish_reason || "" };
+}
+function parseAIResult(answer, c, prompt) {
+  const text = answer.trim();
+  let parsed;
+  try { parsed = JSON.parse(text); }
+  catch (firstError) {
+    const first = text.indexOf("{");
+    const last = text.lastIndexOf("}");
+    if (first < 0 || last <= first) throw new Error("Die KI-Antwort war kein gültiges JSON. Kürze die Idee oder wechsle das Modell.");
+    try { parsed = JSON.parse(text.slice(first, last + 1)); }
+    catch (secondError) { throw new Error("Die KI-Antwort war unvollständig. Kürze die Idee oder reduziere den Projektumfang."); }
+  }
+  if (!parsed || !Array.isArray(parsed.files)) throw new Error("Die KI-Antwort enthält kein files-Array. Versuche ein anderes Modell.");
+  const files = {};
+  parsed.files.forEach(item => {
+    if (!item || typeof item.path !== "string" || typeof item.content !== "string") return;
+    const path = item.path.replace(/\\/g, "/").replace(/^\/+/, "");
+    if (!path || path.split("/").some(part => part === ".." || part === "") || path.includes(":") || item.content.length > 600000) return;
+    files[path] = item.content;
+  });
+  if (!Object.keys(files).length) throw new Error("Die KI lieferte keine gültigen Projektdateien.");
+  files["AI_PROMPT.txt"] = prompt;
+  if (!files["README.md"]) files["README.md"] = "# " + c.name + "\n\nKI-generierter Quellcode. Vor dem Build prüfen.\n";
+  files["GENERATION_INFO.txt"] = "Model: " + (window.__modforgeModel || "OpenRouter") + "\nVor dem Build Versionskompatibilität prüfen.\n";
+  return files;
+}
+async function makeAI(c, prompt) {
+  const system = "You are an expert Minecraft Java developer. Return only one valid JSON object with this structure: {\"summary\":\"short explanation\",\"files\":[{\"path\":\"relative/path\",\"content\":\"full text\"}]}. Generate complete, compile-ready source code. Do not invent APIs or version numbers. No credential theft, hidden telemetry, destructive code, obfuscated payloads, placeholders, TODOs, README files, or markdown fences. Paths must be relative and cannot contain .. .";
+  let lastError;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const retryPrompt = attempt === 0 ? prompt : prompt + "\n\nRETRY REQUIREMENTS: The previous answer was incomplete or invalid. Return a smaller but complete implementation that preserves the requested core commands, persistence, permissions, and safety checks. Use only the files necessary to compile; keep the JSON valid and concise. Do not omit the main class or required plugin/mod entrypoint.";
+    try {
+      const result = await callOpenRouter([
+        { role: "system", content: system },
+        { role: "user", content: retryPrompt }
+      ], attempt === 0 ? 12000 : 9000);
+      window.__modforgeModel = result.model;
+      if (result.finishReason === "length") throw new Error("AI_OUTPUT_TRUNCATED");
+      return parseAIResult(result.text, c, prompt);
+    } catch (error) {
+      lastError = error;
+      const message = error && error.message ? error.message : String(error);
+      const retryable = /AI_OUTPUT_TRUNCATED|gültiges JSON|unvollständig|files-Array|keine gültigen Projektdateien/i.test(message);
+      if (attempt === 0 && retryable) {
+        setStatus("KI-Antwort unvollständig. Versuche eine kompaktere, vollständige Generierung…");
+        continue;
+      }
+      if (message === "AI_OUTPUT_TRUNCATED") {
+        throw new Error("Die KI-Antwort wurde trotz Wiederholung abgeschnitten. Kürze die Idee etwas oder wähle ein Modell mit größerem Ausgabelimit.");
+      }
+      throw error;
+    }
+  }
+  throw lastError || new Error("KI-Codegenerierung fehlgeschlagen.");
+}
+async function testAIConnection() {
+  const button = $("testAI"), diag = $("aiDiag");
+  if (!$("key").value.trim()) { diag.textContent = "Bitte zuerst einen API-Key eintragen."; toast("API-Key fehlt."); return; }
+  button.disabled = true; button.textContent = "Teste…"; diag.textContent = "KI-Anfrage läuft (max. 150 Sekunden)…";
+  try {
+    const result = await callOpenRouter([
+      { role: "system", content: "Return only this JSON object: {\"ok\":true,\"message\":\"connected\"}." },
+      { role: "user", content: "Test API connection. Return a tiny JSON object with ok true." }
+    ], 100);
+    const parsed = JSON.parse(result.text);
+    if (parsed.ok !== true) throw new Error("Unerwartete Testantwort.");
+    diag.textContent = "Verbunden: " + result.model;
+    toast("KI-Verbindung funktioniert. Der Codegenerator kann bei großen Antworten trotzdem an Limits stoßen.");
+  } catch (error) { diag.textContent = error.message; toast(error.message); }
+  finally { button.disabled = false; button.textContent = "KI-Verbindung testen"; }
+}
+function download(name,content,type){let u=URL.createObjectURL(new Blob([content],{type:type||'text/plain'})),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+function setStatus(message, error=false){$('status').textContent=message;$('status').className=error?'status error':'status'}
+const repo='Lennonbsiq999/craft-attack-app';
+function ghHeaders(){return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+$('ghToken').value.trim(),'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'}}
+async function ghJson(path, options={}){
+let response;
+try{response=await fetch('https://api.github.com'+path,{...options,headers:{...ghHeaders(),...(options.headers||{})}})}
+catch(e){throw new Error('GitHub-API nicht erreichbar. Prüfe Internetverbindung oder Browserblocker.')}
+const raw=await response.text();let data={};try{data=raw?JSON.parse(raw):{}}catch(e){}
+if(!response.ok){
+if(response.status===401)throw new Error('GitHub-Token ungültig. Erstelle einen neuen Fine-grained Token.');
+if(response.status===403)throw new Error('GitHub verweigert den Zugriff. Der Token braucht Actions: Read and write für craft-attack-app.');
+if(response.status===404)throw new Error('Workflow nicht gefunden oder Token hat keinen Zugriff. Prüfe Repository und Token-Berechtigung.');
+throw new Error(data.message||('GitHub-Fehler HTTP '+response.status));
+}
+return data;
+}
+function buildFiles(files){
+const allowed={};
+const resourceExtensions=new Set(['json','yml','yaml','txt','properties','lang','toml','mcmeta','xml']);
+for(const [rawPath,content] of Object.entries(files||{})){
+if(typeof content!=='string')continue;
+let path=String(rawPath).split(String.fromCharCode(92)).join('/');
+while(path.startsWith('/'))path=path.slice(1);
+if(!path||path.split('/').some(p=>p===''||p==='.'||p==='..')||path.includes(':'))continue;
+const lower=path.toLowerCase();
+if(lower.endsWith('.java'))allowed[path]=content;
+else if(path.startsWith('src/main/resources/')){
+const suffix=lower.includes('.')?lower.slice(lower.lastIndexOf('.')+1):'';
+if(resourceExtensions.has(suffix)&&!lower.endsWith('/plugin.yml')&&!lower.endsWith('/fabric.mod.json'))allowed[path]=content;
+}
+}
+if(!Object.keys(allowed).some(p=>p.toLowerCase().endsWith('.java')))throw new Error('Die KI hat keinen Java-Einstiegspunkt erstellt. Versuche es mit einer klareren Idee.');
+return allowed;
+}
+async function encodePayload(c, files){
+if(typeof CompressionStream==='undefined')throw new Error('Dein Browser unterstützt die sichere Komprimierung nicht. Nutze eine aktuelle Version von Chrome oder Opera.');
+const payload={config:{name:c.name,id:c.id,version:c.version,kind:c.kind,platform:c.platform,pkg:c.pkg,desc:c.desc},files:files};
+const stream=new Blob([JSON.stringify(payload)]).stream().pipeThrough(new CompressionStream('gzip'));
+const bytes=new Uint8Array(await new Response(stream).arrayBuffer());
+let binary='';for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));
+const encoded=btoa(binary);
+if(encoded.length>64000)throw new Error('Der generierte Code ist für einen Build zu groß. Kürze die Idee.');
+return encoded;
+}
+function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
+async function buildJar(c, files){
+const token=$('ghToken').value.trim();
+if(!token)throw new Error('GitHub-Token fehlt. Erstelle einen Fine-grained Token mit Actions: Read and write.');
+if(typeof JSZip==='undefined')throw new Error('Die JAR-Download-Komponente konnte nicht geladen werden. Seite neu laden.');
+const projectFiles=buildFiles(files);
+const payload=await encodePayload(c,projectFiles);
+setStatus('Verbinde mit GitHub Actions…');
+$('resultTitle').textContent='Build läuft';
+$('resultText').textContent='GitHub Actions kompiliert deinen Java-Code. Es werden keine Quelldateien zum Download angezeigt.';
+$('buildresult').style.display='block';$('empty').style.display='none';$('runlink').style.display='none';
+const workflow='/repos/'+repo+'/actions/workflows/modforge-build-jar.yml/runs?per_page=10';
+const before=await ghJson(workflow);
+const oldIds=new Set((before.workflow_runs||[]).map(r=>r.id));
+const launchedAt=Date.now();
+await ghJson('/repos/'+repo+'/actions/workflows/modforge-build-jar.yml/dispatches',{method:'POST',body:JSON.stringify({ref:'main',inputs:{payload:payload}})});
+let run=null;
+for(let i=0;i<25&&!run;i++){
+await delay(1500);
+const data=await ghJson(workflow);
+run=(data.workflow_runs||[]).find(r=>!oldIds.has(r.id)&&r.event==='workflow_dispatch'&&new Date(r.created_at).getTime()>=launchedAt-10000)||null;
+setStatus(run?'Build gestartet…':'Warte auf GitHub Runner…');
+}
+if(!run)throw new Error('GitHub hat keinen Build gestartet. Öffne die Actions-Seite und prüfe, ob Actions für das Repository aktiviert sind.');
+$('runlink').href=run.html_url||'https://github.com/'+repo+'/actions';
+for(let i=0;i<390;i++){
+await delay(2000);
+const current=await ghJson('/repos/'+repo+'/actions/runs/'+run.id);
+if(current.status==='completed'){
+if(current.conclusion!=='success'){
+$('runlink').href=current.html_url||run.html_url;$('runlink').style.display='inline-block';
+throw new Error('Die Kompilierung ist fehlgeschlagen. Öffne „Build-Details“, um die Fehlermeldung zu sehen.');
+}
+break;
+}
+setStatus(current.status==='queued'?'Build wartet auf einen Runner…':'Kompiliere Minecraft-JAR…');
+if(i===389)throw new Error('Der Build läuft ungewöhnlich lange. Öffne die Build-Details und prüfe, ob GitHub Actions noch kompiliert.');
+}
+setStatus('JAR wird heruntergeladen…');
+const artifactData=await ghJson('/repos/'+repo+'/actions/runs/'+run.id+'/artifacts');
+const artifact=(artifactData.artifacts||[]).find(a=>a.name==='modforge-jar'&&!a.expired);
+if(!artifact)throw new Error('Der Build war erfolgreich, aber das JAR-Artefakt wurde nicht gefunden.');
+let response;
+try{response=await fetch('https://api.github.com/repos/'+repo+'/actions/artifacts/'+artifact.id+'/zip',{headers:ghHeaders()})}
+catch(e){throw new Error('JAR-Artefakt konnte nicht heruntergeladen werden. Prüfe Token-Berechtigung und Browserverbindung.')}
+if(!response.ok)throw new Error('Download des Build-Artefakts fehlgeschlagen (HTTP '+response.status+').');
+const zip=await JSZip.loadAsync(await response.blob());
+const entry=Object.values(zip.files).find(f=>!f.dir&&f.name.toLowerCase().endsWith('.jar'));
+if(!entry)throw new Error('Im Build-Artefakt wurde keine JAR-Datei gefunden.');
+const jar=await entry.async('blob');
+const filename=slug(c.id)+'.jar';
+download(filename,jar,'application/java-archive');
+setStatus('JAR bereit');
+$('resultTitle').textContent='Fertig: '+filename;
+$('resultText').textContent='Die kompilierte JAR wurde heruntergeladen. Lege sie bei einer Fabric-Mod in den mods-Ordner oder bei einem Paper/Purpur-Plugin in den plugins-Ordner.';
+$('runlink').href=run.html_url||'https://github.com/'+repo+'/actions';$('runlink').textContent='Build-Details öffnen ↗';$('runlink').style.display='inline-block';
+}
+document.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{
+kind=b.dataset.kind;
+document.querySelectorAll('.tile').forEach(t=>t.classList.toggle('active',t===b));
+const list=kind==='mod'?[['fabric','Fabric']]:[['paper','Paper / Purpur']];
+$('platform').innerHTML=list.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');
+$('platform').disabled=true;
+$('pkg').disabled=false;
+});
+$('version').onchange=()=>{$('customVersion').style.display=$('version').value==='custom'?'block':'none'};
+$('generate').onclick=async()=>{
+const c=config();
+if(!c.idea){toast('Beschreibe die Idee zuerst.');return}
+if(!$('ghToken').value.trim()){toast('GitHub-Token fehlt. Erst Token eintragen, dann wird gebaut.');$('ghToken').focus();return}
+$('generate').disabled=true;$('generate').textContent='Build läuft…';
+$('runlink').style.display='none';$('buildresult').style.display='none';$('empty').style.display='flex';
+setStatus('Bereite Code vor…');
+try{
+const p=makePrompt(c);
+let files;
+if(isHomeMasterRequest(c)){
+setStatus('Lade integrierte HomeMaster-Vorlage…');
+files=await homeMasterStarter(c);
+toast('HomeMaster-Vorlage aktiviert: Kernfunktionen werden ohne KI generiert und anschließend kompiliert.');
+}else if($('key').value.trim()){
+setStatus('KI schreibt Java-Code…');
+files=await makeAI(c,p);
+}else{
+files=starter(c);
+toast('Basis-JAR: Ohne OpenRouter-Key wird deine eingegebene Wunschfunktion nicht von der KI umgesetzt.');
+}
+setStatus('Quellcode bereit. Starte Kompilierung…');
+await buildJar(c,files);
+}catch(e){
+setStatus('Build fehlgeschlagen',true);
+$('buildresult').style.display='block';$('empty').style.display='none';
+$('resultTitle').textContent='JAR konnte nicht erstellt werden';
+$('resultText').textContent=e&&e.message?e.message:'Unbekannter Fehler beim Erstellen der JAR.';
+toast($('resultText').textContent);
+}finally{
+$('generate').disabled=false;$('generate').textContent='⚡ JAR erstellen & herunterladen';
+}
+};
+$('homePreset').onclick=()=>{
+const pluginTile=document.querySelector('.tile[data-kind="plugin"]');
+if(pluginTile)pluginTile.click();
+$('name').value='HomeMaster';
+$('id').value='homemaster';
+$('pkg').value='de.toastomat.homemaster';
+$('desc').value='Homes speichern, verwalten und sicher teleportieren';
+$('idea').value='HomeMaster Paper-Plugin für Minecraft: /sethome [name], /home [name], /homes, /homes gui, /delhome <name>, /renamehome <alt> <neu> und /back. Homes dauerhaft pro UUID speichern, Home-Limit konfigurierbar, Permissions, sichere Teleports, Teleport-Verzögerung mit Abbruch bei Bewegung oder Schaden und Cooldown. Nutze die integrierte HomeMaster-Vorlage.';
+$('aiDiag').textContent='Integrierte Vorlage aktiv. OpenRouter-Key ist für HomeMaster nicht erforderlich.';
+setStatus('HomeMaster-Vorlage ausgewählt');
+toast('HomeMaster ist vorkonfiguriert. Jetzt nur noch GitHub-Build-Token eintragen und JAR erstellen.');
+};
+$('testAI').onclick=testAIConnection;
+})();
+
+</script>
+<script>
+(function(){
+const get=id=>document.getElementById(id);
+function updatePreview(){
+  const name=get("name"),id=get("id"),version=get("version"),custom=get("customVersion"),platform=get("platform");
+  const active=document.querySelector(".tile.active");
+  const previewName=get("previewName"),previewId=get("previewId"),previewKind=get("previewKind"),previewVersion=get("previewVersion"),previewPlatform=get("previewPlatform"),stripVersion=get("stripVersion");
+  if(previewName)previewName.textContent=name.value.trim()||"MinecraftProjekt";
+  if(previewId)previewId.textContent=id.value.trim()||"projekt-id";
+  if(previewKind)previewKind.textContent=active&&active.dataset.kind==="plugin"?"Paper-Plugin":"Fabric-Mod";
+  const v=version.value==="custom"?(custom.value.trim()||"Eigene Version"):version.value;
+  if(previewVersion)previewVersion.textContent=v;
+  if(stripVersion)stripVersion.textContent=v;
+  if(previewPlatform)previewPlatform.textContent=platform.options[platform.selectedIndex]?.textContent||"Automatisch";
+}
+["name","id","version","customVersion","platform"].forEach(id=>{const el=get(id);if(el){el.addEventListener("input",updatePreview);el.addEventListener("change",updatePreview)}});
+document.querySelectorAll(".tile").forEach(el=>el.addEventListener("click",updatePreview));
+const preset=get("homePreset");if(preset)preset.addEventListener("click",updatePreview);
+updatePreview();
+})();
+</script>
+</body>
+</html>
