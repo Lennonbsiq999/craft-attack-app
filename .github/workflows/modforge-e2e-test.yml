@@ -1,0 +1,121 @@
+name: ModForge JAR End-to-End Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/modforge_build_jar.py"
+      - ".github/workflows/modforge-build-jar.yml"
+      - ".github/workflows/modforge-e2e-test.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-smoke-test:
+    name: Build ${{ matrix.kind }} JAR
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        kind: [fabric, paper]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create smoke-test project payload
+        env:
+          KIND: ${{ matrix.kind }}
+        run: |
+          python3 - <<'PY'
+          import base64, gzip, json, os
+          kind = os.environ["KIND"]
+          if kind == "fabric":
+              config = {
+                  "name": "ModForgeSmokeTest", "id": "modforge_smoke_test",
+                  "version": "1.21.11", "kind": "mod", "platform": "fabric",
+                  "pkg": "de.toastomat.smoketest", "desc": "CI smoke test"
+              }
+              path = "src/main/java/de/toastomat/smoketest/SmokeMod.java"
+              source = """package de.toastomat.smoketest;
+
+          import net.fabricmc.api.ModInitializer;
+
+          public final class SmokeMod implements ModInitializer {
+              @Override
+              public void onInitialize() {
+                  System.out.println("ModForge smoke test loaded.");
+              }
+          }
+          """
+          else:
+              config = {
+                  "name": "ModForgeSmokeTest", "id": "modforge_smoke_test",
+                  "version": "1.21.11", "kind": "plugin", "platform": "paper",
+                  "pkg": "de.toastomat.smoketest", "desc": "CI smoke test"
+              }
+              path = "src/main/java/de/toastomat/smoketest/SmokePlugin.java"
+              source = """package de.toastomat.smoketest;
+
+          import org.bukkit.plugin.java.JavaPlugin;
+
+          public final class SmokePlugin extends JavaPlugin {
+              @Override
+              public void onEnable() {
+                  getLogger().info("ModForge smoke test loaded.");
+              }
+          }
+          """
+          payload = {"config": config, "files": {path: source}}
+          encoded = base64.b64encode(gzip.compress(json.dumps(payload, separators=(",", ":")).encode())).decode()
+          if len(encoded) > 64000:
+              raise SystemExit("Smoke-test payload unexpectedly exceeds GitHub's input limit")
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
+              env.write("MODFORGE_PAYLOAD=" + encoded + "\n")
+          PY
+
+      - name: Prepare project
+        id: prepare
+        run: python3 scripts/modforge_build_jar.py prepare
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ steps.prepare.outputs.java }}
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.2.1"
+
+      - name: Compile JAR
+        run: python3 scripts/modforge_build_jar.py build
+
+      - name: Verify output
+        env:
+          KIND: ${{ matrix.kind }}
+        run: |
+          python3 - <<'PY'
+          import os, zipfile
+          from pathlib import Path
+          jars = list(Path("dist").glob("*.jar"))
+          if len(jars) != 1:
+              raise SystemExit("Expected exactly one JAR in dist/")
+          required = "fabric.mod.json" if os.environ["KIND"] == "fabric" else "plugin.yml"
+          with zipfile.ZipFile(jars[0]) as archive:
+              if required not in archive.namelist():
+                  raise SystemExit("JAR is missing " + required)
+          print("Verified", jars[0].name, "with", required)
+          PY
+
+      - name: Upload test JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: modforge-smoke-${{ matrix.kind }}
+          path: dist/*.jar
+          if-no-files-found: error
+          retention-days: 1
