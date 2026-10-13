@@ -1,0 +1,45 @@
+name: ModForge Static Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/modforge_build_jar.py"
+      - "public/modforge/index.html"
+      - ".github/workflows/modforge-build-jar.yml"
+      - ".github/workflows/modforge-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check Python syntax
+        run: python -m py_compile scripts/modforge_build_jar.py
+
+      - name: Extract the ModForge browser script
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html = Path("public/modforge/index.html").read_text(encoding="utf-8")
+          lib = '<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>'
+          pos = html.index(lib) + len(lib)
+          start = html.index("<script>", pos) + len("<script>")
+          end = html.index("</script>", start)
+          Path("/tmp/modforge-page.js").write_text(html[start:end], encoding="utf-8")
+          PY
+
+      - name: Check browser JavaScript syntax
+        run: node --check /tmp/modforge-page.js
