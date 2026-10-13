@@ -1,0 +1,53 @@
+name: ModForge JAR Build
+run-name: ModForge JAR Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: "Compressed project data (sent by ModForge AI)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  build-jar:
+    name: Compile Minecraft JAR
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout builder
+        uses: actions/checkout@v4
+
+      - name: Prepare safe project
+        id: prepare
+        env:
+          MODFORGE_PAYLOAD: ${{ inputs.payload }}
+        run: python3 scripts/modforge_build_jar.py prepare
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ steps.prepare.outputs.java }}
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.2.1"
+
+      - name: Compile JAR
+        env:
+          MODFORGE_PAYLOAD: ${{ inputs.payload }}
+        run: python3 scripts/modforge_build_jar.py build
+
+      - name: Upload only the finished JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: modforge-jar
+          path: dist/*.jar
+          if-no-files-found: error
+          retention-days: 1
