@@ -251,7 +251,7 @@ public final class HomeMaster extends JavaPlugin implements Listener, CommandExe
             }
             player.sendMessage(PREFIX + ChatColor.GRAY + "Teleport in " + state.remaining + "…");
             state.remaining--;
-        }, 20L, 20L);
+        }, 0L, 20L);
     }
 
     private void finishTeleport(Player player, Location target) {
