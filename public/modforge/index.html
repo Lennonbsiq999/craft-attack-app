@@ -154,10 +154,10 @@ function parseAIResult(answer, c, prompt) {
   return files;
 }
 async function makeAI(c, prompt) {
-  const system = "You are an expert Minecraft Java developer. Return only one valid JSON object with this structure: {\\\"summary\\\":\\\"short explanation\\\",\\\"files\\\":[{\\\"path\\\":\\\"relative/path\\\",\\\"content\\\":\\\"full text\\\"}]}. Generate complete, compile-ready source code. Do not invent APIs or version numbers. No credential theft, hidden telemetry, destructive code, obfuscated payloads, placeholders, TODOs, README files, or markdown fences. Paths must be relative and cannot contain .. .";
+  const system = "You are an expert Minecraft Java developer. Return only one valid JSON object with this structure: {\"summary\":\"short explanation\",\"files\":[{\"path\":\"relative/path\",\"content\":\"full text\"}]}. Generate complete, compile-ready source code. Do not invent APIs or version numbers. No credential theft, hidden telemetry, destructive code, obfuscated payloads, placeholders, TODOs, README files, or markdown fences. Paths must be relative and cannot contain .. .";
   let lastError;
   for (let attempt = 0; attempt < 2; attempt++) {
-    const retryPrompt = attempt === 0 ? prompt : prompt + "\\n\\nRETRY REQUIREMENTS: The previous answer was incomplete or invalid. Return a smaller but complete implementation that preserves the requested core commands, persistence, permissions, and safety checks. Use only the files necessary to compile; keep the JSON valid and concise. Do not omit the main class or required plugin/mod entrypoint.";
+    const retryPrompt = attempt === 0 ? prompt : prompt + "\n\nRETRY REQUIREMENTS: The previous answer was incomplete or invalid. Return a smaller but complete implementation that preserves the requested core commands, persistence, permissions, and safety checks. Use only the files necessary to compile; keep the JSON valid and concise. Do not omit the main class or required plugin/mod entrypoint.";
     try {
       const result = await callOpenRouter([
         { role: "system", content: system },
