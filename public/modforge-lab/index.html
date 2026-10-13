@@ -544,7 +544,7 @@ function syncOverview(){
  const pkgValid=/^[A-Za-z_$][A-Za-z0-9_$]*(\.[A-Za-z_$][A-Za-z0-9_$]*)*$/.test(pkg);
  const checks=[
   {id:'checkName',ok:$('name').value.trim().length>1,label:'Projektname gesetzt'},
-  {id:'checkId',ok:/^[a-z][a-z0-9_-]{0,47}$/.test(c.id),label:'Projekt-ID gültig'},
+  {id:'checkId',ok:/^[a-z][a-z0-9_-]{0,47}$/.test($('id').value.trim().toLowerCase()),label:'Projekt-ID gültig'},
   {id:'checkPackage',ok:pkgValid,label:'Java-Package gültig'},
   {id:'checkIdea',ok:$('idea').value.trim().length>=30,label:'Projektidee ausreichend konkret'},
   {id:'checkVersion',ok:/^\d+\.\d+(?:\.\d+)?$/.test(c.version)&&($("version").value!=="custom"||$("customVersion").value.trim().length>0),label:'Minecraft-Version erkannt'}
@@ -635,6 +635,7 @@ function restoreDraft(){
   if(d.version&&[...$('version').options].some(o=>o.value===d.version||o.text===d.version))$('version').value=d.version;
   else if(d.version){$('version').value='custom';$('customVersion').value=d.version;$('customVersion').style.display='block';}
   if(d.customVersion)$('customVersion').value=d.customVersion;
+  if($('version').value==='custom')$('customVersion').style.display='block';
   if(d.desc!==undefined)$('desc').value=d.desc;
   if(d.idea!==undefined)$('idea').value=d.idea;
   if(d.pkg)$('pkg').value=d.pkg;
