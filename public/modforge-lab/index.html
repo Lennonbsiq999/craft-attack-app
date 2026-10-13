@@ -340,8 +340,9 @@ $('status').className=error?'status error':'status';
 const m=String(message).toLowerCase();
 let active=0;
 if(/lade integrierte|ki schreibt|bereite code|quellcode vorbereiten/.test(m))active=1;
-else if(/quellcode bereit|verbinde mit github|build gestartet|warte auf github|build wartet|kompiliere minecraft/.test(m))active=2;
-else if(/jar wird heruntergeladen/.test(m))active=3;
+else if(/quellcode bereit|verbinde mit github|build gestartet|warte auf github|build wartet|validier/.test(m))active=2;
+else if(/kompiliere minecraft|compile|gradle/.test(m))active=3;
+else if(/jar wird heruntergeladen/.test(m))active=4;
 else if(/jar bereit/.test(m))active=4;
 else if(/fehlgeschlagen/.test(m))active=0;
 for(let i=1;i<=4;i++){
