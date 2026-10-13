@@ -178,8 +178,10 @@ def prepare():
         qname = name.replace("\\", "\\\\").replace('"', '\\"')
         qdesc = desc.replace("\\", "\\\\").replace('"', '\\"')
         commands = set()
+        permissions = set()
         for content in files.values():
             commands.update(re.findall(r"""getCommand\s*\(\s*["']([a-zA-Z0-9_-]+)["']\s*\)""", content))
+            permissions.update(re.findall(r"""hasPermission\s*\(\s*["']([a-zA-Z0-9_.-]+)["']\s*\)""", content))
         if not commands:
             commands.add(project_id)
         lines = ['name: "' + qname + '"', 'version: "1.0.0"', "main: " + entrypoint]
@@ -189,6 +191,11 @@ def prepare():
         for command in sorted(commands):
             command = slug(command)
             lines += ["  " + command + ":", '    description: "Generated command"', "    usage: /" + command]
+        if permissions:
+            lines.append("permissions:")
+            for permission in sorted(permissions):
+                default = "op" if permission.endswith(".admin") or ".bypass." in permission or permission.endswith(".multiple") else "true"
+                lines += ["  " + permission + ":", '    description: "Generated permission"', '    default: "' + default + '"']
         write(work / "src/main/resources/plugin.yml", "\n".join(lines) + "\n")
         gradle = """plugins {
     id 'java'
