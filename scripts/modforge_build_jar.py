@@ -170,7 +170,8 @@ def prepare():
     for rel, content in files.items():
         write(work / rel, content)
     release = target_java(v)
-    runner = 25 if v[0] >= 26 else 21
+    # Loom 1.16 requires Java 25 to run; `release` still controls the bytecode target for the selected Minecraft version.
+    runner = 25 if kind == "mod" or v[0] >= 26 else 21
 
     if kind == "plugin":
         api = (mc + ".build.+") if v[0] >= 26 else (mc + "-R0.1-SNAPSHOT")
