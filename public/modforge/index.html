@@ -247,7 +247,7 @@ setStatus(run?'Build gestartet…':'Warte auf GitHub Runner…');
 }
 if(!run)throw new Error('GitHub hat keinen Build gestartet. Öffne die Actions-Seite und prüfe, ob Actions für das Repository aktiviert sind.');
 $('runlink').href=run.html_url||'https://github.com/'+repo+'/actions';
-for(let i=0;i<210;i++){
+for(let i=0;i<390;i++){
 await delay(2000);
 const current=await ghJson('/repos/'+repo+'/actions/runs/'+run.id);
 if(current.status==='completed'){
@@ -258,7 +258,7 @@ throw new Error('Die Kompilierung ist fehlgeschlagen. Öffne „Build-Details“
 break;
 }
 setStatus(current.status==='queued'?'Build wartet auf einen Runner…':'Kompiliere Minecraft-JAR…');
-if(i===209)throw new Error('Der Build dauert zu lange. Öffne die Build-Details und prüfe den Status.');
+if(i===389)throw new Error('Der Build läuft ungewöhnlich lange. Öffne die Build-Details und prüfe, ob GitHub Actions noch kompiliert.');
 }
 setStatus('JAR wird heruntergeladen…');
 const artifactData=await ghJson('/repos/'+repo+'/actions/runs/'+run.id+'/artifacts');
