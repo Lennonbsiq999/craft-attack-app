@@ -252,7 +252,7 @@ rootProject.name = '%s'
             properties += "fabric_api_version=" + fabric_api + "\n"
         write(work / "gradle.properties", properties)
         gradle = """plugins {
-    id '%s' version '1.18-SNAPSHOT'
+    id '%s' version '1.16-SNAPSHOT'
 }
 version = '1.0.0'
 group = '%s'
