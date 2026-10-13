@@ -287,7 +287,10 @@ public final class HomeMaster extends JavaPlugin implements Listener, CommandExe
         if (state == null) return;
         Location from = event.getFrom();
         Location to = event.getTo();
-        if (from.getBlockX() != to.getBlockX() || from.getBlockY() != to.getBlockY() || from.getBlockZ() != to.getBlockZ()) {
+        if (from.getWorld() != to.getWorld()
+                || Math.abs(from.getX() - to.getX()) > 0.001
+                || Math.abs(from.getY() - to.getY()) > 0.001
+                || Math.abs(from.getZ() - to.getZ()) > 0.001) {
             cancelTeleport(event.getPlayer().getUniqueId(), true);
         }
     }
