@@ -315,8 +315,31 @@ def build():
             suffix = " Builddiagnose: " + " | ".join(details[-5:]) if details else ""
             fail("Eine Minecraft-, Fabric- oder Paper-Abhängigkeit konnte nicht geladen werden. Prüfe die Version." + suffix)
         if "cannot find symbol" in out or (" does not exist" in out and "package " in out):
-            fail("Der Java-Code passt nicht zur ausgewählten Minecraft-API. Ändere die Idee oder generiere den Code neu.")
-        fail("Die Kompilierung ist fehlgeschlagen. Java-Code oder API-Version ist inkompatibel. Quellcode wird nicht in Build-Logs ausgegeben.")
+            heading = "Der Java-Code passt nicht zur ausgewählten Minecraft-API."
+        else:
+            heading = "Die Kompilierung ist fehlgeschlagen."
+        # Emit only compiler metadata, never source lines or generated code.
+        diagnostics = []
+        patterns = (
+            re.compile(r"^.*\\.java:\\d+:\\s+error:.*$", re.I),
+            re.compile(r"^\\s*(?:symbol|location|reason|required|found):\\s*.*$", re.I),
+            re.compile(r"^> Task .* FAILED$", re.I),
+            re.compile(r"^Execution failed for task .*$", re.I),
+            re.compile(r"^Could not resolve .*", re.I),
+            re.compile(r"^Could not find .*", re.I),
+            re.compile(r"^Plugin .* was not found.*", re.I),
+        )
+        for line in out.splitlines():
+            item = line.strip()
+            if not item or not any(pattern.match(item) for pattern in patterns):
+                continue
+            item = re.sub(r"(https?://[^\\s)]+)", lambda m: re.sub(r"[?#].*$", "", m.group(1)), item)
+            item = re.sub(r"(?i)(token|password|secret|authorization)=\\S+", r"\\1=[redacted]", item)
+            item = item[:220]
+            if item not in diagnostics:
+                diagnostics.append(item)
+        suffix = " Diagnose: " + " | ".join(diagnostics[:6]) if diagnostics else " Öffne die Build-Details für den Laufzeitkontext."
+        fail(heading + suffix + " Quellcode wird nicht in Build-Logs ausgegeben.")
     data = get_payload()
     kind = data["config"].get("kind")
     jars = [p for p in (work / "build/libs").glob("*.jar") if not p.name.endswith(("-dev.jar", "-sources.jar", "-javadoc.jar"))]
