@@ -13,7 +13,7 @@
 <div><label for="java">Java-Version</label><select id="java"><option>Automatisch passend</option><option>Java 8</option><option>Java 17</option><option>Java 21</option><option>Java 25</option></select></div>
 <div><label for="pkg">Java-Package</label><input class="input" id="pkg" value="de.toastomat.toastertools"></div><div><label for="desc">Kurzbeschreibung</label><input class="input" id="desc" value="Toasterstarke Minecraft-Features"></div></div></section>
 <section class="panel"><h2>02 · Deine Idee beschreiben</h2><label for="idea">Was soll es können?</label><textarea id="idea">Erstelle ein Starterprojekt mit einem Beispiel-Feature, sauberer Struktur, Kommentaren und einer README mit Installations- und Build-Anleitung. IDs müssen konsistent sein.</textarea>
-<div class="keybox"><h2>✦ KI-Codegenerierung <span class="hint">optional</span></h2><label for="key">OpenRouter API-Key</label><input class="input" id="key" type="password" autocomplete="off" placeholder="sk-or-v1-…"><label for="model" style="margin-top:10px">Modell-ID</label><input class="input" id="model" value="openrouter/free"><p class="hint">Ohne Key gibt es Starterdateien plus Prompt. Mit Key kann die KI individuellen Quellcode schreiben. Der Key bleibt nur im Tab, wird nicht gespeichert und landet nicht im ZIP oder GitHub. Er wird direkt an OpenRouter gesendet.</p></div>
+<div class="keybox"><h2>✦ KI-Codegenerierung <span class="hint">optional</span></h2><label for="key">OpenRouter API-Key</label><input class="input" id="key" type="password" autocomplete="off" placeholder="sk-or-v1-…"><label for="model" style="margin-top:10px">Modell-ID</label><input class="input" id="model" value="openrouter/free"><button class="btn" id="testAI" type="button" style="margin-top:10px">KI-Verbindung testen</button><p class="hint" id="aiDiag" aria-live="polite"></p><p class="hint">Ohne Key gibt es Starterdateien plus Prompt. Mit Key kann die KI individuellen Quellcode schreiben. Der Key bleibt nur im Tab, wird nicht gespeichert und landet nicht im ZIP oder GitHub. Er wird direkt an OpenRouter gesendet.</p></div>
 <div class="actions"><button class="btn primary" id="generate">✦ Projekt generieren</button><button class="btn" id="prompt">Prompt herunterladen</button></div></section></main>
 <aside class="panel"><h2>03 · Projektdateien</h2><span class="status" id="status">Bereit</span><div class="empty" id="empty"><b>Deine Dateien erscheinen hier</b><p>Konfiguriere dein Projekt und starte die Generierung.</p></div><div class="filelist" id="filelist"><div class="files" id="files"></div></div><div class="preview" id="preview"><p id="previewName"></p><pre id="code"></pre><button class="btn" id="copy">Datei kopieren</button></div><div class="outactions" id="outactions"><button class="btn primary" id="zip">ZIP herunterladen</button><button class="btn" id="individual">Einzeldateien</button></div><p class="hint">Der Export ist Quellcode, kein garantiert fertiges JAR. Prüfe Versionen, baue lokal und teste vor dem Einsatz.</p></aside>
 </div><footer style="border-top:1px solid var(--line);margin-top:25px;padding-top:15px;font-size:10px;color:var(--muted)">MODFORGE AI · Fan-Tool · <a href="https://docs.fabricmc.net/" target="_blank">Fabric Docs</a> · <a href="https://docs.papermc.io/" target="_blank">Paper Docs</a> · <a href="https://github.com/Lennonbsiq999/craft-attack-app/tree/main/public/modforge" target="_blank">GitHub</a></footer></div><div class="toast" id="toast"></div>
@@ -25,15 +25,114 @@ function slug(s){return s.toLowerCase().trim().replace(/[^a-z0-9_-]+/g,'-').repl
 function config(){let v=$('version').value;if(v==='custom')v=$('customVersion').value.trim();if(!v)v='1.21.11';return {name:$('name').value.trim()||'MinecraftProject',id:slug($('id').value),version:v,kind:kind,platform:$('platform').value,java:$('java').value,pkg:$('pkg').value.trim()||'com.example.project',desc:$('desc').value.trim(),idea:$('idea').value.trim()}}
 function makePrompt(c){return 'Erzeuge ein vollständiges Minecraft-Projekt mit echten editierbaren Quelldateien. Projekt: '+c.name+'. ID: '+c.id+'. Minecraft: '+c.version+'. Typ: '+c.kind+'. Loader/Plattform: '+c.platform+'. Java: '+c.java+'. Package: '+c.pkg+'. Beschreibung: '+c.desc+'. Gewünschte Funktionen: '+c.idea+'. Antworte NUR als JSON: {"summary":"...","files":[{"path":"relativer/pfad","content":"vollständiger Dateiinhalt"}]}. Erzeuge Build-Dateien, Metadaten, Code und README. Erfinde keine API-Methoden oder Versionen, prüfe Kompatibilität für die exakte Minecraft-Version und kennzeichne Unsicherheiten. Keine absoluten Pfade, keine Pfade mit .., keine Binärdateien, keine Telemetrie oder destruktiven Funktionen.'}
 function starter(c){let f={};f['README.md']='# '+c.name+'\n\n'+c.desc+'\n\nMinecraft '+c.version+' - '+c.kind+' - '+c.platform+'\n\nStartervorlage, kein getestetes JAR. Versionskompatibilität prüfen, lokal bauen und vor dem Einsatz testen.\n';f['AI_PROMPT.txt']=makePrompt(c);if(c.kind==='datapack'){f['pack.mcmeta']='{\n "pack":{"description":"'+c.name+'","pack_format":0}\n}\n';f['data/'+c.id+'/function/example.mcfunction']='# pack_format ist ein Platzhalter für Minecraft '+c.version+'\nsay Dein Datapack ist geladen\n'}else if(c.kind==='plugin'){f['plugin.yml']='name: '+c.name+'\nversion: 1.0.0\nmain: '+c.pkg+'.Main\ncommands:\n  '+c.id+':\n    description: Starter command\n';f['Main.java']='// Starterdatei; passe diese Klasse an die ausgewählte Server-API an.\n// '+c.desc+'\n'}else{f['fabric.mod.json']='{\n "schemaVersion":1,\n "id":"'+c.id+'",\n "version":"1.0.0",\n "name":"'+c.name+'",\n "description":"'+c.desc+'",\n "environment":"*"\n}\n';f['Main.java']='// Starterdatei für '+c.platform+'.\n// Prüfe das offizielle Template für Minecraft '+c.version+' bevor du baust.\n// '+c.desc+'\n'}return f}
-async function makeAI(c,p){const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{Authorization:'Bearer '+$('key').value.trim(),'Content-Type':'application/json','X-OpenRouter-Title':'ModForge AI Minecraft Creator'},body:JSON.stringify({model:$('model').value.trim()||'openrouter/free',messages:[{role:'system',content:'You are an expert Minecraft Java developer. Return only valid JSON {"summary":"...","files":[{"path":"relative/path","content":"full text"}]}. Do not invent APIs. Generate editable files, no credential theft, telemetry, destructive code or obfuscated payloads. No absolute paths or .. path segments.'},{role:'user',content:p}],temperature:0.2,max_tokens:12000})});const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.error&&j.error.message||'OpenRouter HTTP '+r.status);let s=j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content;if(Array.isArray(s))s=s.map(x=>x.text||'').join('\n');if(typeof s!=='string')throw Error('KI lieferte keinen Text');s=s.trim();let o;try{o=JSON.parse(s)}catch(e){let a=s.indexOf('{'),b=s.lastIndexOf('}');if(a<0||b<=a)throw Error('KI-Antwort ist kein JSON. Probiere ein anderes Modell.');o=JSON.parse(s.slice(a,b+1))}if(!o||!Array.isArray(o.files))throw Error('JSON braucht ein files-Array');let f={};o.files.forEach(x=>{if(!x||typeof x.path!=='string'||typeof x.content!=='string')return;let p=x.path.replace(/\\/g,'/').replace(/^\/+/,'');if(!p||p.split('/').includes('..')||p.includes(':')||x.content.length>600000)return;f[p]=x.content});if(!Object.keys(f).length)throw Error('Keine gültigen Dateien erhalten');f['AI_PROMPT.txt']=p;if(!f['README.md'])f['README.md']='# '+c.name+'\n\nVor Build sorgfältig prüfen.\n';return f}
+function apiMessage(status, message) {
+  const raw = String(message || "").trim();
+  if (status === 401) return "API-Key ungültig oder widerrufen. Prüfe deinen Key im OpenRouter-Dashboard.";
+  if (status === 402) return "OpenRouter meldet ein Guthaben- oder Kontolimit. Prüfe dein Konto.";
+  if (status === 403) return "Zugriff verweigert. Prüfe Berechtigungen und Sicherheitsbeschränkungen.";
+  if (status === 404) return "Modell nicht gefunden. Nutze openrouter/free oder eine aktuell verfügbare Modell-ID.";
+  if (status === 408) return "Zeitüberschreitung. Bitte erneut versuchen.";
+  if (status === 413) return "Anfrage zu groß. Kürze deine Idee.";
+  if (status === 429) return "Limit erreicht. Kostenlose Modelle sind begrenzt. Warte etwas und versuche es erneut.";
+  if (status === 502 || status === 503) return "Das Modell oder die kostenlosen Anbieter sind gerade nicht verfügbar. Versuche es später oder wähle ein anderes Modell.";
+  if (status === 400) return "OpenRouter lehnt einen Anfrageparameter ab: " + raw;
+  return "OpenRouter-Fehler (" + status + "): " + (raw || "Keine weiteren Details.");
+}
+async function callOpenRouter(messages, maxTokens) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 90000);
+  let response;
+  try {
+    response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST", signal: controller.signal,
+      headers: {
+        "Authorization": "Bearer " + $("key").value.trim(),
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://lennonbsiq999.github.io/craft-attack-app/modforge/",
+        "X-OpenRouter-Title": "ModForge AI"
+      },
+      body: JSON.stringify({
+        model: $("model").value.trim() || "openrouter/free",
+        messages: messages, max_tokens: maxTokens, temperature: 0.2,
+        response_format: { type: "json_object" }
+      })
+    });
+  } catch (error) {
+    if (error && error.name === "AbortError") throw new Error("Zeitüberschreitung nach 90 Sekunden. Das kostenlose Modell ist eventuell überlastet.");
+    throw new Error("API nicht erreichbar. Prüfe Internetverbindung, Browser-Erweiterungen und mögliche CORS-/Netzwerkblockaden. " + (error && error.message ? error.message : ""));
+  } finally { clearTimeout(timer); }
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok || body.error) {
+    const status = Number(response.status || (body.error && body.error.code) || 0);
+    const message = body.error && (body.error.message || (body.error.metadata && body.error.metadata.raw)) || body.message || "";
+    throw new Error(apiMessage(status, message));
+  }
+  const choice = body.choices && body.choices[0];
+  const content = choice && choice.message && choice.message.content;
+  if (typeof content !== "string" || !content.trim()) {
+    if (choice && choice.finish_reason === "length") throw new Error("Die KI-Antwort wurde abgeschnitten. Kürze die Idee oder reduziere den Umfang.");
+    throw new Error("Das Modell lieferte keine Textantwort. Modell: " + (body.model || "unbekannt") + ".");
+  }
+  return { text: content.trim(), model: body.model || "unbekannt" };
+}
+function parseAIResult(answer, c, prompt) {
+  const text = answer.trim();
+  let parsed;
+  try { parsed = JSON.parse(text); }
+  catch (firstError) {
+    const first = text.indexOf("{");
+    const last = text.lastIndexOf("}");
+    if (first < 0 || last <= first) throw new Error("Die KI-Antwort war kein gültiges JSON. Kürze die Idee oder wechsle das Modell.");
+    try { parsed = JSON.parse(text.slice(first, last + 1)); }
+    catch (secondError) { throw new Error("Die KI-Antwort war unvollständig. Kürze die Idee oder reduziere den Projektumfang."); }
+  }
+  if (!parsed || !Array.isArray(parsed.files)) throw new Error("Die KI-Antwort enthält kein files-Array. Versuche ein anderes Modell.");
+  const files = {};
+  parsed.files.forEach(item => {
+    if (!item || typeof item.path !== "string" || typeof item.content !== "string") return;
+    const path = item.path.replace(/\\/g, "/").replace(/^\/+/, "");
+    if (!path || path.split("/").some(part => part === ".." || part === "") || path.includes(":") || item.content.length > 600000) return;
+    files[path] = item.content;
+  });
+  if (!Object.keys(files).length) throw new Error("Die KI lieferte keine gültigen Projektdateien.");
+  files["AI_PROMPT.txt"] = prompt;
+  if (!files["README.md"]) files["README.md"] = "# " + c.name + "\n\nKI-generierter Quellcode. Vor dem Build prüfen.\n";
+  files["GENERATION_INFO.txt"] = "Model: " + (window.__modforgeModel || "OpenRouter") + "\nVor dem Build Versionskompatibilität prüfen.\n";
+  return files;
+}
+async function makeAI(c, prompt) {
+  const result = await callOpenRouter([
+    { role: "system", content: "You are an expert Minecraft Java developer. Return only a valid JSON object with this structure: {\"summary\":\"short explanation\",\"files\":[{\"path\":\"relative/path\",\"content\":\"full text\"}]}. Generate editable source files and README. Do not invent APIs or version numbers. No credential theft, hidden telemetry, destructive code or obfuscated payloads. Paths must be relative and cannot contain .. ." },
+    { role: "user", content: prompt }
+  ], 7000);
+  window.__modforgeModel = result.model;
+  return parseAIResult(result.text, c, prompt);
+}
+async function testAIConnection() {
+  const button = $("testAI"), diag = $("aiDiag");
+  if (!$("key").value.trim()) { diag.textContent = "Bitte zuerst einen API-Key eintragen."; toast("API-Key fehlt."); return; }
+  button.disabled = true; button.textContent = "Teste…"; diag.textContent = "KI-Anfrage läuft (max. 90 Sekunden)…";
+  try {
+    const result = await callOpenRouter([
+      { role: "system", content: "Return only this JSON object: {\"ok\":true,\"message\":\"connected\"}." },
+      { role: "user", content: "Test API connection. Return a tiny JSON object with ok true." }
+    ], 100);
+    const parsed = JSON.parse(result.text);
+    if (parsed.ok !== true) throw new Error("Unerwartete Testantwort.");
+    diag.textContent = "Verbunden: " + result.model;
+    toast("KI-Verbindung funktioniert. Der Codegenerator kann bei großen Antworten trotzdem an Limits stoßen.");
+  } catch (error) { diag.textContent = error.message; toast(error.message); }
+  finally { button.disabled = false; button.textContent = "KI-Verbindung testen"; }
+}
 function render(f){out=f;let ps=Object.keys(f).sort();if(!selected||!f[selected])selected=ps[0];$('empty').style.display='none';$('filelist').classList.add('show');$('preview').classList.add('show');$('outactions').classList.add('show');$('files').innerHTML='';ps.forEach(path=>{let b=document.createElement('button');b.className='file';if(path===selected)b.classList.add('active');b.textContent=path;b.onclick=()=>{selected=path;render(out)};$('files').appendChild(b)});$('previewName').textContent=selected;$('code').textContent=f[selected]||''}
 function download(name,content,type){let u=URL.createObjectURL(new Blob([content],{type:type||'text/plain'})),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 document.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{kind=b.dataset.kind;document.querySelectorAll('.tile').forEach(t=>t.classList.toggle('active',t===b));let list={mod:[['fabric','Fabric'],['neoforge','NeoForge'],['forge','Forge'],['quilt','Quilt']],plugin:[['paper','Paper'],['purpur','Purpur'],['spigot','Spigot'],['bukkit','Bukkit']],datapack:[['vanilla','Vanilla Datapack']]}[kind];$('platform').innerHTML=list.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');$('platform').disabled=list.length===1;$('pkg').disabled=kind==='datapack'});
 $('version').onchange=()=>{$('customVersion').style.display=$('version').value==='custom'?'block':'none'};
 $('prompt').onclick=()=>{let c=config();download(slug(c.name)+'-prompt.txt',makePrompt(c));toast('Prompt heruntergeladen')};
-$('generate').onclick=async()=>{let c=config();if(!c.idea){toast('Beschreibe die Idee zuerst');return}let p=makePrompt(c);$('generate').disabled=true;$('status').textContent='Generiere…';try{let f;if($('key').value.trim())f=await makeAI(c,p);else f=starter(c);selected='';render(f);$('status').textContent='Dateien bereit';toast('Projektdateien erstellt. Bitte vor Einsatz prüfen.')}catch(e){$('status').textContent='Fehler';$('status').className='status error';toast('Fehler: '+e.message)}finally{$('generate').disabled=false}};
+$('generate').onclick=async()=>{let c=config();if(!c.idea){toast('Beschreibe die Idee zuerst');return}let p=makePrompt(c);$('generate').disabled=true;$('generate').textContent='Generiere…';$('status').textContent=$('key').value.trim()?'KI generiert Quellcode…':'Startermodus';$('status').className='status';try{let f;if($('key').value.trim()){f=await makeAI(c,p);$('status').textContent='KI-Dateien bereit';toast('Quellcode erstellt. Vor dem Build Kompatibilität prüfen.')}else{f=starter(c);$('status').textContent='Startervorlage bereit';toast('Starterprojekt erstellt. Für KI-Code bitte einen eigenen API-Key eintragen.')}selected='';render(f)}catch(e){$('status').textContent='Generierung fehlgeschlagen';$('status').className='status error';toast(e.message)}finally{$('generate').disabled=false;$('generate').textContent='✦ Projekt generieren'}};
 $('zip').onclick=async()=>{if(!Object.keys(out).length)return;if(typeof JSZip==='undefined'){toast('ZIP-Bibliothek nicht geladen');return}let z=new JSZip();Object.entries(out).forEach(([p,c])=>z.file(slug($('name').value)+'/'+p,c));let blob=await z.generateAsync({type:'blob'});download(slug($('name').value)+'-'+slug(config().version)+'.zip',blob,'application/zip')};
 $('individual').onclick=()=>Object.entries(out).forEach(([p,c],i)=>setTimeout(()=>download(p.replace(/\//g,'_'),c),i*150));
 $('copy').onclick=async()=>{try{await navigator.clipboard.writeText($('code').textContent);toast('Datei kopiert')}catch(e){toast('Clipboard nicht verfügbar')}};
+$('testAI').onclick=testAIConnection;
 })();
 </script></body></html>
