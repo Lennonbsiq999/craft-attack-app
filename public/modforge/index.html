@@ -93,7 +93,7 @@ function apiMessage(status, message) {
 }
 async function callOpenRouter(messages, maxTokens) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 90000);
+  const timer = setTimeout(() => controller.abort(), 150000);
   let response;
   try {
     response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -111,7 +111,7 @@ async function callOpenRouter(messages, maxTokens) {
       })
     });
   } catch (error) {
-    if (error && error.name === "AbortError") throw new Error("Zeitüberschreitung nach 90 Sekunden. Das kostenlose Modell ist eventuell überlastet.");
+    if (error && error.name === "AbortError") throw new Error("Zeitüberschreitung nach 150 Sekunden. Das kostenlose Modell ist eventuell überlastet.");
     throw new Error("API nicht erreichbar. Prüfe Internetverbindung, Browser-Erweiterungen und mögliche CORS-/Netzwerkblockaden. " + (error && error.message ? error.message : ""));
   } finally { clearTimeout(timer); }
   const body = await response.json().catch(() => ({}));
@@ -126,7 +126,7 @@ async function callOpenRouter(messages, maxTokens) {
     if (choice && choice.finish_reason === "length") throw new Error("Die KI-Antwort wurde abgeschnitten. Kürze die Idee oder reduziere den Umfang.");
     throw new Error("Das Modell lieferte keine Textantwort. Modell: " + (body.model || "unbekannt") + ".");
   }
-  return { text: content.trim(), model: body.model || "unbekannt" };
+  return { text: content.trim(), model: body.model || "unbekannt", finishReason: choice.finish_reason || "" };
 }
 function parseAIResult(answer, c, prompt) {
   const text = answer.trim();
@@ -154,17 +154,38 @@ function parseAIResult(answer, c, prompt) {
   return files;
 }
 async function makeAI(c, prompt) {
-  const result = await callOpenRouter([
-    { role: "system", content: "You are an expert Minecraft Java developer. Return only a valid JSON object with this structure: {\"summary\":\"short explanation\",\"files\":[{\"path\":\"relative/path\",\"content\":\"full text\"}]}. Generate editable source files and README. Do not invent APIs or version numbers. No credential theft, hidden telemetry, destructive code or obfuscated payloads. Paths must be relative and cannot contain .. ." },
-    { role: "user", content: prompt }
-  ], 7000);
-  window.__modforgeModel = result.model;
-  return parseAIResult(result.text, c, prompt);
+  const system = "You are an expert Minecraft Java developer. Return only one valid JSON object with this structure: {\\\"summary\\\":\\\"short explanation\\\",\\\"files\\\":[{\\\"path\\\":\\\"relative/path\\\",\\\"content\\\":\\\"full text\\\"}]}. Generate complete, compile-ready source code. Do not invent APIs or version numbers. No credential theft, hidden telemetry, destructive code, obfuscated payloads, placeholders, TODOs, README files, or markdown fences. Paths must be relative and cannot contain .. .";
+  let lastError;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const retryPrompt = attempt === 0 ? prompt : prompt + "\\n\\nRETRY REQUIREMENTS: The previous answer was incomplete or invalid. Return a smaller but complete implementation that preserves the requested core commands, persistence, permissions, and safety checks. Use only the files necessary to compile; keep the JSON valid and concise. Do not omit the main class or required plugin/mod entrypoint.";
+    try {
+      const result = await callOpenRouter([
+        { role: "system", content: system },
+        { role: "user", content: retryPrompt }
+      ], attempt === 0 ? 12000 : 9000);
+      window.__modforgeModel = result.model;
+      if (result.finishReason === "length") throw new Error("AI_OUTPUT_TRUNCATED");
+      return parseAIResult(result.text, c, prompt);
+    } catch (error) {
+      lastError = error;
+      const message = error && error.message ? error.message : String(error);
+      const retryable = /AI_OUTPUT_TRUNCATED|gültiges JSON|unvollständig|files-Array|keine gültigen Projektdateien/i.test(message);
+      if (attempt === 0 && retryable) {
+        setStatus("KI-Antwort unvollständig. Versuche eine kompaktere, vollständige Generierung…");
+        continue;
+      }
+      if (message === "AI_OUTPUT_TRUNCATED") {
+        throw new Error("Die KI-Antwort wurde trotz Wiederholung abgeschnitten. Kürze die Idee etwas oder wähle ein Modell mit größerem Ausgabelimit.");
+      }
+      throw error;
+    }
+  }
+  throw lastError || new Error("KI-Codegenerierung fehlgeschlagen.");
 }
 async function testAIConnection() {
   const button = $("testAI"), diag = $("aiDiag");
   if (!$("key").value.trim()) { diag.textContent = "Bitte zuerst einen API-Key eintragen."; toast("API-Key fehlt."); return; }
-  button.disabled = true; button.textContent = "Teste…"; diag.textContent = "KI-Anfrage läuft (max. 90 Sekunden)…";
+  button.disabled = true; button.textContent = "Teste…"; diag.textContent = "KI-Anfrage läuft (max. 150 Sekunden)…";
   try {
     const result = await callOpenRouter([
       { role: "system", content: "Return only this JSON object: {\"ok\":true,\"message\":\"connected\"}." },
