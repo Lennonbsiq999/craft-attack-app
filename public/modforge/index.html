@@ -592,7 +592,7 @@ function updatePreview(){
   const name=get("name"),id=get("id"),version=get("version"),custom=get("customVersion"),platform=get("platform");
   const active=document.querySelector(".tile.active");
   const previewName=get("previewName"),previewId=get("previewId"),previewKind=get("previewKind"),previewVersion=get("previewVersion"),previewPlatform=get("previewPlatform"),stripVersion=get("stripVersion");
-  if(previewName)previewName.textContent=name.value.trim()||"NouveauProjet";
+  if(previewName)previewName.textContent=name.value.trim()||"MinecraftProjekt";
   if(previewId)previewId.textContent=id.value.trim()||"projekt-id";
   if(previewKind)previewKind.textContent=active&&active.dataset.kind==="plugin"?"Paper-Plugin":"Fabric-Mod";
   const v=version.value==="custom"?(custom.value.trim()||"Eigene Version"):version.value;
@@ -602,6 +602,7 @@ function updatePreview(){
 }
 ["name","id","version","customVersion","platform"].forEach(id=>{const el=get(id);if(el){el.addEventListener("input",updatePreview);el.addEventListener("change",updatePreview)}});
 document.querySelectorAll(".tile").forEach(el=>el.addEventListener("click",updatePreview));
+const preset=get("homePreset");if(preset)preset.addEventListener("click",updatePreview);
 updatePreview();
 })();
 </script>
