@@ -685,7 +685,7 @@ $('generate').addEventListener('click',function validationCapture(e){
  if(!$('name').value.trim()||!$('idea').value.trim()||$('idea').value.trim().length<20){
   e.stopImmediatePropagation();toast('Bitte Projektname und eine aussagekräftige Idee mit mindestens 20 Zeichen angeben.');$('idea').focus();return;
  }
- if(!/^\d+\.\d+(?:\.\d+)?$/.test(c.version)){
+ if(!/^\d+\.\d+(?:\.\d+)?$/.test(c.version)||($('version').value==='custom'&&!$('customVersion').value.trim())){
   e.stopImmediatePropagation();toast('Minecraft-Version ungültig. Beispiel: 1.21.11');$('version').focus();return;
  }
  if(activeTemplate&&activeTemplate!=='homemaster'&&!$('key').value.trim()){
