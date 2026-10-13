@@ -350,7 +350,7 @@ public final class HomeMaster extends JavaPlugin implements Listener, CommandExe
                 List<String> lore = new ArrayList<>();
                 if (loc != null) {
                     lore.add(ChatColor.GRAY + loc.getWorld().getName());
-                    lore.add(ChatColor.GRAY + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ());
+                    lore.add(ChatColor.GRAY.toString() + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ());
                     lore.add(ChatColor.GREEN + "Klicken zum Teleportieren");
                 } else {
                     lore.add(ChatColor.RED + "Zielwelt nicht verfügbar");
@@ -362,7 +362,7 @@ public final class HomeMaster extends JavaPlugin implements Listener, CommandExe
             holder.homeBySlot.put(slot, name);
         }
         if (page > 0) inventory.setItem(45, menuItem(Material.ARROW, ChatColor.YELLOW + "Vorherige Seite"));
-        inventory.setItem(49, menuItem(Material.BOOK, ChatColor.GRAY + names.size() + " Homes"));
+        inventory.setItem(49, menuItem(Material.BOOK, ChatColor.GRAY.toString() + names.size() + " Homes"));
         if (page < maxPage) inventory.setItem(53, menuItem(Material.ARROW, ChatColor.YELLOW + "Nächste Seite"));
         player.openInventory(inventory);
     }
