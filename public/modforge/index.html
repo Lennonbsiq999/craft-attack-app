@@ -13,6 +13,7 @@
 
 <div><label for="pkg">Java-Package</label><input class="input" id="pkg" value="de.toastomat.toastertools"></div><div><label for="desc">Kurzbeschreibung</label><input class="input" id="desc" value="Toasterstarke Minecraft-Features"></div></div></section>
 <section class="panel"><h2>02 · Deine Idee beschreiben</h2><label for="idea">Was soll es können?</label><textarea id="idea">Erstelle ein Starterprojekt mit einem Beispiel-Feature, sauberer Struktur, Kommentaren und einer README mit Installations- und Build-Anleitung. IDs müssen konsistent sein.</textarea>
+<button class="btn" id="homePreset" type="button" style="margin-top:10px">🏠 HomeMaster / SetHome als Vorlage einsetzen</button>
 <div class="keybox">
 <h2>✦ KI-Codegenerierung <span class="hint">optional</span></h2>
 <label for="key">OpenRouter API-Key</label><input class="input" id="key" type="password" autocomplete="off" placeholder="sk-or-v1-…">
@@ -360,6 +361,18 @@ toast($('resultText').textContent);
 }finally{
 $('generate').disabled=false;$('generate').textContent='⚡ JAR erstellen & herunterladen';
 }
+};
+$('homePreset').onclick=()=>{
+const pluginTile=document.querySelector('.tile[data-kind="plugin"]');
+if(pluginTile)pluginTile.click();
+$('name').value='HomeMaster';
+$('id').value='homemaster';
+$('pkg').value='de.toastomat.homemaster';
+$('desc').value='Homes speichern, verwalten und sicher teleportieren';
+$('idea').value='HomeMaster Paper-Plugin für Minecraft: /sethome [name], /home [name], /homes, /homes gui, /delhome <name>, /renamehome <alt> <neu> und /back. Homes dauerhaft pro UUID speichern, Home-Limit konfigurierbar, Permissions, sichere Teleports, Teleport-Verzögerung mit Abbruch bei Bewegung oder Schaden und Cooldown. Nutze die integrierte HomeMaster-Vorlage.';
+$('aiDiag').textContent='Integrierte Vorlage aktiv. OpenRouter-Key ist für HomeMaster nicht erforderlich.';
+setStatus('HomeMaster-Vorlage ausgewählt');
+toast('HomeMaster ist vorkonfiguriert. Jetzt nur noch GitHub-Build-Token eintragen und JAR erstellen.');
 };
 $('testAI').onclick=testAIConnection;
 })();
