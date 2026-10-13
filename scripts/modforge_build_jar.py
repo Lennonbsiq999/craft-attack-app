@@ -182,6 +182,7 @@ def prepare():
         for content in files.values():
             commands.update(re.findall(r"""getCommand\s*\(\s*["']([a-zA-Z0-9_-]+)["']\s*\)""", content))
             permissions.update(re.findall(r"""hasPermission\s*\(\s*["']([a-zA-Z0-9_.-]+)["']\s*\)""", content))
+            permissions.update(re.findall(r"""allowed\s*\(\s*\w+\s*,\s*["']([a-zA-Z0-9_.-]+)["']\s*\)""", content))
         if not commands:
             commands.add(project_id)
         lines = ['name: "' + qname + '"', 'version: "1.0.0"', "main: " + entrypoint]
