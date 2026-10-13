@@ -307,8 +307,8 @@ def build():
                 if not item or not patterns.search(item):
                     continue
                 # Keep dependency coordinates and high-level URLs, never source or arbitrary build output.
-                item = re.sub(r"(https?://[^\\s)]+)", lambda m: re.sub(r"[?#].*$", "", m.group(1)), item)
-                item = re.sub(r"(?i)(token|password|secret|authorization)=\\S+", r"\\1=[redacted]", item)
+                item = re.sub(r"(https?://[^\s)]+)", lambda m: re.sub(r"[?#].*$", "", m.group(1)), item)
+                item = re.sub(r"(?i)(token|password|secret|authorization)=\S+", r"\1=[redacted]", item)
                 item = item[:220]
                 if item not in details:
                     details.append(item)
@@ -321,10 +321,12 @@ def build():
         # Emit only compiler metadata, never source lines or generated code.
         diagnostics = []
         patterns = (
-            re.compile(r"^.*\\.java:\\d+:\\s+error:.*$", re.I),
-            re.compile(r"^\\s*(?:symbol|location|reason|required|found):\\s*.*$", re.I),
+            re.compile(r"^.*\.java:\d+:\s+error:.*$", re.I),
+            re.compile(r"^\s*(?:symbol|location|reason|required|found):\s*.*$", re.I),
             re.compile(r"^> Task .* FAILED$", re.I),
             re.compile(r"^Execution failed for task .*$", re.I),
+            re.compile(r"^.*\\berror:\\s+.*$", re.I),
+            re.compile(r"^.*(?:Caused by:|Unsupported class file major version|invalid source release|bad source file|cannot access).*", re.I),
             re.compile(r"^Could not resolve .*", re.I),
             re.compile(r"^Could not find .*", re.I),
             re.compile(r"^Plugin .* was not found.*", re.I),
@@ -333,8 +335,8 @@ def build():
             item = line.strip()
             if not item or not any(pattern.match(item) for pattern in patterns):
                 continue
-            item = re.sub(r"(https?://[^\\s)]+)", lambda m: re.sub(r"[?#].*$", "", m.group(1)), item)
-            item = re.sub(r"(?i)(token|password|secret|authorization)=\\S+", r"\\1=[redacted]", item)
+            item = re.sub(r"(https?://[^\s)]+)", lambda m: re.sub(r"[?#].*$", "", m.group(1)), item)
+            item = re.sub(r"(?i)(token|password|secret|authorization)=\S+", r"\1=[redacted]", item)
             item = item[:220]
             if item not in diagnostics:
                 diagnostics.append(item)
