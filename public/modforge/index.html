@@ -9,7 +9,7 @@
 <section class="panel"><h2>01 · Projekt und Version</h2><div class="tiles"><button class="tile active" data-kind="mod"><b>🧩 Fabric-Mod</b><small>Fertige Mod-JAR</small></button><button class="tile" data-kind="plugin"><b>⚙️ Server-Plugin</b><small>Paper / Purpur</small></button></div>
 <div class="grid"><div><label for="name">Projektname</label><input class="input" id="name" value="ToasterTools"></div><div><label for="id">Projekt-ID</label><input class="input" id="id" value="toastertools"></div>
 <div><label for="version">Minecraft-Version</label><select id="version"><option>26.2</option><option>26.1.2</option><option selected>1.21.11</option><option>1.21.10</option><option>1.21.8</option><option>1.21.4</option><option>1.21.1</option><option>1.20.6</option><option>1.20.4</option><option>1.20.1</option><option>1.19.4</option><option>1.18.2</option><option>1.16.5</option><option>1.12.2</option><option>1.8.8</option><option value="custom">Eigene Version</option></select><input class="input" id="customVersion" placeholder="Eigene Version" style="display:none;margin-top:7px"></div>
-<div><label for="platform">Loader / Plattform</label><select id="platform"><option value="fabric">Fabric</option><option value="neoforge">NeoForge</option><option value="forge">Forge</option><option value="quilt">Quilt</option></select></div>
+<div><label for="platform">Loader / Plattform</label><select id="platform" disabled><option value="fabric">Fabric</option></select></div>
 
 <div><label for="pkg">Java-Package</label><input class="input" id="pkg" value="de.toastomat.toastertools"></div><div><label for="desc">Kurzbeschreibung</label><input class="input" id="desc" value="Toasterstarke Minecraft-Features"></div></div></section>
 <section class="panel"><h2>02 · Deine Idee beschreiben</h2><label for="idea">Was soll es können?</label><textarea id="idea">Erstelle ein Starterprojekt mit einem Beispiel-Feature, sauberer Struktur, Kommentaren und einer README mit Installations- und Build-Anleitung. IDs müssen konsistent sein.</textarea>
@@ -37,7 +37,7 @@
 </div><footer style="border-top:1px solid var(--line);margin-top:25px;padding-top:15px;font-size:10px;color:var(--muted)">MODFORGE AI · Fan-Tool · <a href="https://docs.fabricmc.net/" target="_blank">Fabric Docs</a> · <a href="https://docs.papermc.io/" target="_blank">Paper Docs</a> · <a href="https://github.com/Lennonbsiq999/craft-attack-app/tree/main/public/modforge" target="_blank">GitHub</a></footer></div><div class="toast" id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script><script>
 (function(){
-const $=id=>document.getElementById(id);let kind='mod',out={},selected='';
+const $=id=>document.getElementById(id);let kind='mod';
 function toast(s){$('toast').textContent=s;$('toast').classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').classList.remove('show'),4000)}
 function slug(s){let v=s.toLowerCase().trim().replace(/[^a-z0-9_-]+/g,"-").replace(/^-+|-+$/g,"").slice(0,48)||"minecraft-project";return /^[a-z]/.test(v)?v:"project-"+v}
 function config(){let v=$('version').value;if(v==='custom')v=$('customVersion').value.trim();if(!v)v='1.21.11';return {name:$('name').value.trim()||'MinecraftProject',id:slug($('id').value),version:v,kind:kind,platform:$('platform').value,pkg:$('pkg').value.trim()||'de.toastomat.minecraft',desc:$('desc').value.trim(),idea:$('idea').value.trim()}}
@@ -48,15 +48,34 @@ const role=c.kind==='plugin'
 return 'Erzeuge einen tatsächlich kompilierbaren Java-Code für '+role+'. Projektname: '+c.name+'. ID: '+c.id+'. Package: '+c.pkg+'. Beschreibung: '+c.desc+'. Nutzeridee: '+c.idea+'. Java-Ziel passend zu Minecraft wählen; ausschließlich JSON im Format {"summary":"...","files":[{"path":"src/main/java/paket/Klasse.java","content":"vollständiger Java-Quellcode"}]}. Optional sind einfache Textressourcen nur unter src/main/resources/ erlaubt. Gib KEINE build.gradle, settings.gradle, plugin.yml, fabric.mod.json, README, Prompts oder Binärdateien zurück; der Build erzeugt Gradle-Konfiguration und Minecraft-Metadaten selbst. Alle Klassen müssen vollständig sein, Imports müssen stimmen, keine Platzhalter oder TODOs. Keine absoluten Pfade, keine ".."-Pfade, keine versteckte Telemetrie, kein Credential-Diebstahl, keine destruktiven Funktionen, keine Verschleierung.';
 }
 function starter(c){
-const pkg=/^[A-Za-z_$][\\w$]*(?:\\.[A-Za-z_$][\\w$]*)*$/.test(c.pkg)?c.pkg:'de.toastomat.minecraft';
+const parts=c.pkg.split('.');
+const pkg=parts.length&&parts.every(part=>/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(part))?c.pkg:'de.toastomat.minecraft';
 const cls=c.kind==='plugin'?'Main':'ToasterMod';
-let code;
-if(c.kind==='plugin'){
-code='package '+pkg+';\\n\\nimport org.bukkit.plugin.java.JavaPlugin;\\n\\npublic final class Main extends JavaPlugin {\\n    @Override\\n    public void onEnable() {\\n        getLogger().info("'+c.name.replace(/["\\\\]/g,'')+' wurde gestartet.");\\n    }\\n}\\n';
-}else{
-code='package '+pkg+';\\n\\nimport net.fabricmc.api.ModInitializer;\\n\\npublic final class ToasterMod implements ModInitializer {\\n    @Override\\n    public void onInitialize() {\\n        System.out.println("'+c.name.replace(/["\\\\]/g,'')+' wurde geladen.");\\n    }\\n}\\n';
-}
-const path='src/main/java/'+pkg.replace(/\\./g,'/')+'/'+cls+'.java';
+const lines=c.kind==='plugin'?[
+'package '+pkg+';',
+'',
+'import org.bukkit.plugin.java.JavaPlugin;',
+'',
+'public final class Main extends JavaPlugin {',
+'    @Override',
+'    public void onEnable() {',
+'        getLogger().info("ModForge starter plugin is ready.");',
+'    }',
+'}'
+]:[
+'package '+pkg+';',
+'',
+'import net.fabricmc.api.ModInitializer;',
+'',
+'public final class ToasterMod implements ModInitializer {',
+'    @Override',
+'    public void onInitialize() {',
+'        System.out.println("ModForge starter mod is ready.");',
+'    }',
+'}'
+];
+const code=lines.join(String.fromCharCode(10))+String.fromCharCode(10);
+const path='src/main/java/'+pkg.split('.').join('/')+'/'+cls+'.java';
 return {[path]:code};
 }
 function apiMessage(status, message) {
@@ -158,7 +177,6 @@ async function testAIConnection() {
   } catch (error) { diag.textContent = error.message; toast(error.message); }
   finally { button.disabled = false; button.textContent = "KI-Verbindung testen"; }
 }
-function render(f){out=f;let ps=Object.keys(f).sort();if(!selected||!f[selected])selected=ps[0];$('empty').style.display='none';$('filelist').classList.add('show');$('preview').classList.add('show');$('outactions').classList.add('show');$('files').innerHTML='';ps.forEach(path=>{let b=document.createElement('button');b.className='file';if(path===selected)b.classList.add('active');b.textContent=path;b.onclick=()=>{selected=path;render(out)};$('files').appendChild(b)});$('previewName').textContent=selected;$('code').textContent=f[selected]||''}
 function download(name,content,type){let u=URL.createObjectURL(new Blob([content],{type:type||'text/plain'})),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 function setStatus(message, error=false){$('status').textContent=message;$('status').className=error?'status error':'status'}
 const repo='Lennonbsiq999/craft-attack-app';
@@ -177,15 +195,122 @@ throw new Error(data.message||('GitHub-Fehler HTTP '+response.status));
 return data;
 }
 function buildFiles(files){
-const allowed={},safeExt=/\\.(json|yml|yaml|txt|properties|lang|toml|mcmeta|xml)$/i;
+const allowed={};
+const resourceExtensions=new Set(['json','yml','yaml','txt','properties','lang','toml','mcmeta','xml']);
 for(const [rawPath,content] of Object.entries(files||{})){
 if(typeof content!=='string')continue;
-const path=String(rawPath).replace(/\\\\/g,'/').replace(/^\\/+/, '');
+let path=String(rawPath).split(String.fromCharCode(92)).join('/');
+while(path.startsWith('/'))path=path.slice(1);
 if(!path||path.split('/').some(p=>p===''||p==='.'||p==='..')||path.includes(':'))continue;
-if(/\\.java$/i.test(path))allowed[path]=content;
-else if(path.startsWith('src/main/resources/')&&safeExt.test(path)&&!/(^|\\/)(plugin\\.yml|fabric\\.mod\\.json)$/i.test(path))allowed[path]=content;
+const lower=path.toLowerCase();
+if(lower.endsWith('.java'))allowed[path]=content;
+else if(path.startsWith('src/main/resources/')){
+const suffix=lower.includes('.')?lower.slice(lower.lastIndexOf('.')+1):'';
+if(resourceExtensions.has(suffix)&&!lower.endsWith('/plugin.yml')&&!lower.endsWith('/fabric.mod.json'))allowed[path]=content;
 }
-if(!Object.keys(allowed).some(p=>/\\.java$/i.test(p)))throw new Error('Die KI hat keinen Java-Einstiegspunkt erstellt. Versuche es mit einer klareren Idee.');
+}
+if(!Object.keys(allowed).some(p=>p.toLowerCase().endsWith('.java')))throw new Error('Die KI hat keinen Java-Einstiegspunkt erstellt. Versuche es mit einer klareren Idee.');
+return allowed;
+}
+async function encodePayload(c, files){
+if(typeof CompressionStream==='undefined')throw new Error('Dein Browser unterstützt die sichere Komprimierung nicht. Nutze eine aktuelle Version von Chrome oder Opera.');
+const payload={config:{name:c.name,id:c.id,version:c.version,kind:c.kind,platform:c.platform,pkg:c.pkg,desc:c.desc},files:files};
+const stream=new Blob([JSON.stringify(payload)]).stream().pipeThrough(new CompressionStream('gzip'));
+const bytes=new Uint8Array(await new Response(stream).arrayBuffer());
+let binary='';for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));
+const encoded=btoa(binary);
+if(encoded.length>64000)throw new Error('Der generierte Code ist für einen Build zu groß. Kürze die Idee.');
+return encoded;
+}
+function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
+async function buildJar(c, files){
+const token=$('ghToken').value.trim();
+if(!token)throw new Error('GitHub-Token fehlt. Erstelle einen Fine-grained Token mit Actions: Read and write.');
+if(typeof JSZip==='undefined')throw new Error('Die JAR-Download-Komponente konnte nicht geladen werden. Seite neu laden.');
+const projectFiles=buildFiles(files);
+const payload=await encodePayload(c,projectFiles);
+setStatus('Verbinde mit GitHub Actions…');
+$('resultTitle').textContent='Build läuft';
+$('resultText').textContent='GitHub Actions kompiliert deinen Java-Code. Es werden keine Quelldateien zum Download angezeigt.';
+$('buildresult').style.display='block';$('empty').style.display='none';$('runlink').style.display='none';
+const workflow='/repos/'+repo+'/actions/workflows/modforge-build-jar.yml/runs?per_page=10';
+const before=await ghJson(workflow);
+const oldIds=new Set((before.workflow_runs||[]).map(r=>r.id));
+const launchedAt=Date.now();
+await ghJson('/repos/'+repo+'/actions/workflows/modforge-build-jar.yml/dispatches',{method:'POST',body:JSON.stringify({ref:'main',inputs:{payload:payload}})});
+let run=null;
+for(let i=0;i<25&&!run;i++){
+await delay(1500);
+const data=await ghJson(workflow);
+run=(data.workflow_runs||[]).find(r=>!oldIds.has(r.id)&&r.event==='workflow_dispatch'&&new Date(r.created_at).getTime()>=launchedAt-10000)||null;
+setStatus(run?'Build gestartet…':'Warte auf GitHub Runner…');
+}
+if(!run)throw new Error('GitHub hat keinen Build gestartet. Öffne die Actions-Seite und prüfe, ob Actions für das Repository aktiviert sind.');
+$('runlink').href=run.html_url||'https://github.com/'+repo+'/actions';
+for(let i=0;i<210;i++){
+await delay(2000);
+const current=await ghJson('/repos/'+repo+'/actions/runs/'+run.id);
+if(current.status==='completed'){
+if(current.conclusion!=='success'){
+$('runlink').href=current.html_url||run.html_url;$('runlink').style.display='inline-block';
+throw new Error('Die Kompilierung ist fehlgeschlagen. Öffne „Build-Details“, um die Fehlermeldung zu sehen.');
+}
+break;
+}
+setStatus(current.status==='queued'?'Build wartet auf einen Runner…':'Kompiliere Minecraft-JAR…');
+if(i===209)throw new Error('Der Build dauert zu lange. Öffne die Build-Details und prüfe den Status.');
+}
+setStatus('JAR wird heruntergeladen…');
+const artifactData=await ghJson('/repos/'+repo+'/actions/runs/'+run.id+'/artifacts');
+const artifact=(artifactData.artifacts||[]).find(a=>a.name==='modforge-jar'&&!a.expired);
+if(!artifact)throw new Error('Der Build war erfolgreich, aber das JAR-Artefakt wurde nicht gefunden.');
+let response;
+try{response=await fetch('https://api.github.com/repos/'+repo+'/actions/artifacts/'+artifact.id+'/zip',{headers:ghHeaders()})}
+catch(e){throw new Error('JAR-Artefakt konnte nicht heruntergeladen werden. Prüfe Token-Berechtigung und Browserverbindung.')}
+if(!response.ok)throw new Error('Download des Build-Artefakts fehlgeschlagen (HTTP '+response.status+').');
+const zip=await JSZip.loadAsync(await response.blob());
+const entry=Object.values(zip.files).find(f=>!f.dir&&f.name.toLowerCase().endsWith('.jar'));
+if(!entry)throw new Error('Im Build-Artefakt wurde keine JAR-Datei gefunden.');
+const jar=await entry.async('blob');
+const filename=slug(c.id)+'.jar';
+download(filename,jar,'application/java-archive');
+setStatus('JAR bereit');
+$('resultTitle').textContent='Fertig: '+filename;
+$('resultText').textContent='Die kompilierte JAR wurde heruntergeladen. Lege sie bei einer Fabric-Mod in den mods-Ordner oder bei einem Paper/Purpur-Plugin in den plugins-Ordner.';
+$('runlink').href=run.html_url||'https://github.com/'+repo+'/actions';$('runlink').textContent='Build-Details öffnen ↗';$('runlink').style.display='inline-block';
+}
+function setStatus(message, error=false){$('status').textContent=message;$('status').className=error?'status error':'status'}
+const repo='Lennonbsiq999/craft-attack-app';
+function ghHeaders(){return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+$('ghToken').value.trim(),'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'}}
+async function ghJson(path, options={}){
+let response;
+try{response=await fetch('https://api.github.com'+path,{...options,headers:{...ghHeaders(),...(options.headers||{})}})}
+catch(e){throw new Error('GitHub-API nicht erreichbar. Prüfe Internetverbindung oder Browserblocker.')}
+const raw=await response.text();let data={};try{data=raw?JSON.parse(raw):{}}catch(e){}
+if(!response.ok){
+if(response.status===401)throw new Error('GitHub-Token ungültig. Erstelle einen neuen Fine-grained Token.');
+if(response.status===403)throw new Error('GitHub verweigert den Zugriff. Der Token braucht Actions: Read and write für craft-attack-app.');
+if(response.status===404)throw new Error('Workflow nicht gefunden oder Token hat keinen Zugriff. Prüfe Repository und Token-Berechtigung.');
+throw new Error(data.message||('GitHub-Fehler HTTP '+response.status));
+}
+return data;
+}
+function buildFiles(files){
+const allowed={};
+const resourceExtensions=new Set(['json','yml','yaml','txt','properties','lang','toml','mcmeta','xml']);
+for(const [rawPath,content] of Object.entries(files||{})){
+if(typeof content!=='string')continue;
+let path=String(rawPath).split(String.fromCharCode(92)).join('/');
+while(path.startsWith('/'))path=path.slice(1);
+if(!path||path.split('/').some(p=>p===''||p==='.'||p==='..')||path.includes(':'))continue;
+const lower=path.toLowerCase();
+if(lower.endsWith('.java'))allowed[path]=content;
+else if(path.startsWith('src/main/resources/')){
+const suffix=lower.includes('.')?lower.slice(lower.lastIndexOf('.')+1):'';
+if(resourceExtensions.has(suffix)&&!lower.endsWith('/plugin.yml')&&!lower.endsWith('/fabric.mod.json'))allowed[path]=content;
+}
+}
+if(!Object.keys(allowed).some(p=>p.toLowerCase().endsWith('.java')))throw new Error('Die KI hat keinen Java-Einstiegspunkt erstellt. Versuche es mit einer klareren Idee.');
 return allowed;
 }
 async function encodePayload(c, files){
