@@ -688,8 +688,8 @@ $('generate').addEventListener('click',function validationCapture(e){
  if(!/^\d+\.\d+(?:\.\d+)?$/.test(c.version)||($('version').value==='custom'&&!$('customVersion').value.trim())){
   e.stopImmediatePropagation();toast('Minecraft-Version ungültig. Beispiel: 1.21.11');$('version').focus();return;
  }
- if(activeTemplate&&activeTemplate!=='homemaster'&&!$('key').value.trim()){
-  e.stopImmediatePropagation();toast('Diese Vorlage benötigt einen OpenRouter-Key, sonst würde nur ein leeres Starterprojekt gebaut.');$('key').focus();return;
+ if(activeTemplate!=='homemaster'&&!$('key').value.trim()){
+  e.stopImmediatePropagation();toast(activeTemplate?'Diese Vorlage benötigt einen OpenRouter-Key, sonst würde nur ein leeres Starter-JAR gebaut.':'Ohne OpenRouter-Key entsteht nur ein leeres Starter-JAR. Wähle HomeMaster oder trage einen Key ein.');$('key').focus();return;
  }
 }, true);
 const oldPreset=$('homePreset');
