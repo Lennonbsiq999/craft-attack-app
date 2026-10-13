@@ -8,6 +8,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
@@ -49,17 +50,23 @@ public final class HomeMaster extends JavaPlugin implements Listener, CommandExe
         getConfig().options().copyDefaults(true);
         saveConfig();
 
-        for (String name : new String[]{"sethome", "home", "delhome", "homes", "renamehome", "back"}) {
-            var command = getCommand(name);
-            if (command != null) {
-                command.setExecutor(this);
-                command.setTabCompleter(this);
-            } else {
-                getLogger().warning("Command /" + name + " fehlt in plugin.yml.");
-            }
-        }
+        registerCommand("sethome", getCommand("sethome"));
+        registerCommand("home", getCommand("home"));
+        registerCommand("delhome", getCommand("delhome"));
+        registerCommand("homes", getCommand("homes"));
+        registerCommand("renamehome", getCommand("renamehome"));
+        registerCommand("back", getCommand("back"));
         getServer().getPluginManager().registerEvents(this, this);
         getLogger().info("HomeMaster Ultra aktiviert.");
+    }
+
+    private void registerCommand(String name, PluginCommand command) {
+        if (command == null) {
+            getLogger().warning("Command /" + name + " fehlt in plugin.yml.");
+            return;
+        }
+        command.setExecutor(this);
+        command.setTabCompleter(this);
     }
 
     @Override
