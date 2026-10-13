@@ -290,8 +290,21 @@ def build():
         fail("Gradle konnte nicht gestartet werden.")
     if res.returncode:
         out = res.stdout or ""
-        if "Could not find" in out or "Could not resolve" in out or "Could not GET" in out:
-            fail("Eine Minecraft-, Fabric- oder Paper-Abhängigkeit konnte nicht geladen werden. Prüfe die Version.")
+        if "Could not find" in out or "Could not resolve" in out or "Could not GET" in out or "was not found" in out:
+            patterns = re.compile(r"(Could not find|Could not GET|Could not download|Plugin .* was not found|No matching variant|Received status code|Resource missing|failed to resolve)", re.I)
+            details = []
+            for line in out.splitlines():
+                item = line.strip()
+                if not item or not patterns.search(item):
+                    continue
+                # Keep dependency coordinates and high-level URLs, never source or arbitrary build output.
+                item = re.sub(r"(https?://[^\\s)]+)", lambda m: re.sub(r"[?#].*$", "", m.group(1)), item)
+                item = re.sub(r"(?i)(token|password|secret|authorization)=\\S+", r"\\1=[redacted]", item)
+                item = item[:220]
+                if item not in details:
+                    details.append(item)
+            suffix = " Builddiagnose: " + " | ".join(details[-5:]) if details else ""
+            fail("Eine Minecraft-, Fabric- oder Paper-Abhängigkeit konnte nicht geladen werden. Prüfe die Version." + suffix)
         if "cannot find symbol" in out or (" does not exist" in out and "package " in out):
             fail("Der Java-Code passt nicht zur ausgewählten Minecraft-API. Ändere die Idee oder generiere den Code neu.")
         fail("Die Kompilierung ist fehlgeschlagen. Java-Code oder API-Version ist inkompatibel. Quellcode wird nicht in Build-Logs ausgegeben.")
