@@ -199,19 +199,19 @@ footer a{color:#8ca7a8}footer a:hover{color:var(--cyan)}
     <a href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer"><span class="navicon">↗</span><span class="navtext">GitHub Build-History</span></a>
   </nav>
   <div class="rail-spacer"></div>
-  <div class="rail-status"><div class="rail-status-head"><span class="led"></span> Build-Engine erreichbar</div><p>Java wird auf GitHub kompiliert. ModForge liefert die JAR erst nach erfolgreichem Build aus.</p></div>
+  <div class="rail-status"><div class="rail-status-head"><span class="led"></span> Tokenloser Export</div><p>Das vollständige Gradle-Projekt wird direkt im Browser als ZIP erstellt. Kein GitHub-Token nötig.</p></div>
   <div class="rail-foot">MC MODDING / TOOLKIT / V4.0</div>
 </aside>
 <main class="main" id="top">
   <header class="topbar"><div class="crumb">MODFORGE / <strong>BUILD WORKBENCH</strong></div><div class="top-tools"><span class="pill"><span class="led"></span> PIPELINE READY</span><span class="pill purple">FABRIC + PAPER</span><span class="userchip">MF</span></div></header>
   <div class="content">
     <section class="hero">
-      <div><div class="overline">Minecraft developer tools / 04</div><h1>Vom Konzept zur<br><span>fertigen JAR.</span></h1><p>Eine echte Build-Werkstatt statt einem Prompt-Feld mit Download-Button. Starte mit einer Vorlage, verfeinere das Verhalten, prüfe die Konfiguration und kompiliere deine Mod oder dein Server-Plugin auf GitHub.</p><div class="hero-actions"><a class="btn primary" href="#templates">Vorlage wählen <span>↓</span></a><a class="btn cyan" href="#project">Eigenes Projekt konfigurieren</a><a class="btn quiet" href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">Build-Logs ↗</a></div></div>
+      <div><div class="overline">Minecraft developer tools / 04</div><h1>Vom Konzept zum<br><span>Build-Projekt.</span></h1><p>Erstelle ein vollständiges Gradle-Projekt für eine Fabric-Mod oder ein Paper-Plugin. ModForge packt Java-Code, Minecraft-Metadaten und Build-Konfiguration direkt im Browser in ein ZIP. Kein GitHub-Token und kein Zugriff auf dein Repository erforderlich.</p><div class="hero-actions"><a class="btn primary" href="#templates">Vorlage wählen <span>↓</span></a><a class="btn cyan" href="#project">Eigenes Projekt konfigurieren</a><a class="btn quiet" href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">Build-Logs ↗</a></div></div>
       <div class="hero-art"><div class="art-top"><span>MODFORGE / STATION 04</span><span>● LIVE</span></div><div class="art-icon">⚒</div><div class="art-title">Compile. Verify. Play.</div><div class="art-sub">JAVA · GRADLE · PAPER · FABRIC</div></div>
     </section>
     <div class="stats">
-      <div class="stat"><span class="stat-icon">⌘</span><span><small>OUTPUT</small><b>Nur fertige JAR</b></span></div>
-      <div class="stat"><span class="stat-icon">⬡</span><span><small>BUILD SYSTEM</small><b>GitHub Actions</b></span></div>
+      <div class="stat"><span class="stat-icon">⌘</span><span><small>OUTPUT</small><b>Gradle-Projekt als ZIP</b></span></div>
+      <div class="stat"><span class="stat-icon">⬡</span><span><small>BUILD SYSTEM</small><b>Tokenloser Browser-Export</b></span></div>
       <div class="stat"><span class="stat-icon">⌁</span><span><small>MINECRAFT TARGET</small><b id="stripVersion">1.21.11</b></span></div>
       <div class="stat"><span class="stat-icon">◷</span><span><small>LOKALE ENTWÜRFE</small><b id="saveDraftState">Aus</b></span></div>
     </div>
@@ -252,15 +252,15 @@ footer a{color:#8ca7a8}footer a:hover{color:var(--cyan)}
           <div class="keybox"><h4>✳ OpenRouter · AI code engine</h4><div class="field"><label for="key">API-KEY</label><input class="input" id="key" type="password" autocomplete="off" placeholder="sk-or-v1-…"><p class="hint">Nur für eigene KI-Codegenerierung. HomeMaster nutzt die integrierte Vorlage und benötigt diesen Key nicht. Niemals Keys in den Chat posten.</p></div><div class="field" style="margin-top:11px"><label for="model">MODEL ID</label><input class="input" id="model" value="openrouter/free" placeholder="openrouter/free"></div><div class="inline" style="margin-top:10px"><button class="btn small" id="testAI" type="button">Verbindung testen</button><span class="hint" id="aiDiag" aria-live="polite"></span></div></div>
         </section>
         <section class="panel" id="buildaccess">
-          <div class="panelhead"><div><div class="panel-kicker">03 / Authorization</div><h3>Build-Zugang</h3><p class="panel-sub">GitHub kompiliert Java und gibt nach Erfolg ausschließlich das JAR-Artefakt zurück.</p></div><span class="stepno">03</span></div>
-          <div class="field"><label for="ghToken">GITHUB FINE-GRAINED TOKEN</label><input class="input" id="ghToken" type="password" autocomplete="off" placeholder="github_pat_…"></div>
-          <p class="hint">Repository <strong>Lennonbsiq999/craft-attack-app</strong> · Permission <strong>Actions: Read and write</strong>. Das Token wird nicht an OpenRouter gesendet und nicht in lokalen Entwürfen gespeichert.</p>
-          <div class="inline"><a class="btn small" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noreferrer">Token erstellen ↗</a><a class="btn small quiet" href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">Actions öffnen ↗</a></div>
+          <div class="panelhead"><div><div class="panel-kicker">03 / Tokenless export</div><h3>Projekt herunterladen</h3><p class="panel-sub">Das ZIP wird lokal zusammengesetzt. Kein GitHub-Zugriff, kein persönlicher GitHub-Token.</p></div><span class="stepno">03</span></div>
+          <div class="notice good">Dein GitHub-Konto bleibt außen vor. ModForge schreibt nichts in Repositories und startet keine Actions.</div>
+          <div class="info-row"><strong>Fabric-Mod</strong><p>Enthält Java-Quellen, fabric.mod.json und Gradle-Konfiguration. Mit Java/Gradle lässt sich daraus lokal eine JAR bauen.</p></div>
+          <div class="info-row"><strong>Paper / Purpur Plugin</strong><p>Enthält Java-Quellen, plugin.yml und Paper-API-Konfiguration.</p></div>
           <div class="save-row"><label class="save-label"><input id="saveDraft" type="checkbox"> Projektentwurf lokal speichern</label><button class="btn small quiet" id="clearDraft" type="button">Entwurf löschen</button></div>
-          <p class="hint">Lokal gespeichert werden nur Projektfelder und Spezifikation. Passwörter und Tokens sind ausgeschlossen.</p>
+          <p class="hint">Lokal gespeichert werden nur Projektfelder und Spezifikation. Der OpenRouter-Key wird nicht in Entwürfen gespeichert.</p>
           <div class="divider"></div>
-          <button class="btn primary primary-wide" id="generate" type="button">⚡ Jetzt kompilieren & JAR herunterladen</button>
-          <p class="hint" style="margin:10px 0 0">Shortcut: <strong>Strg + Enter</strong> im Spezifikationsfeld startet die Validierung.</p>
+          <button class="btn primary primary-wide" id="generate" type="button">⬇ Projekt-ZIP erstellen & herunterladen</button>
+          <p class="hint" style="margin:10px 0 0">Shortcut: <strong>Strg + Enter</strong> im Spezifikationsfeld startet den Export.</p>
         </section>
       </div>
       <aside class="stack rightstack">
@@ -271,14 +271,14 @@ footer a{color:#8ca7a8}footer a:hover{color:var(--cyan)}
           <div class="notice warn" id="readinessAlert">Wähle eine Vorlage oder beschreibe deine Idee.</div>
         </section>
         <section class="panel" id="pipeline">
-          <div class="panelhead"><div><div class="panel-kicker">Build engine / 04</div><h3>Build-Konsole</h3><p class="panel-sub">Live-Status bis zur fertigen JAR-Datei.</p></div><span class="stepno">04</span></div>
+          <div class="panelhead"><div><div class="panel-kicker">Export engine / 04</div><h3>Export-Konsole</h3><p class="panel-sub">Live-Status bis zum fertigen Gradle-Projekt-ZIP.</p></div><span class="stepno">04</span></div>
           <span class="status" id="status">Bereit</span><p class="pipeline-note" id="pipelineNote">Wähle eine Vorlage und fülle die Pflichtfelder aus.</p>
-          <div class="pipeline"><div class="phase" id="phase1"><span class="phase-num">01</span>CODE</div><div class="phase" id="phase2"><span class="phase-num">02</span>CHECK</div><div class="phase" id="phase3"><span class="phase-num">03</span>BUILD</div><div class="phase" id="phase4"><span class="phase-num">04</span>JAR</div></div>
-          <div class="resultempty" id="empty"><div class="emptyicon">⌘</div><b>Warte auf dein erstes Build</b><p>Das Ergebnis, der Download und der GitHub-Run erscheinen in diesem Bereich.</p></div>
-          <div class="buildresult" id="buildresult" style="display:none"><b id="resultTitle">Build abgeschlossen</b><p id="resultText"></p><a id="runlink" class="btn small" href="#" target="_blank" rel="noreferrer" style="display:none">Build-Details öffnen ↗</a></div>
-          <div class="divider"></div><div class="info-row"><strong>KI-Code <span id="modelState" style="float:right;color:#789093;font:8px 'DM Mono',monospace">KEY MISSING</span></strong><p>HomeMaster ist eingebaut. Andere Vorlagen benötigen OpenRouter zur Java-Generierung.</p></div><div class="info-row"><strong>GitHub-Zugang <span id="accessState" style="float:right;color:#789093;font:8px 'DM Mono',monospace">TOKEN MISSING</span></strong><p>Ein erfolgreicher Build muss Java kompilieren und gültige Metadaten enthalten, bevor das JAR angeboten wird.</p></div>
+          <div class="pipeline"><div class="phase" id="phase1"><span class="phase-num">01</span>CODE</div><div class="phase" id="phase2"><span class="phase-num">02</span>CHECK</div><div class="phase" id="phase3"><span class="phase-num">03</span>GRADLE</div><div class="phase" id="phase4"><span class="phase-num">04</span>ZIP</div></div>
+          <div class="resultempty" id="empty"><div class="emptyicon">⌘</div><b>Warte auf deinen ersten Export</b><p>Dein Gradle-Projekt und die Download-Informationen erscheinen hier.</p></div>
+          <div class="buildresult" id="buildresult" style="display:none"><b id="resultTitle">Projekt-ZIP erstellt</b><p id="resultText"></p></div>
+          <div class="divider"></div><div class="info-row"><strong>KI-Code <span id="modelState" style="float:right;color:#789093;font:8px 'DM Mono',monospace">KEY MISSING</span></strong><p>HomeMaster ist eingebaut. Andere Vorlagen benötigen OpenRouter zur Java-Generierung. Der Export selbst braucht keinen GitHub-Token.</p></div><div class="info-row"><strong>Privatsphäre</strong><p>Es wird kein persönlicher GitHub-Key abgefragt oder an irgendeinen Server geschickt. Das ZIP entsteht lokal im Browser.</p></div>
         </section>
-        <section class="panel"><div class="panelhead"><div><div class="panel-kicker">Notes</div><h3>Vor dem Einbau</h3></div></div><div class="info-row"><strong>Fabric-Mod</strong><p>Die JAR kommt in den mods-Ordner. Loader und Abhängigkeiten müssen passen.</p></div><div class="info-row"><strong>Paper / Purpur</strong><p>Die JAR kommt in plugins. Nach dem Neustart die Server-Konsole auf Fehler prüfen.</p></div><div class="info-row"><strong>Build ist nicht Runtime-Test</strong><p>Erfolgreiche Kompilierung garantiert keine fehlerfreie Spiel-Logik. Teste auf einer Kopie deines Servers.</p></div></section>
+        <section class="panel"><div class="panelhead"><div><div class="panel-kicker">Notes</div><h3>Vor dem Einbau</h3></div></div><div class="info-row"><strong>ZIP zuerst entpacken</strong><p>Das Paket enthält ein vollständiges Gradle-Projekt. Baue es mit einer passenden Java-Version und Gradle über <code>gradle build</code>.</p></div><div class="info-row"><strong>Fabric / Paper</strong><p>Die fertige JAR liegt nach einem erfolgreichen lokalen Build in <code>build/libs</code>. Bei Fabric gehört sie in <code>mods</code>, bei Paper in <code>plugins</code>.</p></div><div class="info-row"><strong>Build ist nicht Runtime-Test</strong><p>Ein Projekt-ZIP ist noch keine kompilierte JAR. Prüfe die Kompatibilität und teste auf einer Kopie deines Servers.</p></div></section>
       </aside>
     </div>
     <footer><span>MODFORGE X / BUILD WORKBENCH / RELEASE 04</span><span><a href="https://github.com/Lennonbsiq999/craft-attack-app/tree/main/public/modforge-lab" target="_blank" rel="noreferrer">Source</a> · <a href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">Build history</a> · <a href="https://docs.fabricmc.net/" target="_blank" rel="noreferrer">Fabric</a> · <a href="https://docs.papermc.io/" target="_blank" rel="noreferrer">Paper</a></span></footer>
@@ -479,12 +479,11 @@ $('status').textContent=message;
 $('status').className=error?'status error':'status';
 const m=String(message).toLowerCase();
 let active=0;
-if(/lade integrierte|ki schreibt|bereite code|quellcode vorbereiten/.test(m))active=1;
-else if(/quellcode bereit|verbinde mit github|build gestartet|warte auf github|build wartet|validier/.test(m))active=2;
-else if(/kompiliere minecraft|compile|gradle/.test(m))active=3;
-else if(/jar wird heruntergeladen/.test(m))active=4;
-else if(/jar bereit/.test(m))active=4;
-else if(/fehlgeschlagen/.test(m))active=0;
+if(/ki schreibt|bereite code|lade integrierte|quellcode vorbereiten/.test(m))active=1;
+else if(/quellcode bereit|prüfe|metadaten/.test(m))active=2;
+else if(/schreibe gradle|packe projekt|zip wird/.test(m))active=3;
+else if(/projekt-zip bereit|projektpaket bereit/.test(m))active=4;
+else if(/fehlgeschlagen|angehalten/.test(m))active=0;
 for(let i=1;i<=4;i++){
  const el=$('phase'+i);
  if(!el)continue;
@@ -494,105 +493,267 @@ for(let i=1;i<=4;i++){
 const note=$('pipelineNote');
 if(note)note.textContent=error?'Build angehalten. Öffne die Fehlermeldung und prüfe den angegebenen Schritt.':message;
 }
-const repo='Lennonbsiq999/craft-attack-app';
-function ghHeaders(){return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+$('ghToken').value.trim(),'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'}}
-async function ghJson(path, options={}){
-let response;
-try{response=await fetch('https://api.github.com'+path,{...options,headers:{...ghHeaders(),...(options.headers||{})}})}
-catch(e){throw new Error('GitHub-API nicht erreichbar. Prüfe Internetverbindung oder Browserblocker.')}
-const raw=await response.text();let data={};try{data=raw?JSON.parse(raw):{}}catch(e){}
-if(!response.ok){
-if(response.status===401)throw new Error('GitHub-Token ungültig. Erstelle einen neuen Fine-grained Token.');
-if(response.status===403)throw new Error('GitHub verweigert den Zugriff. Der Token braucht Actions: Read and write für craft-attack-app.');
-if(response.status===404)throw new Error('Workflow nicht gefunden oder Token hat keinen Zugriff. Prüfe Repository und Token-Berechtigung.');
-throw new Error(data.message||('GitHub-Fehler HTTP '+response.status));
+
+function versionParts(value){
+const parts=String(value||'').split('.').map(Number);
+if(parts.length<2||parts.some(n=>!Number.isFinite(n)))throw new Error('Minecraft-Version ist ungültig.');
+return [parts[0],parts[1],parts[2]||0];
 }
-return data;
+function targetJavaVersion(version){
+const v=versionParts(version);
+if(v[0]>=26)return 25;
+if(v[0]>1||(v[0]===1&&(v[1]>20||(v[1]===20&&v[2]>=5))))return 21;
+if(v[0]===1&&v[1]>=18)return 17;
+return 8;
 }
-function buildFiles(files){
-const allowed={};
-const resourceExtensions=new Set(['json','yml','yaml','txt','properties','lang','toml','mcmeta','xml']);
-for(const [rawPath,content] of Object.entries(files||{})){
-if(typeof content!=='string')continue;
-let path=String(rawPath).split(String.fromCharCode(92)).join('/');
-while(path.startsWith('/'))path=path.slice(1);
-if(!path||path.split('/').some(p=>p===''||p==='.'||p==='..')||path.includes(':'))continue;
-const lower=path.toLowerCase();
-if(lower.endsWith('.java'))allowed[path]=content;
-else if(path.startsWith('src/main/resources/')){
-const suffix=lower.includes('.')?lower.slice(lower.lastIndexOf('.')+1):'';
-if(resourceExtensions.has(suffix)&&!lower.endsWith('/plugin.yml')&&!lower.endsWith('/fabric.mod.json'))allowed[path]=content;
+function quoteYaml(value){
+return JSON.stringify(String(value||'').replace(/[\r\n\x00]/g,' ').slice(0,180));
+}
+async function getJsonOrNull(url){
+try{
+const response=await fetch(url,{headers:{'Accept':'application/json'},cache:'no-store'});
+if(!response.ok)return null;
+return await response.json();
+}catch(e){return null}
+}
+function normalizeExportFiles(c, files){
+const raw=buildFiles(files);
+const normalized={};
+for(const [rawPath,rawContent] of Object.entries(raw)){
+let path=rawPath;
+let content=String(rawContent);
+if(path.toLowerCase().endsWith('.java')){
+const match=content.match(/^\s*package\s+([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)\s*;/m);
+let pkg=match?match[1]:c.pkg;
+if(!pkg||!pkg.split('.').every(part=>/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(part)))throw new Error('Ungültiges Java-Package in '+path+'.');
+if(!match)content='package '+pkg+';\n\n'+content;
+path='src/main/java/'+pkg.replace(/\./g,'/')+'/'+path.split('/').pop();
+}
+if(Object.prototype.hasOwnProperty.call(normalized,path))throw new Error('Mehrere Dateien haben denselben Zielpfad: '+path);
+normalized[path]=content;
+}
+if(!Object.keys(normalized).some(path=>path.endsWith('.java')))throw new Error('Kein Java-Quellcode zum Export gefunden.');
+return normalized;
+}
+function getEntrypoint(files, kind){
+for(const [path,content] of Object.entries(files)){
+if(!path.endsWith('.java'))continue;
+const pkgMatch=content.match(/^\s*package\s+([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)\s*;/m);
+const pkg=pkgMatch?pkgMatch[1]:'';
+if(kind==='plugin'){
+const regex=/\bclass\s+([A-Za-z_$][A-Za-z0-9_$]*)\b[^{};]*?\bextends\s+([A-Za-z_$][A-Za-z0-9_$.]*)/g;
+for(const match of content.matchAll(regex)){
+if(match[2].split('.').pop()==='JavaPlugin')return (pkg?pkg+'.':'')+match[1];
+}
+}else{
+const regex=/\bclass\s+([A-Za-z_$][A-Za-z0-9_$]*)\b[^{}]*?\bimplements\b([^{}]+)/g;
+for(const match of content.matchAll(regex)){
+if(/\bModInitializer\b/.test(match[2]))return (pkg?pkg+'.':'')+match[1];
 }
 }
-if(!Object.keys(allowed).some(p=>p.toLowerCase().endsWith('.java')))throw new Error('Die KI hat keinen Java-Einstiegspunkt erstellt. Versuche es mit einer klareren Idee.');
-return allowed;
 }
-async function encodePayload(c, files){
-if(typeof CompressionStream==='undefined')throw new Error('Dein Browser unterstützt die sichere Komprimierung nicht. Nutze eine aktuelle Version von Chrome oder Opera.');
-const payload={config:{name:c.name,id:c.id,version:c.version,kind:c.kind,platform:c.platform,pkg:c.pkg,desc:c.desc},files:files};
-const stream=new Blob([JSON.stringify(payload)]).stream().pipeThrough(new CompressionStream('gzip'));
-const bytes=new Uint8Array(await new Response(stream).arrayBuffer());
-let binary='';for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));
-const encoded=btoa(binary);
-if(encoded.length>64000)throw new Error('Der generierte Code ist für einen Build zu groß. Kürze die Idee.');
-return encoded;
+throw new Error(kind==='plugin'
+?'Die Hauptklasse muss JavaPlugin erweitern, damit Paper das Plugin laden kann.'
+:'Die Hauptklasse muss ModInitializer implementieren, damit Fabric die Mod laden kann.');
 }
-function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
-async function buildJar(c, files){
-const token=$('ghToken').value.trim();
-if(!token)throw new Error('GitHub-Token fehlt. Erstelle einen Fine-grained Token mit Actions: Read and write.');
-if(typeof JSZip==='undefined')throw new Error('Die JAR-Download-Komponente konnte nicht geladen werden. Seite neu laden.');
-const projectFiles=buildFiles(files);
-const payload=await encodePayload(c,projectFiles);
-setStatus('Verbinde mit GitHub Actions…');
-$('resultTitle').textContent='Build läuft';
-$('resultText').textContent='GitHub Actions kompiliert deinen Java-Code. Es werden keine Quelldateien zum Download angezeigt.';
-$('buildresult').style.display='block';$('empty').style.display='none';$('runlink').style.display='none';
-const workflow='/repos/'+repo+'/actions/workflows/modforge-build-jar.yml/runs?per_page=10';
-const before=await ghJson(workflow);
-const oldIds=new Set((before.workflow_runs||[]).map(r=>r.id));
-const launchedAt=Date.now();
-await ghJson('/repos/'+repo+'/actions/workflows/modforge-build-jar.yml/dispatches',{method:'POST',body:JSON.stringify({ref:'main',inputs:{payload:payload}})});
-let run=null;
-for(let i=0;i<25&&!run;i++){
-await delay(1500);
-const data=await ghJson(workflow);
-run=(data.workflow_runs||[]).find(r=>!oldIds.has(r.id)&&r.event==='workflow_dispatch'&&new Date(r.created_at).getTime()>=launchedAt-10000)||null;
-setStatus(run?'Build gestartet…':'Warte auf GitHub Runner…');
+function makePluginYaml(c, files, entrypoint){
+const commands=new Set(),permissions=new Set();
+for(const content of Object.values(files)){
+for(const match of content.matchAll(/getCommand\s*\(\s*["']([a-zA-Z0-9_-]+)["']\s*\)/g))commands.add(slug(match[1]));
+for(const match of content.matchAll(/hasPermission\s*\(\s*["']([a-zA-Z0-9_.-]+)["']\s*\)/g))permissions.add(match[1]);
+for(const match of content.matchAll(/allowed\s*\(\s*\w+\s*,\s*["']([a-zA-Z0-9_.-]+)["']\s*\)/g))permissions.add(match[1]);
 }
-if(!run)throw new Error('GitHub hat keinen Build gestartet. Öffne die Actions-Seite und prüfe, ob Actions für das Repository aktiviert sind.');
-$('runlink').href=run.html_url||'https://github.com/'+repo+'/actions';
-for(let i=0;i<390;i++){
-await delay(2000);
-const current=await ghJson('/repos/'+repo+'/actions/runs/'+run.id);
-if(current.status==='completed'){
-if(current.conclusion!=='success'){
-$('runlink').href=current.html_url||run.html_url;$('runlink').style.display='inline-block';
-throw new Error('Die Kompilierung ist fehlgeschlagen. Öffne „Build-Details“, um die Fehlermeldung zu sehen.');
+if(!commands.size)commands.add(slug(c.id));
+const v=versionParts(c.version);
+const lines=[
+'name: '+quoteYaml(c.name),
+'version: "1.0.0"',
+'main: '+entrypoint
+];
+if((v[0]===1&&v[1]>=13)||v[0]>=2)lines.push('api-version: '+quoteYaml(String(v[0])+'.'+String(v[1])));
+lines.push('description: '+quoteYaml(c.desc),'commands:');
+for(const command of [...commands].sort()){
+lines.push('  '+command+':','    description: "Generated command"','    usage: /'+command);
 }
-break;
+if(permissions.size){
+lines.push('permissions:');
+for(const permission of [...permissions].sort()){
+const isAdmin=permission.endsWith('.admin')||permission.includes('.bypass.')||permission.endsWith('.multiple');
+lines.push('  '+permission+':','    description: "Generated permission"','    default: '+(isAdmin?'op':'true'));
 }
-setStatus(current.status==='queued'?'Build wartet auf einen Runner…':'Kompiliere Minecraft-JAR…');
-if(i===389)throw new Error('Der Build läuft ungewöhnlich lange. Öffne die Build-Details und prüfe, ob GitHub Actions noch kompiliert.');
 }
-setStatus('JAR wird heruntergeladen…');
-const artifactData=await ghJson('/repos/'+repo+'/actions/runs/'+run.id+'/artifacts');
-const artifact=(artifactData.artifacts||[]).find(a=>a.name==='modforge-jar'&&!a.expired);
-if(!artifact)throw new Error('Der Build war erfolgreich, aber das JAR-Artefakt wurde nicht gefunden.');
-let response;
-try{response=await fetch('https://api.github.com/repos/'+repo+'/actions/artifacts/'+artifact.id+'/zip',{headers:ghHeaders()})}
-catch(e){throw new Error('JAR-Artefakt konnte nicht heruntergeladen werden. Prüfe Token-Berechtigung und Browserverbindung.')}
-if(!response.ok)throw new Error('Download des Build-Artefakts fehlgeschlagen (HTTP '+response.status+').');
-const zip=await JSZip.loadAsync(await response.blob());
-const entry=Object.values(zip.files).find(f=>!f.dir&&f.name.toLowerCase().endsWith('.jar'));
-if(!entry)throw new Error('Im Build-Artefakt wurde keine JAR-Datei gefunden.');
-const jar=await entry.async('blob');
-const filename=slug(c.id)+'.jar';
-download(filename,jar,'application/java-archive');
-setStatus('JAR bereit');
+return lines.join('\n')+'\n';
+}
+async function downloadProjectZip(c, files){
+if(typeof JSZip==='undefined')throw new Error('Die ZIP-Komponente konnte nicht geladen werden. Lade die Seite neu.');
+const projectFiles=normalizeExportFiles(c,files);
+const entrypoint=getEntrypoint(projectFiles,c.kind);
+const zip=new JSZip();
+const projectId=slug(c.id);
+const root=projectId+'/';
+const v=versionParts(c.version);
+const release=targetJavaVersion(c.version);
+const mcText=String(c.version).trim();
+const name=String(c.name||projectId).replace(/[\r\n\x00]/g,' ').slice(0,48);
+const desc=String(c.desc||'Minecraft-Projekt').replace(/[\r\n\x00]/g,' ').slice(0,180);
+setStatus('Erstelle Minecraft-Metadaten…');
+if(c.kind==='plugin'){
+const apiVersion=v[0]>=26?mcText+'.build.+':mcText+'-R0.1-SNAPSHOT';
+const runner=v[0]>=26?25:21;
+projectFiles['src/main/resources/plugin.yml']=makePluginYaml({...c,name,desc},projectFiles,entrypoint);
+projectFiles['settings.gradle']="rootProject.name = '"+projectId+"'\n";
+projectFiles['build.gradle']=[
+"plugins {",
+"    id 'java'",
+"}",
+"",
+"group = '"+c.pkg+"'",
+"version = '1.0.0'",
+"base { archivesName = '"+projectId+"' }",
+"",
+"repositories {",
+"    mavenCentral()",
+"    maven { url = 'https://repo.papermc.io/repository/maven-public/' }",
+"}",
+"",
+"dependencies {",
+"    compileOnly 'io.papermc.paper:paper-api:"+apiVersion+"'",
+"}",
+"",
+"java {",
+"    toolchain { languageVersion = JavaLanguageVersion.of("+runner+") }",
+"}",
+"",
+"tasks.withType(JavaCompile).configureEach {",
+"    options.encoding = 'UTF-8'",
+"    options.release = "+release,
+"}",
+""
+].join('\n');
+}else{
+const loaderUrl='https://meta.fabricmc.net/v2/versions/loader/'+encodeURIComponent(mcText);
+const yarnUrl='https://meta.fabricmc.net/v2/versions/yarn/'+encodeURIComponent(mcText);
+const apiParams=new URLSearchParams({game_versions:JSON.stringify([mcText]),loaders:JSON.stringify(['fabric'])});
+const apiUrl='https://api.modrinth.com/v2/project/fabric-api/version?'+apiParams.toString();
+const needsApi=Object.values(projectFiles).some(content=>content.includes('net.fabricmc.fabric.api'));
+setStatus('Prüfe öffentliche Fabric-Metadaten…');
+const [loaderRows,yarnRows,apiRows]=await Promise.all([
+getJsonOrNull(loaderUrl),getJsonOrNull(yarnUrl),needsApi?getJsonOrNull(apiUrl):Promise.resolve(null)
+]);
+const loader=Array.isArray(loaderRows)?(loaderRows.find(row=>row&&row.loader&&row.loader.stable)||loaderRows[0]):null;
+const loaderVersion=loader&&loader.loader&&loader.loader.version?String(loader.loader.version):'+';
+const yarn=Array.isArray(yarnRows)?(yarnRows.find(row=>row&&row.stable&&row.version)||yarnRows.find(row=>row&&row.version)):null;
+const yarnVersion=yarn&&yarn.version?String(yarn.version):mcText+'+build.+';
+const apiVersion=Array.isArray(apiRows)&&apiRows[0]&&apiRows[0].version_number?String(apiRows[0].version_number):'+';
+const modern=v[0]>=26;
+const loomId=modern?'net.fabricmc.fabric-loom':'net.fabricmc.fabric-loom-remap';
+const mcDependency='minecraft "com.mojang:minecraft:'+'$'+'{mc_version}"';
+const loaderDependency=modern
+?'implementation "net.fabricmc:fabric-loader:'+'$'+'{loader_version}"'
+:'modImplementation "net.fabricmc:fabric-loader:'+'$'+'{loader_version}"';
+const dependencyLines=[mcDependency,loaderDependency];
+if(needsApi)dependencyLines.push((modern?'implementation':'modImplementation')+' "net.fabricmc.fabric-api:fabric-api:'+'$'+'{fabric_api_version}"');
+const metadata={
+schemaVersion:1,id:projectId,version:'1.0.0',name:name,description:desc,environment:'*',
+entrypoints:{main:[entrypoint]},
+depends:{fabricloader:loaderVersion==='+'?'>=0.16.0':'>='+loaderVersion,minecraft:mcText,java:'>='+release}
+};
+if(needsApi)metadata.depends['fabric-api']='*';
+projectFiles['src/main/resources/fabric.mod.json']=JSON.stringify(metadata,null,2)+'\n';
+projectFiles['settings.gradle']=[
+'pluginManagement {',
+'    repositories {',
+"        maven { url = 'https://maven.fabricmc.net/' }",
+'        gradlePluginPortal()',
+'        mavenCentral()',
+'    }',
+'}',
+"rootProject.name = '"+projectId+"'",
+''
+].join('\n');
+projectFiles['gradle.properties']=[
+'org.gradle.jvmargs=-Xmx3G',
+'org.gradle.parallel=true',
+'mc_version='+mcText,
+'loader_version='+loaderVersion
+].concat(modern?[]:['yarn_mappings='+yarnVersion]).concat(needsApi?['fabric_api_version='+apiVersion]:[]).join('\n')+'\n';
+projectFiles['build.gradle']=[
+'plugins {',
+"    id '"+loomId+"' version '1.16-SNAPSHOT'",
+'}',
+'',
+"version = '1.0.0'",
+"group = '"+c.pkg+"'",
+"base { archivesName = '"+projectId+"' }",
+'',
+'repositories {',
+"    maven { url = 'https://maven.fabricmc.net/' }",
+'    mavenCentral()',
+'}',
+'',
+'dependencies {',
+'    '+dependencyLines.join('\n    '),
+'}',
+'',
+'java {',
+'    toolchain { languageVersion = JavaLanguageVersion.of(25) }',
+'}',
+'',
+'tasks.withType(JavaCompile).configureEach {',
+"    options.encoding = 'UTF-8'",
+'    options.release = '+release,
+'}',
+''
+].join('\n');
+if(needsApi&&apiVersion==='+')toast('Hinweis: Fabric API wurde nicht automatisch gefunden. Prüfe beim lokalen Build gegebenenfalls fabric_api_version in gradle.properties.');
+}
+for(const [path,content] of Object.entries(projectFiles)){
+const relative=path.replace(/\\/g,'/');
+if(!relative||relative.startsWith('/')||relative.split('/').some(part=>part==='..'||part===''||part==='.')||relative.includes(':'))continue;
+zip.file(root+relative,content);
+}
+const readme=[
+'# '+name,
+'',
+desc,
+'',
+'## Projekt',
+'',
+'- Typ: '+(c.kind==='plugin'?'Paper / Purpur Plugin':'Fabric-Mod'),
+'- Minecraft: '+mcText,
+'- Java-Quellcode: src/main/java/',
+'- Hauptklasse: '+entrypoint,
+'',
+'## Lokal bauen',
+'',
+'Installiere eine passende Java-Version und Gradle. Öffne dieses Verzeichnis im Terminal und führe aus:',
+'',
+'gradle build',
+'',
+'Nach einem erfolgreichen Build liegt die JAR-Datei im Ordner build/libs/.',
+'',
+'## Installation',
+'',
+c.kind==='plugin'
+?'Kopiere die fertige JAR in den plugins-Ordner deines Paper-/Purpur-Servers und starte den Server neu.'
+:'Kopiere die fertige JAR in den mods-Ordner. Fabric Loader und eventuell benötigte Fabric API müssen auf dem Zielsystem vorhanden sein.',
+'',
+'## Wichtig',
+'',
+'Dieses ZIP enthält ein Gradle-Projekt, keine bereits kompilierte JAR. ModForge benötigt für den Export keinen GitHub-Token und verändert keine GitHub-Repositories.',
+''
+].join('\n');
+zip.file(root+'README.md',readme);
+zip.file(root+'.gitignore','/build/\n/.gradle/\n/out/\n*.class\n');
+setStatus('Packe Projekt-ZIP…');
+const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
+const filename=projectId+'-project.zip';
+download(filename,blob,'application/zip');
+setStatus('Projekt-ZIP bereit');
+$('buildresult').style.display='block';
+$('empty').style.display='none';
 $('resultTitle').textContent='Fertig: '+filename;
-$('resultText').textContent='Die kompilierte JAR wurde heruntergeladen. Lege sie bei einer Fabric-Mod in den mods-Ordner oder bei einem Paper/Purpur-Plugin in den plugins-Ordner.';
-$('runlink').href=run.html_url||'https://github.com/'+repo+'/actions';$('runlink').textContent='Build-Details öffnen ↗';$('runlink').style.display='inline-block';
+$('resultText').textContent='Das vollständige Gradle-Projekt wurde heruntergeladen. Entpacke es und führe im Projektordner gradle build aus. Erst nach erfolgreichem lokalen Build liegt die JAR in build/libs/. Es wurde kein GitHub-Token angefordert oder verwendet.';
 }
 document.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{
 kind=b.dataset.kind;
@@ -606,9 +767,8 @@ $('version').onchange=()=>{$('customVersion').style.display=$('version').value==
 $('generate').onclick=async()=>{
 const c=config();
 if(!c.idea){toast('Beschreibe die Idee zuerst.');return}
-if(!$('ghToken').value.trim()){toast('GitHub-Token fehlt. Erst Token eintragen, dann wird gebaut.');$('ghToken').focus();return}
-$('generate').disabled=true;$('generate').textContent='Build läuft…';
-$('runlink').style.display='none';$('buildresult').style.display='none';$('empty').style.display='flex';
+$('generate').disabled=true;$('generate').textContent='ZIP wird erstellt…';
+$('buildresult').style.display='none';$('empty').style.display='flex';
 setStatus('Bereite Code vor…');
 try{
 const p=makePrompt(c);
@@ -624,16 +784,16 @@ files=await makeAI(c,p);
 files=starter(c);
 toast('Basis-JAR: Ohne OpenRouter-Key wird deine eingegebene Wunschfunktion nicht von der KI umgesetzt.');
 }
-setStatus('Quellcode bereit. Starte Kompilierung…');
-await buildJar(c,files);
+setStatus('Quellcode bereit. Erstelle das Gradle-Projekt…');
+await downloadProjectZip(c,files);
 }catch(e){
 setStatus('Build fehlgeschlagen',true);
 $('buildresult').style.display='block';$('empty').style.display='none';
-$('resultTitle').textContent='JAR konnte nicht erstellt werden';
+$('resultTitle').textContent='Projekt-ZIP konnte nicht erstellt werden';
 $('resultText').textContent=e&&e.message?e.message:'Unbekannter Fehler beim Erstellen der JAR.';
 toast($('resultText').textContent);
 }finally{
-$('generate').disabled=false;$('generate').textContent='⚡ JAR erstellen & herunterladen';
+$('generate').disabled=false;$('generate').textContent='⬇ Projekt-ZIP erstellen & herunterladen';
 }
 };
 $('homePreset').onclick=()=>{
@@ -646,7 +806,7 @@ $('desc').value='Homes speichern, verwalten und sicher teleportieren';
 $('idea').value='HomeMaster Paper-Plugin für Minecraft: /sethome [name], /home [name], /homes, /homes gui, /delhome <name>, /renamehome <alt> <neu> und /back. Homes dauerhaft pro UUID speichern, Home-Limit konfigurierbar, Permissions, sichere Teleports, Teleport-Verzögerung mit Abbruch bei Bewegung oder Schaden und Cooldown. Nutze die integrierte HomeMaster-Vorlage.';
 $('aiDiag').textContent='Integrierte Vorlage aktiv. OpenRouter-Key ist für HomeMaster nicht erforderlich.';
 setStatus('HomeMaster-Vorlage ausgewählt');
-toast('HomeMaster ist vorkonfiguriert. Jetzt nur noch GitHub-Build-Token eintragen und JAR erstellen.');
+toast('HomeMaster ist vorkonfiguriert. Das Gradle-Projekt lässt sich ohne GitHub-Token als ZIP herunterladen.');
 };
 
 const templateData={
@@ -695,14 +855,12 @@ function syncOverview(){
  const scoreEl=$('readinessScore');if(scoreEl)scoreEl.textContent=score*20+'%';
  const fill=$('readinessFill');if(fill)fill.style.width=score*20+'%';
  const modelState=$('modelState');if(modelState)modelState.textContent=activeTemplate==='homemaster'?'Vorlage integriert':($('key').value.trim()?'KI bereit':'KI-Key fehlt');
- const buildState=$('accessState');if(buildState)buildState.textContent=$('ghToken').value.trim()?'Token eingetragen':'Token fehlt';
- const alert=$('readinessAlert');
+  const alert=$('readinessAlert');
  if(alert){
   if(!pkgValid){alert.textContent='Java-Package prüfen: nur gültige Bezeichner wie de.toastomat.example verwenden.';alert.className='notice warn';}
   else if(activeTemplate&&activeTemplate!=='homemaster'&&!$('key').value.trim()){alert.textContent='Diese Vorlage benötigt einen OpenRouter-Key, weil ihr Java-Code per KI erstellt wird.';alert.className='notice warn';}
   else if(activeTemplate==='homemaster'){alert.textContent='HomeMaster nutzt eine integrierte Vorlage. Dafür ist kein OpenRouter-Key nötig.';alert.className='notice good';}
-  else if(!$('ghToken').value.trim()){alert.textContent='Zum tatsächlichen Kompilieren brauchst du zusätzlich den GitHub-Build-Token.';alert.className='notice warn';}
-  else{alert.textContent='Konfiguration sieht vollständig aus. Du kannst den Build starten.';alert.className='notice good';}
+  else{alert.textContent='Konfiguration sieht vollständig aus. Du kannst das Gradle-Projekt als ZIP herunterladen, ohne GitHub-Token.';alert.className='notice good';}
  }
 }
 function applyTemplate(id){
@@ -754,7 +912,7 @@ document.querySelectorAll('[data-template-filter]').forEach(btn=>btn.addEventLis
 }));
 const ideaEl=$('idea');
 if(ideaEl)ideaEl.addEventListener('input',syncOverview);
-['name','id','version','customVersion','platform','pkg','desc','key','ghToken'].forEach(id=>{const el=$(id);if(el){el.addEventListener('input',syncOverview);el.addEventListener('change',syncOverview)}});
+['name','id','version','customVersion','platform','pkg','desc','key'].forEach(id=>{const el=$(id);if(el){el.addEventListener('input',syncOverview);el.addEventListener('change',syncOverview)}});
 const savedToggle=$('saveDraft');
 const storeKey='modforge-lab-draft-v3';
 function saveDraft(){
@@ -831,7 +989,7 @@ $('generate').addEventListener('click',function validationCapture(e){
   e.stopImmediatePropagation();toast('Minecraft-Version ungültig. Beispiel: 1.21.11');$('version').focus();return;
  }
  if(activeTemplate!=='homemaster'&&!$('key').value.trim()){
-  e.stopImmediatePropagation();toast(activeTemplate?'Diese Vorlage benötigt einen OpenRouter-Key, sonst würde nur ein leeres Starter-JAR gebaut.':'Ohne OpenRouter-Key entsteht nur ein leeres Starter-JAR. Wähle HomeMaster oder trage einen Key ein.');$('key').focus();return;
+  e.stopImmediatePropagation();toast('Für die KI-Codegenerierung brauchst du einen OpenRouter-Key. Der ZIP-Export selbst benötigt keinen GitHub-Key.');$('key').focus();return;
  }
 }, true);
 const oldPreset=$('homePreset');
