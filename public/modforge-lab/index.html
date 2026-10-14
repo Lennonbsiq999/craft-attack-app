@@ -3,153 +3,290 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f7f4ee">
-<meta name="description" content="ModForge Lab: Erstelle Minecraft-Mods und Server-Plugins mit Vorlagen, Projektprüfung und echten JAR-Builds.">
-<title>ModForge Lab 3 | Minecraft Build Workshop</title>
+<meta name="theme-color" content="#080b10">
+<meta name="description" content="ModForge X — Deine Werkstatt für Minecraft Fabric-Mods und Paper-Plugins.">
+<title>ModForge X | Minecraft Build Workbench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:light;--bg:#f7f4ee;--paper:#fffdf8;--ink:#19231f;--soft:#26342d;--muted:#68756d;--line:#dcded2;--green:#1d6a49;--lime:#caff52;--orange:#f36a3d;--gold:#e5bd47;--radius:16px}
-*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:22px}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:inherit;text-decoration:none}a:hover{text-decoration:underline}button,input,select,textarea{font:inherit}
-.layout-app{min-height:100vh;display:grid;grid-template-columns:252px minmax(0,1fr)}
-.sidebar{position:sticky;top:0;height:100vh;overflow:auto;background:#17261f;color:#eef2df;padding:21px 15px;display:flex;flex-direction:column}
-.brand{display:flex;align-items:center;gap:11px;padding:4px 8px 24px;border-bottom:1px solid #ffffff19}
-.brand-symbol{width:42px;height:42px;border-radius:13px;background:var(--lime);color:#1b2a20;display:grid;place-items:center;font-weight:1000;font-size:24px;transform:rotate(-4deg)}
-.brand-name{font-weight:1000;letter-spacing:.13em;font-size:13px}.brand-sub{font-size:9px;letter-spacing:.15em;color:#a6b6a3;margin-top:3px}
-.side-label{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#91a291;font-weight:950;margin:23px 10px 8px}
-.nav{display:grid;gap:4px}.nav a,.nav button{display:flex;align-items:center;gap:11px;border:1px solid transparent;border-radius:10px;padding:11px;background:transparent;color:#bbc9b7;text-align:left;font-size:11px;font-weight:800;cursor:pointer;width:100%}
-.nav a:hover,.nav button:hover{background:#ffffff0c;text-decoration:none}.nav a.active{background:#294136;border-color:#3c5848;color:#fff}.navicon{width:21px;text-align:center;font-size:15px;color:#a9df78}
-.side-bottom{margin-top:auto}.side-status{padding:14px;background:#203429;border:1px solid #344d3d;border-radius:13px}.side-status strong{display:flex;align-items:center;gap:8px;font-size:10px}.indicator{width:7px;height:7px;border-radius:50%;background:#caff52;box-shadow:0 0 0 4px #caff5214}.side-status p{font-size:10px;line-height:1.6;color:#a9baa8;margin:9px 0 0}.side-foot{font-size:9px;color:#829282;padding:17px 7px 0}
-.main{min-width:0}.topbar{height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 clamp(18px,4vw,48px);background:#fffdf8;border-bottom:1px solid var(--line)}.crumb{font-size:10px;color:var(--muted);font-weight:850;letter-spacing:.12em;text-transform:uppercase}.crumb b{color:var(--ink)}.toptools{display:flex;align-items:center;gap:8px}.build-pill{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid #d1dfc5;border-radius:8px;background:#f5ffe9;color:#396632;font-size:9px;font-weight:950;letter-spacing:.05em}.userdot{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:#ffe0d1;color:#923b20;font-size:10px;font-weight:1000}
-.content{max-width:1680px;margin:0 auto;padding:clamp(18px,3vw,40px) clamp(16px,3.6vw,48px) 32px}
-.hero{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:26px;align-items:center;margin-bottom:22px}
-.kicker{display:flex;align-items:center;gap:9px;text-transform:uppercase;letter-spacing:.17em;font-size:9px;color:var(--green);font-weight:1000}.kicker:before{content:"";height:3px;width:25px;background:var(--orange);border-radius:9px}
-h1{font-size:clamp(35px,5vw,62px);line-height:.97;letter-spacing:-.07em;margin:15px 0;font-weight:1000;max-width:790px}h1 span{color:var(--green)}.hero p{max-width:690px;color:var(--muted);line-height:1.75;font-size:12px;margin:0}
-.actions{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin-top:19px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #d6dacf;background:var(--paper);color:var(--ink);padding:10px 13px;border-radius:9px;font-size:10px;font-weight:950;cursor:pointer;transition:transform .15s,border-color .15s}.btn:hover{transform:translateY(-1px);border-color:#879788;text-decoration:none}.btn:disabled{opacity:.55;cursor:wait;transform:none}.btn.primary{background:var(--green);border-color:var(--green);color:#fff}.btn.lime{background:var(--lime);border-color:var(--lime);color:#18251c}.btn.subtle{background:transparent}.btn.small{padding:7px 9px;font-size:9px}
-.hero-card{background:var(--lime);border-radius:15px;padding:19px;min-height:172px;border:1px solid #addb3d;box-shadow:6px 6px 0 #d3d8c9;position:relative;overflow:hidden}.hero-card:after{content:"";position:absolute;width:135px;height:135px;border:1px solid #263c292a;transform:rotate(45deg);right:-30px;bottom:-57px;box-shadow:0 0 0 13px #263c2906,0 0 0 27px #263c2906}.hero-card small{font-size:8px;font-weight:1000;letter-spacing:.16em;text-transform:uppercase}.hero-card .big-icon{font-size:35px;margin:14px 0 8px}.hero-card b{display:block;font-size:15px;letter-spacing:-.04em}.hero-card p{font-size:9px;color:#385138;margin-top:3px}
-.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:20px 0 25px}.metric{border:1px solid var(--line);border-radius:11px;background:#fffdf8;padding:12px 13px;min-width:0}.metric small{display:block;color:var(--muted);font-size:8px;letter-spacing:.13em;font-weight:950}.metric b{display:block;font-size:12px;margin-top:5px;overflow-wrap:anywhere}
-.section-top{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:26px 0 13px}.section-top h2{font-size:18px;letter-spacing:-.05em;margin:0}.section-top p{font-size:10px;color:var(--muted);margin:4px 0 0}.section-tag{font-size:9px;color:var(--green);font-weight:950;letter-spacing:.12em}
-.templates{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.template-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:167px;padding:14px;border:1px solid var(--line);border-radius:13px;background:#fffdf8;cursor:pointer;text-align:left;color:var(--ink);transition:border-color .15s,transform .15s,box-shadow .15s}.template-card:hover{transform:translateY(-2px);border-color:#a5b5a1;box-shadow:0 8px 20px #19231f0d}.template-card.selected{border:1.5px solid var(--green);box-shadow:inset 0 0 0 2px #1d6a4910;background:#f4faee}.template-card[hidden]{display:none}.template-icon{height:34px;width:38px;border-radius:9px;background:#eef2e5;display:grid;place-items:center;font-size:18px;margin-bottom:12px}.template-card[data-category="client"] .template-icon{background:#e1eaff}.template-card[data-category="starter"] .template-icon{background:#ffe6d9}.template-card strong{font-size:11px;font-weight:1000}.template-card p{font-size:9px;color:var(--muted);margin:5px 0 13px;line-height:1.55}.template-bottom{display:flex;justify-content:space-between;align-items:center;gap:7px;width:100%;margin-top:auto}.template-badge{padding:4px 6px;border-radius:5px;background:#edf0e8;color:#586557;font-size:8px;font-weight:950}.template-badge.builtin{background:#e2f6be;color:#345d1c}.template-arrow{font-size:12px;color:var(--green)}
-.filters{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}.filter{border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--muted);padding:7px 10px;font-size:9px;font-weight:900;cursor:pointer}.filter.active{background:var(--ink);border-color:var(--ink);color:#fff}.search{width:min(250px,100%);border:1px solid var(--line);background:#fffdf8;border-radius:8px;padding:9px 11px;font-size:10px;color:var(--ink)}
-.workspace{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:16px;align-items:start}.stack{display:grid;gap:15px;min-width:0}.panel{min-width:0;border:1px solid var(--line);border-radius:15px;background:#fffdf8;padding:20px;box-shadow:0 4px 14px #26352606}.panelhead{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}.panel-kicker{font-size:8px;letter-spacing:.17em;text-transform:uppercase;color:var(--green);font-weight:1000;margin-bottom:5px}.panel h3{font-size:14px;letter-spacing:-.04em;margin:0;font-weight:1000}.panel-sub{font-size:10px;line-height:1.6;color:var(--muted);margin:5px 0 0}.stepno{width:28px;height:28px;display:grid;place-items:center;border-radius:8px;background:#f0f1e8;color:#687367;font-size:9px;font-weight:1000}
-.kindgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}.kindtile{display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid var(--line);border-radius:11px;background:#fbfaf5;text-align:left;cursor:pointer;color:var(--ink)}.kindtile.active{background:#edf7e6;border:1.5px solid var(--green)}.kindicon{height:32px;min-width:32px;display:grid;place-items:center;background:white;border:1px solid var(--line);border-radius:8px;font-size:16px}.kindtile strong{display:block;font-size:10px;font-weight:1000}.kindtile small{display:block;font-size:8px;line-height:1.5;color:var(--muted);margin-top:3px}
-.fields{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{min-width:0}.field.full{grid-column:1/-1}label{display:block;font-size:9px;letter-spacing:.04em;font-weight:950;margin-bottom:6px;color:#3d4940}.input,select,textarea{width:100%;min-width:0;background:#fffefa;border:1px solid #d9ded4;border-radius:8px;padding:10px 11px;font:inherit;font-size:11px;color:var(--ink);outline:none}.input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px #1d6a4910}.input:disabled,select:disabled{background:#f0f0e9;color:#969b91}textarea{resize:vertical;min-height:142px;line-height:1.7}.hint{font-size:9px;color:var(--muted);line-height:1.65}.divider{height:1px;background:var(--line);margin:16px 0}.notice{border:1px solid #dae0d3;padding:10px 12px;border-radius:8px;font-size:9px;line-height:1.6;margin:12px 0}.notice.warn{background:#fff3e8;border-color:#f5d4bb;color:#874320}.notice.good{background:#eff9e4;border-color:#d4e9bd;color:#365d25}
-.idea-meta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:6px}.meter{height:4px;background:#e8eadf;border-radius:10px;overflow:hidden;flex:1}.meter span{height:100%;width:0;display:block;background:var(--green);transition:width .15s}.spec-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.spec-chip{border:1px solid #dfe2d8;background:#f7f8f0;padding:6px 8px;border-radius:6px;font-size:8px;font-weight:900;color:#52604e;cursor:pointer}.spec-chip:hover{border-color:#95b68d}
-.keybox{border:1px solid #e0e4d9;background:#f6f7f0;border-radius:11px;padding:14px;margin-top:13px}.keybox h4{font-size:10px;font-weight:1000;margin:0 0 11px}.inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.inline .hint{flex:1}
-.primary-wide{width:100%;padding:14px;font-size:11px}.save-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:11px 0;font-size:9px;color:var(--muted)}.save-label{display:flex;align-items:center;gap:7px;font-weight:850}.save-label input{accent-color:var(--green)}
-.readiness-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.score{font-size:21px;font-weight:1000;letter-spacing:-.07em;color:var(--green)}.scorebar{height:6px;border-radius:10px;background:#e8eadf;overflow:hidden;margin:10px 0 15px}.scorebar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),#9dd65d);transition:width .2s}
-.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px}.check{display:flex;align-items:center;gap:7px;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:#fbfaf5;min-width:0}.check-icon{width:17px;height:17px;flex:0 0 auto;border-radius:5px;background:#efe9dd;display:grid;place-items:center;font-size:9px;color:#8b8070;font-weight:1000}.check.ok{border-color:#d6e7c9;background:#f3faec}.check.ok .check-icon{background:#dff3ca;color:#37651e}.check.no .check-icon{background:#f8e9dd;color:#a95c2f}.check-text{font-size:8px;color:#626d63;font-weight:850;line-height:1.3}
-.overview{background:#17261f;color:#f4f4e7;border-radius:12px;padding:16px;margin-top:15px;overflow:hidden}.overview-title{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:8px;color:#a4b5a1;letter-spacing:.12em;font-weight:950}.overview-project{display:flex;gap:10px;align-items:center;margin:17px 0;padding-bottom:15px;border-bottom:1px solid #ffffff1a}.overview-icon{width:41px;height:41px;display:grid;place-items:center;border-radius:10px;background:var(--lime);color:#1b2a20;font-size:20px}.overview-name{font-size:14px;font-weight:1000;overflow-wrap:anywhere}.overview-id{font-size:9px;color:#a9bba9;margin-top:3px;overflow-wrap:anywhere}.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.overview-cell{padding:9px;background:#ffffff0a;border:1px solid #ffffff12;border-radius:8px;min-width:0}.overview-cell small{display:block;color:#97a995;font-size:7px;letter-spacing:.1em;font-weight:950}.overview-cell b{display:block;color:#f3f4e7;font-size:9px;margin-top:5px;overflow-wrap:anywhere}
-.pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:12px 0 14px}.phase{padding:8px 4px;text-align:center;border:1px solid var(--line);border-radius:7px;background:#faf9f4;color:#8d9488;font-size:8px;font-weight:900}.phase-num{display:block;font-size:11px;margin-bottom:3px}.phase.active{background:#edf6e4;border-color:#b7d69e;color:#2b5c27}.phase.done{background:#1d6a49;border-color:#1d6a49;color:#fff}.status{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;background:#eff8e5;border:1px solid #d4e7bf;border-radius:7px;color:#3d6728;font-size:9px;font-weight:1000;margin-bottom:10px}.status:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.status.error{background:#fff0e9;border-color:#f4d0c2;color:#ab4626}.pipeline-note{font-size:9px;line-height:1.6;color:var(--muted);margin:0 0 12px}
-.resultempty{min-height:155px;border:1px dashed #d2d9cb;border-radius:10px;background:#faf9f3;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px}.emptyicon{height:43px;width:43px;display:grid;place-items:center;border-radius:11px;background:#e8f3dd;color:var(--green);font-size:21px;margin-bottom:10px}.resultempty b{font-size:10px;font-weight:1000}.resultempty p{max-width:255px;color:var(--muted);font-size:9px;line-height:1.6;margin:5px 0 0}.buildresult{border:1px solid var(--line);border-radius:10px;background:#faf9f3;padding:14px}.buildresult p{font-size:10px;line-height:1.7;color:var(--muted);overflow-wrap:anywhere}.buildresult .btn{margin-top:5px}
-.info-row{padding:11px 0;border-bottom:1px solid var(--line)}.info-row:last-child{border:0;padding-bottom:0}.info-row strong{font-size:9px;display:block;margin-bottom:4px}.info-row p{font-size:9px;line-height:1.6;margin:0;color:var(--muted)}
-footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:17px;margin-top:30px;font-size:9px;color:#858d83}footer a{font-weight:900;color:var(--green)}
-.toast{display:none;position:fixed;z-index:100;right:18px;bottom:18px;max-width:min(390px,calc(100vw - 28px));border-radius:11px;padding:13px 15px;background:#17261f;color:#fff;border:1px solid #3a5945;font-size:10px;line-height:1.6;box-shadow:0 20px 60px #0002}.toast.show{display:block}
-@media(max-width:1250px){.layout-app{grid-template-columns:205px minmax(0,1fr)}.sidebar{padding:17px 11px}.templates{grid-template-columns:repeat(4,minmax(0,1fr))}.workspace{grid-template-columns:minmax(0,1fr) 305px}.panel{padding:16px}}
-@media(max-width:990px){.layout-app{grid-template-columns:70px minmax(0,1fr)}.sidebar{align-items:center;padding:16px 8px}.brand{padding:0 0 18px}.brand-copy,.side-label,.nav-text,.side-status,.side-foot{display:none}.nav{width:100%;margin-top:17px}.nav a,.nav button{justify-content:center;padding:12px 4px}.navicon{font-size:17px}.workspace{grid-template-columns:1fr}.rightstack{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:12px}.rightstack .panel{margin:0}.hero{grid-template-columns:minmax(0,1fr) 220px}}
-@media(max-width:700px){.layout-app{display:block}.sidebar{height:auto;position:relative;display:block;padding:11px 15px}.brand{padding:0;border:0}.brand-symbol{width:34px;height:34px;font-size:19px}.brand-copy{display:block}.brand-sub{display:none}.nav,.side-label,.side-bottom{display:none}.topbar{height:52px;padding:0 14px}.build-pill{font-size:8px}.userdot{display:none}.content{padding:22px 13px}.hero{grid-template-columns:1fr;gap:19px}.hero-card{min-height:130px}.hero-card .big-icon{position:absolute;right:20px;top:25px;font-size:28px}.metrics{grid-template-columns:1fr 1fr}.templates{grid-template-columns:1fr 1fr}.workspace{grid-template-columns:1fr}.rightstack{display:block}.rightstack .panel{margin-bottom:13px}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.section-top{align-items:flex-start;flex-direction:column}.search{width:100%}.checks{grid-template-columns:1fr}.hero p{font-size:11px}}
+:root{color-scheme:dark;--bg:#080b10;--panel:#0d131a;--panel2:#111922;--panel3:#151f28;--line:#1f3038;--line2:#2d434a;--text:#ebf6f4;--muted:#82989a;--soft:#afc1c2;--lime:#c9ff55;--cyan:#49e6d3;--purple:#a899ff;--orange:#ff8a5c;--red:#ff6f85;--radius:14px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:22px}
+body{margin:0;background:radial-gradient(ellipse at 50% -35%,#173b3c 0,transparent 50%),linear-gradient(180deg,#0a0f15,#080b10 65%);color:var(--text);font:14px/1.5 "Space Grotesk",Inter,ui-sans-serif,system-ui,sans-serif;min-height:100vh}
+a{color:inherit;text-decoration:none}a:hover{text-decoration:none}
+button,input,select,textarea{font:inherit}
+button{color:inherit}
+.shell{min-height:100vh;display:grid;grid-template-columns:226px minmax(0,1fr)}
+.rail{height:100vh;position:sticky;top:0;background:#070a0f;border-right:1px solid var(--line);padding:19px 13px;display:flex;flex-direction:column;overflow-y:auto;z-index:5}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 6px 22px;border-bottom:1px solid var(--line)}
+.brandmark{width:39px;height:39px;display:grid;place-items:center;background:var(--lime);color:#0a1110;font-weight:700;font-size:22px;border-radius:11px;box-shadow:0 0 24px #c9ff5521;transform:rotate(-3deg)}
+.brandname{font-size:13px;font-weight:700;letter-spacing:.12em}.brandname span{color:var(--cyan)}
+.brandmeta{font:9px "DM Mono",monospace;letter-spacing:.06em;color:#6f8587;margin-top:3px}
+.rail-label{font:9px "DM Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#587075;padding:23px 10px 8px}
+.nav{display:grid;gap:4px}
+.nav a,.nav button{display:flex;align-items:center;gap:10px;width:100%;border:1px solid transparent;border-radius:9px;padding:10px;background:transparent;text-align:left;color:#9db1b2;font-size:11px;font-weight:600;cursor:pointer}
+.nav a:hover,.nav button:hover{background:#111922;color:var(--text)}
+.nav a.active{color:var(--lime);background:#17211b;border-color:#32482b}
+.navicon{width:20px;text-align:center;font-size:15px;color:#6d9696}
+.nav a.active .navicon{color:var(--lime)}
+.rail-spacer{flex:1}
+.rail-status{margin-top:22px;padding:12px;border:1px solid #253b38;border-radius:10px;background:linear-gradient(140deg,#101e1b,#0c1318)}
+.rail-status-head{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:700}
+.led{display:inline-block;width:6px;height:6px;flex:0 0 auto;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px #c9ff5511}
+.rail-status p{font-size:9px;line-height:1.65;color:#829c98;margin:8px 0 0}
+.rail-foot{padding:15px 7px 0;color:#526669;font:8px "DM Mono",monospace;letter-spacing:.13em}
+.main{min-width:0}
+.topbar{height:61px;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:0 clamp(17px,3vw,39px);border-bottom:1px solid var(--line);background:#090e14e8}
+.crumb{font:9px "DM Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:#6e8689}
+.crumb strong{color:#d9e8e7;font-weight:500}
+.top-tools{display:flex;align-items:center;gap:9px}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:6px;background:#101e1c;border:1px solid #23413b;color:#8ed6c6;font:9px "DM Mono",monospace;letter-spacing:.04em}
+.pill.purple{background:#18172a;border-color:#353253;color:#b8aeff}
+.userchip{height:29px;width:29px;display:grid;place-items:center;border-radius:8px;background:#1a2431;border:1px solid #30414d;color:var(--cyan);font:10px "DM Mono",monospace}
+.content{max-width:1600px;margin:0 auto;padding:27px clamp(17px,3vw,39px) 35px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:25px;align-items:center;margin-bottom:24px}
+.overline{display:flex;align-items:center;gap:8px;color:var(--cyan);font:9px "DM Mono",monospace;letter-spacing:.19em;text-transform:uppercase}
+.overline:before{content:"";height:2px;width:20px;background:var(--lime);box-shadow:0 0 12px #c9ff5566}
+h1{font-size:clamp(35px,4.5vw,58px);line-height:.98;letter-spacing:-.07em;font-weight:700;margin:14px 0 15px;max-width:780px}
+h1 span{color:var(--lime)}
+.hero p{font-size:12px;line-height:1.8;max-width:670px;color:#90a5a7;margin:0}
+.hero-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:19px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border:1px solid var(--line2);background:#111923;color:#dbe9e8;border-radius:8px;font-size:10px;font-weight:700;cursor:pointer;transition:transform .15s,border-color .15s,background .15s}
+.btn:hover{border-color:#577078;background:#17222c;transform:translateY(-1px)}
+.btn:disabled{opacity:.48;cursor:wait;transform:none}
+.btn.primary{background:var(--lime);border-color:var(--lime);color:#0b130d;font-weight:700;box-shadow:0 4px 0 #6d9031}
+.btn.primary:hover{background:#d7ff7c}
+.btn.cyan{background:#15332f;border-color:#2d7066;color:var(--cyan)}
+.btn.quiet{background:transparent;border-color:transparent;color:#9ab0b1}
+.btn.small{font-size:9px;padding:7px 9px}
+.hero-art{position:relative;min-height:164px;border-radius:12px;border:1px solid #294e4b;background:linear-gradient(135deg,#122b2b,#0d1621 70%);overflow:hidden;padding:15px}
+.hero-art:before{content:"";position:absolute;right:-20px;top:-30px;width:145px;height:145px;border:1px solid #49e6d336;transform:rotate(35deg);box-shadow:0 0 0 12px #49e6d30a,0 0 0 27px #49e6d308,0 0 0 43px #49e6d305}
+.hero-art:after{content:"";position:absolute;right:45px;bottom:-65px;width:130px;height:130px;border:1px solid #c9ff5530;transform:rotate(45deg)}
+.art-top{position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px;font:8px "DM Mono",monospace;letter-spacing:.13em;color:#76999a}
+.art-icon{position:relative;z-index:1;font-size:36px;line-height:1;margin:18px 0 10px}
+.art-title{position:relative;z-index:1;font-size:14px;letter-spacing:-.03em;font-weight:700}
+.art-sub{position:relative;z-index:1;font:9px "DM Mono",monospace;color:#7ea5a2;margin-top:5px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:25px}
+.stat{min-width:0;display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:#0c121a}
+.stat-icon{width:30px;height:30px;flex:0 0 auto;display:grid;place-items:center;border-radius:8px;background:#13211e;color:var(--cyan);font-size:14px}
+.stat small{display:block;color:#60797c;font:8px "DM Mono",monospace;letter-spacing:.08em}.stat b{display:block;font-size:11px;margin-top:3px;overflow-wrap:anywhere;font-weight:600}
+.section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:28px 0 12px}
+.section-heading h2{font-size:17px;letter-spacing:-.045em;margin:4px 0 0;font-weight:700}
+.section-heading p{font-size:10px;color:#809699;margin:4px 0 0;line-height:1.6}
+.section-tag{font:8px "DM Mono",monospace;color:var(--cyan);letter-spacing:.15em;text-transform:uppercase}
+.tpl-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.filters{display:flex;gap:5px;flex-wrap:wrap}
+.filter{border:1px solid var(--line);border-radius:6px;background:#0d131a;color:#71898b;padding:7px 9px;font:9px "DM Mono",monospace;cursor:pointer}
+.filter:hover{border-color:#3f5b5e;color:#d3e3e2}
+.filter.active{background:#17211b;border-color:#3d592f;color:var(--lime)}
+.search{width:min(245px,100%);padding:8px 10px;border-radius:7px;background:#0c1219;border:1px solid var(--line2);color:var(--text);font-size:10px;outline:none}
+.search:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #49e6d310}
+.templates{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.template-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:142px;text-align:left;padding:12px;border:1px solid var(--line);border-radius:10px;background:linear-gradient(150deg,#101720,#0b1017);color:var(--text);cursor:pointer;transition:border-color .15s,transform .15s,background .15s}
+.template-card:hover{transform:translateY(-2px);border-color:#3e6669;background:#111d24}
+.template-card.selected{border-color:var(--lime);background:linear-gradient(135deg,#17231a,#0f191d);box-shadow:inset 0 0 0 1px #c9ff5512}
+.template-card[hidden]{display:none}
+.template-icon{width:31px;height:31px;border-radius:8px;display:grid;place-items:center;background:#182823;border:1px solid #29443a;color:var(--cyan);font-size:15px;margin-bottom:10px}
+.template-card[data-category="client"] .template-icon{background:#1a1d34;border-color:#35365d;color:var(--purple)}
+.template-card[data-category="starter"] .template-icon{background:#34221b;border-color:#65402f;color:var(--orange)}
+.template-card strong{font-size:10px;font-weight:700;letter-spacing:-.015em}
+.template-card p{font-size:9px;line-height:1.55;color:#819497;margin:5px 0 12px}
+.template-bottom{display:flex;align-items:center;justify-content:space-between;gap:7px;width:100%;margin-top:auto}
+.template-badge{font:8px "DM Mono",monospace;letter-spacing:.02em;padding:4px 6px;border-radius:5px;background:#171f28;color:#a2b3b4;border:1px solid #293741}
+.template-badge.builtin{background:#1b2a19;color:var(--lime);border-color:#3d562d}
+.template-arrow{font-size:11px;color:var(--cyan)}
+.workspace{display:grid;grid-template-columns:minmax(0,1.14fr) minmax(305px,.86fr);gap:13px;align-items:start}
+.stack{display:grid;gap:13px;min-width:0}
+.panel{min-width:0;border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,#101720,#0c1219);padding:17px;box-shadow:0 12px 35px #00000017}
+.panelhead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.panel-kicker{font:8px "DM Mono",monospace;letter-spacing:.16em;color:var(--cyan);text-transform:uppercase;margin-bottom:5px}
+.panel h3{font-size:13px;letter-spacing:-.025em;margin:0;font-weight:700}
+.panel-sub{font-size:10px;line-height:1.6;color:#7f9497;margin:5px 0 0}
+.stepno{width:27px;height:27px;display:grid;place-items:center;flex:0 0 auto;border:1px solid #2c3d43;background:#131c25;border-radius:7px;color:#7d9699;font:9px "DM Mono",monospace}
+.kindgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:16px}
+.kindtile{display:flex;align-items:flex-start;gap:9px;padding:11px;border:1px solid var(--line2);border-radius:9px;background:#0a0f16;text-align:left;cursor:pointer;color:#dfecea;min-width:0}
+.kindtile.active{background:#15231c;border-color:#587a3c;box-shadow:inset 0 0 0 1px #c9ff550a}
+.kindicon{width:30px;height:30px;flex:0 0 auto;display:grid;place-items:center;background:#141d25;border:1px solid #2b3b43;border-radius:7px;color:var(--cyan);font-size:15px}
+.kindtile.active .kindicon{color:var(--lime);border-color:#3b522e}
+.kindtile strong{display:block;font-size:10px;font-weight:700}
+.kindtile small{display:block;color:#7e9295;font-size:8px;line-height:1.5;margin-top:3px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{min-width:0}.field.full{grid-column:1/-1}
+label{display:block;color:#a4b8ba;font:9px "DM Mono",monospace;letter-spacing:.07em;margin-bottom:6px}
+.input,select,textarea{width:100%;min-width:0;border:1px solid #273943;border-radius:7px;background:#090e15;color:var(--text);padding:10px 10px;font-size:10px;outline:none;transition:border-color .15s,box-shadow .15s}
+.input:focus,select:focus,textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #49e6d30e}
+.input:disabled,select:disabled{background:#101720;color:#687d80}
+textarea{min-height:128px;resize:vertical;line-height:1.7;font-size:11px}
+.hint{font-size:9px;line-height:1.65;color:#789093}
+.divider{height:1px;background:var(--line);margin:15px 0}
+.idea-meta{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-top:7px}
+.meter{height:4px;flex:1;border-radius:9px;background:#1c2a30;overflow:hidden}.meter span{display:block;height:100%;width:0;background:var(--cyan);transition:width .15s}
+.spec-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}
+.spec-chip{padding:6px 8px;border:1px solid #2a4047;border-radius:6px;color:#a1b8b8;background:#101921;font-size:8px;font-weight:600;cursor:pointer}
+.spec-chip:hover{border-color:#4c7777;color:var(--cyan)}
+.keybox{border:1px solid #263b42;border-radius:9px;background:#0a1219;padding:12px;margin-top:13px}
+.keybox h4{font-size:10px;margin:0 0 11px;font-weight:700;color:#dae7e4}
+.inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.inline .hint{flex:1}
+.notice{border:1px solid #263a31;padding:10px 11px;border-radius:7px;font-size:9px;line-height:1.6;margin:12px 0}
+.notice.warn{background:#211912;border-color:#59412a;color:#ffc18a}
+.notice.good{background:#14221b;border-color:#355531;color:#bbf58a}
+.readiness-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.score{font:20px "DM Mono",monospace;color:var(--lime)}.scorebar{height:5px;background:#202b31;border-radius:8px;margin:10px 0 14px;overflow:hidden}.scorebar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--lime));transition:width .2s}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.check{display:flex;align-items:center;gap:6px;min-width:0;padding:8px;border:1px solid #26363d;border-radius:6px;background:#0b1219}
+.check-icon{width:16px;height:16px;flex:0 0 auto;display:grid;place-items:center;border-radius:4px;background:#252621;color:#858a7a;font:10px "DM Mono",monospace}
+.check.ok{border-color:#2b4a35;background:#101c17}.check.ok .check-icon{background:#293e23;color:var(--lime)}
+.check.no .check-icon{background:#34241c;color:var(--orange)}
+.check-text{font-size:8px;color:#8ca1a2;line-height:1.3}
+.overview{margin-top:13px;padding:13px;border:1px solid #2c4446;border-radius:9px;background:linear-gradient(150deg,#101f21,#0b1219)}
+.overview-title{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#7ca09d;font:8px "DM Mono",monospace;letter-spacing:.12em}
+.overview-project{display:flex;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid #203237;margin-bottom:10px}
+.overview-icon{width:39px;height:39px;display:grid;place-items:center;background:var(--lime);color:#09110b;border-radius:9px;font-size:20px}
+.overview-name{display:block;font-size:13px;font-weight:700;overflow-wrap:anywhere}
+.overview-id{display:block;color:#709091;font:9px "DM Mono",monospace;margin-top:3px;overflow-wrap:anywhere}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.overview-cell{min-width:0;padding:8px;border:1px solid #203238;background:#0b151a;border-radius:6px}
+.overview-cell small{display:block;color:#698386;font:7px "DM Mono",monospace;letter-spacing:.1em}
+.overview-cell b{display:block;color:#dfecea;font-size:9px;font-weight:500;margin-top:5px;overflow-wrap:anywhere}
+.save-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 0;color:#82989a;font-size:9px}
+.save-label{display:flex;align-items:center;gap:7px;margin:0;font:9px "Space Grotesk",sans-serif;letter-spacing:0;color:#a3b7b7;font-weight:600}
+.save-label input{accent-color:var(--lime)}
+.primary-wide{width:100%;padding:13px;font-size:10px}
+.pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:13px 0}
+.phase{padding:8px 3px;text-align:center;border:1px solid #25343c;border-radius:6px;background:#0a1118;color:#677e81;font:8px "DM Mono",monospace}
+.phase-num{display:block;font-size:10px;margin-bottom:3px}
+.phase.active{border-color:#3e766c;background:#12221e;color:var(--cyan)}
+.phase.done{border-color:#456531;background:#1b2b1b;color:var(--lime)}
+.status{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:6px;background:#16221b;border:1px solid #31472d;color:var(--lime);font:9px "DM Mono",monospace;margin-bottom:8px}
+.status:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.status.error{background:#29151b;border-color:#6e2f3c;color:var(--red)}
+.pipeline-note{font-size:9px;color:#829799;line-height:1.65;margin:0 0 10px}
+.resultempty{min-height:140px;padding:18px;border:1px dashed #2a3c43;border-radius:8px;background:#0a1017;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.emptyicon{height:39px;width:39px;display:grid;place-items:center;border-radius:10px;background:#17271e;color:var(--lime);font-size:20px;margin-bottom:9px}
+.resultempty b{font-size:10px;font-weight:700}.resultempty p{font-size:9px;line-height:1.6;color:#71888b;max-width:240px;margin:5px 0 0}
+.buildresult{padding:13px;border:1px solid #30413c;background:#0c1518;border-radius:8px}
+.buildresult p{font-size:9px;color:#91a8a8;line-height:1.7;overflow-wrap:anywhere}.buildresult .btn{margin-top:4px}
+.info-row{padding:10px 0;border-bottom:1px solid var(--line)}.info-row:last-child{border-bottom:0;padding-bottom:0}
+.info-row strong{display:block;font-size:9px;font-weight:700;margin-bottom:4px}.info-row p{font-size:9px;line-height:1.7;color:#829799;margin:0}
+footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:26px;padding-top:15px;border-top:1px solid var(--line);font:8px "DM Mono",monospace;color:#5f777a;letter-spacing:.04em}
+footer a{color:#8ca7a8}footer a:hover{color:var(--cyan)}
+.toast{display:none;position:fixed;z-index:100;right:17px;bottom:17px;max-width:min(380px,calc(100vw - 28px));padding:12px 14px;border:1px solid #38514e;border-radius:8px;background:#111e1d;color:#e7f5f0;box-shadow:0 18px 55px #000a;font-size:10px;line-height:1.6}.toast.show{display:block}
+@media(max-width:1180px){.shell{grid-template-columns:195px minmax(0,1fr)}.rail{padding:16px 9px}.workspace{grid-template-columns:minmax(0,1fr) 300px}.templates{grid-template-columns:repeat(4,minmax(0,1fr))}.panel{padding:14px}}
+@media(max-width:930px){.shell{grid-template-columns:63px minmax(0,1fr)}.rail{align-items:center;padding:13px 7px}.brand{padding:0 0 16px}.brandcopy,.rail-label,.navtext,.rail-status,.rail-foot{display:none}.nav{width:100%;margin-top:17px}.nav a,.nav button{justify-content:center;padding:11px 4px}.navicon{font-size:16px}.hero{grid-template-columns:minmax(0,1fr) 205px}.workspace{grid-template-columns:1fr}.rightstack{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:12px}.rightstack .panel{margin:0}}
+@media(max-width:650px){.shell{display:block}.rail{position:relative;height:auto;display:block;padding:10px 14px}.brand{border:0;padding:0}.brandmark{width:33px;height:33px;font-size:18px}.brandcopy{display:block}.brandmeta{display:none}.nav,.rail-label,.rail-spacer,.rail-status,.rail-foot{display:none}.topbar{height:51px;padding:0 13px}.pill{font-size:8px}.userchip{display:none}.content{padding:21px 12px 25px}.hero{grid-template-columns:1fr;gap:17px}.hero-art{min-height:126px}.art-icon{position:absolute;right:22px;top:30px;font-size:30px}.stats{grid-template-columns:1fr 1fr}.templates{grid-template-columns:1fr 1fr}.workspace{grid-template-columns:1fr}.rightstack{display:block}.rightstack .panel{margin-bottom:12px}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.section-heading{align-items:flex-start;flex-direction:column}.tpl-controls{align-items:stretch;flex-direction:column}.search{width:100%}.checks{grid-template-columns:1fr 1fr}.kindtile{padding:9px}.kindtile small{font-size:8px}.hero p{font-size:11px}}
+@media(max-width:390px){.templates{grid-template-columns:1fr}.checks{grid-template-columns:1fr}.stats{gap:6px}.stat{padding:9px}.top-tools .pill.purple{display:none}}
 </style>
 </head>
 <body>
-<div class="layout-app">
-<aside class="sidebar">
-  <a href="#top" class="brand"><span class="brand-symbol">M</span><span class="brand-copy"><span class="brand-name">MODFORGE LAB</span><span class="brand-sub">MINECRAFT BUILDER 3.0</span></span></a>
-  <div class="side-label">Deine Werkstatt</div>
-  <nav class="nav">
-    <a class="active" href="#templates"><span class="navicon">▦</span><span class="nav-text">Vorlagen entdecken</span></a>
-    <a href="#project"><span class="navicon">⌁</span><span class="nav-text">Projekt konfigurieren</span></a>
-    <a href="#code"><span class="navicon">✳</span><span class="nav-text">Code-Werkstatt</span></a>
-    <a href="#buildaccess"><span class="navicon">⌘</span><span class="nav-text">Build-Zugriff</span></a>
-    <a href="#pipeline"><span class="navicon">◷</span><span class="nav-text">Build-Konsole</span></a>
+<div class="shell">
+<aside class="rail">
+  <a class="brand" href="#top" aria-label="ModForge X Start"><span class="brandmark">M</span><span class="brandcopy"><span class="brandname">MODFORGE <span>X</span></span><span class="brandmeta">BUILD WORKBENCH / 04</span></span></a>
+  <div class="rail-label">Workbench</div>
+  <nav class="nav" aria-label="ModForge navigation">
+    <a class="active" href="#templates"><span class="navicon">▦</span><span class="navtext">Vorlagenbibliothek</span></a>
+    <a href="#project"><span class="navicon">⌘</span><span class="navtext">Projekt konfigurieren</span></a>
+    <a href="#code"><span class="navicon">✳</span><span class="navtext">Code-Spezifikation</span></a>
+    <a href="#buildaccess"><span class="navicon">⌁</span><span class="navtext">Build-Zugang</span></a>
+    <a href="#pipeline"><span class="navicon">◷</span><span class="navtext">Build-Konsole</span></a>
   </nav>
-  <div class="side-label">Schnellzugriff</div>
+  <div class="rail-label">Quick launch</div>
   <nav class="nav">
-    <button type="button" onclick="document.getElementById('homePreset').click()"><span class="navicon">⌂</span><span class="nav-text">HomeMaster</span></button>
-    <a href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer"><span class="navicon">↗</span><span class="nav-text">Build-Verlauf</span></a>
+    <button type="button" onclick="document.getElementById('homePreset').click()"><span class="navicon">⌂</span><span class="navtext">HomeMaster Ultra</span></button>
+    <a href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer"><span class="navicon">↗</span><span class="navtext">GitHub Build-History</span></a>
   </nav>
-  <div class="side-bottom"><div class="side-status"><strong><span class="indicator"></span> GitHub-Build-System</strong><p>ModForge baut echten Java-Code in GitHub Actions. Ein Download kommt erst nach erfolgreicher Kompilierung.</p></div><div class="side-foot">V3 · CRAFTED FOR MINECRAFT</div></div>
+  <div class="rail-spacer"></div>
+  <div class="rail-status"><div class="rail-status-head"><span class="led"></span> Build-Engine erreichbar</div><p>Java wird auf GitHub kompiliert. ModForge liefert die JAR erst nach erfolgreichem Build aus.</p></div>
+  <div class="rail-foot">MC MODDING / TOOLKIT / V4.0</div>
 </aside>
 <main class="main" id="top">
-  <header class="topbar"><div class="crumb">Workspace / <b>ModForge Lab 3.0</b></div><div class="toptools"><span class="build-pill"><span class="indicator"></span> BUILD PIPELINE READY</span><span class="userdot">MF</span></div></header>
+  <header class="topbar"><div class="crumb">MODFORGE / <strong>BUILD WORKBENCH</strong></div><div class="top-tools"><span class="pill"><span class="led"></span> PIPELINE READY</span><span class="pill purple">FABRIC + PAPER</span><span class="userchip">MF</span></div></header>
   <div class="content">
     <section class="hero">
-      <div><div class="kicker">From idea to in-game</div><h1>Du denkst es.<br><span>Wir bauen die JAR.</span></h1><p>Eine komplette Werkstatt für Minecraft-Mods und Server-Plugins. Nutze echte Vorlagen, prüfe deine Projektkonfiguration live, ergänze technische Anforderungen und kompiliere das Ergebnis auf GitHub.</p><div class="actions"><a class="btn primary" href="#templates">Vorlagen durchsuchen ↓</a><a class="btn" href="#project">Eigenes Projekt starten</a><a class="btn subtle" href="https://docs.papermc.io/" target="_blank" rel="noreferrer">Paper Docs ↗</a></div></div>
-      <div class="hero-card"><small>MODFORGE / BUILD STATION 03</small><div class="big-icon">⚒</div><b>Idee rein. JAR raus.</b><p>Java · Gradle · Fabric · Paper</p></div>
+      <div><div class="overline">Minecraft developer tools / 04</div><h1>Vom Konzept zur<br><span>fertigen JAR.</span></h1><p>Eine echte Build-Werkstatt statt einem Prompt-Feld mit Download-Button. Starte mit einer Vorlage, verfeinere das Verhalten, prüfe die Konfiguration und kompiliere deine Mod oder dein Server-Plugin auf GitHub.</p><div class="hero-actions"><a class="btn primary" href="#templates">Vorlage wählen <span>↓</span></a><a class="btn cyan" href="#project">Eigenes Projekt konfigurieren</a><a class="btn quiet" href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">Build-Logs ↗</a></div></div>
+      <div class="hero-art"><div class="art-top"><span>MODFORGE / STATION 04</span><span>● LIVE</span></div><div class="art-icon">⚒</div><div class="art-title">Compile. Verify. Play.</div><div class="art-sub">JAVA · GRADLE · PAPER · FABRIC</div></div>
     </section>
-    <div class="metrics"><div class="metric"><small>GEWÄHLTE VERSION</small><b id="stripVersion">1.21.11</b></div><div class="metric"><small>OUTPUT</small><b>Nur fertige .JAR</b></div><div class="metric"><small>BUILD ENGINE</small><b>GitHub Actions</b></div><div class="metric"><small>LOKALES SPEICHERN</small><b id="saveDraftState">Aus</b></div></div>
+    <div class="stats">
+      <div class="stat"><span class="stat-icon">⌘</span><span><small>OUTPUT</small><b>Nur fertige JAR</b></span></div>
+      <div class="stat"><span class="stat-icon">⬡</span><span><small>BUILD SYSTEM</small><b>GitHub Actions</b></span></div>
+      <div class="stat"><span class="stat-icon">⌁</span><span><small>MINECRAFT TARGET</small><b id="stripVersion">1.21.11</b></span></div>
+      <div class="stat"><span class="stat-icon">◷</span><span><small>LOKALE ENTWÜRFE</small><b id="saveDraftState">Aus</b></span></div>
+    </div>
     <section id="templates">
-      <div class="section-top"><div><span class="section-tag">START HERE / 01</span><h2>Such dir ein Fundament.</h2><p>Die Vorlagen setzen Projekttyp, Paketname, Beschreibung und eine konkrete Spezifikation.</p></div><input id="templateSearch" class="search" placeholder="Vorlagen suchen …" aria-label="Vorlagen suchen"></div>
-      <div class="filters"><button class="filter active" data-template-filter="all">Alle Vorlagen</button><button class="filter" data-template-filter="server">Server-Plugins</button><button class="filter" data-template-filter="client">Fabric-Mods</button><button class="filter" data-template-filter="starter">Starter</button></div>
+      <div class="section-heading"><div><span class="section-tag">01 / Blueprint library</span><h2>Starte mit einem Blueprint.</h2><p>Jede Vorlage setzt eine konkrete Spezifikation. HomeMaster kommt aus einer integrierten und getesteten Java-Vorlage.</p></div><button class="btn small" id="ideaInspire" type="button">✳ Zufällige Idee</button></div>
+      <div class="tpl-controls"><div class="filters"><button class="filter active" data-template-filter="all" type="button">Alle</button><button class="filter" data-template-filter="server" type="button">Server-Plugins</button><button class="filter" data-template-filter="client" type="button">Fabric-Mods</button><button class="filter" data-template-filter="starter" type="button">Starter</button></div><input class="search" id="templateSearch" placeholder="Name oder Feature suchen …" aria-label="Vorlagen suchen"></div>
       <div class="templates">
-        <button class="template-card" id="homePreset" data-template-card data-template="homemaster" data-category="server"><span class="template-icon">⌂</span><strong>HomeMaster Ultra</strong><p>SetHome, GUI, /back und sichere Teleports mit echter integrierter Java-Vorlage.</p><span class="template-bottom"><span class="template-badge builtin">Ohne KI-Key</span><span class="template-arrow">↗</span></span></button>
-        <button class="template-card" data-template-card data-template="moderator" data-category="server"><span class="template-icon">⛨</span><strong>GuardRail</strong><p>Warnungen, Freeze, Staffchat und saubere Moderationsrechte.</p><span class="template-bottom"><span class="template-badge">KI nötig</span><span class="template-arrow">↗</span></span></button>
-        <button class="template-card" data-template-card data-template="economy" data-category="server"><span class="template-icon">◈</span><strong>CrispyEconomy</strong><p>Konten, Überweisungen, Kontostand und einfache Rangliste.</p><span class="template-bottom"><span class="template-badge">KI nötig</span><span class="template-arrow">↗</span></span></button>
-        <button class="template-card" data-template-card data-template="teleport" data-category="server"><span class="template-icon">⌖</span><strong>WarpDeck</strong><p>Warps und Teleport-Anfragen mit Ablaufzeit und Permissions.</p><span class="template-bottom"><span class="template-badge">KI nötig</span><span class="template-arrow">↗</span></span></button>
-        <button class="template-card" data-template-card data-template="death" data-category="client"><span class="template-icon">✚</span><strong>LastSignal</strong><p>Letzten Todesort lokal speichern und über Keybind/HUD anzeigen.</p><span class="template-bottom"><span class="template-badge">KI nötig</span><span class="template-arrow">↗</span></span></button>
-        <button class="template-card" data-template-card data-template="miner" data-category="client"><span class="template-icon">⛏</span><strong>VeinCraft</strong><p>Konfigurierbares Vein-Mining mit Grenzen und Survival-Schutz.</p><span class="template-bottom"><span class="template-badge">KI nötig</span><span class="template-arrow">↗</span></span></button>
-        <button class="template-card" data-template-card data-template="recipes" data-category="server"><span class="template-icon">♜</span><strong>RecipeSmith</strong><p>Server-Rezepte aus recipes.yml und Admin-Reload.</p><span class="template-bottom"><span class="template-badge">KI nötig</span><span class="template-arrow">↗</span></span></button>
-        <button class="template-card" data-template-card data-template="starter" data-category="starter"><span class="template-icon">✳</span><strong>Leeres Fundament</strong><p>Ein sauberer Startpunkt für eine eigene Idee und Struktur.</p><span class="template-bottom"><span class="template-badge">Starter</span><span class="template-arrow">↗</span></span></button>
+        <button class="template-card" id="homePreset" data-template-card data-template="homemaster" data-category="server" type="button"><span class="template-icon">⌂</span><strong>HomeMaster Ultra</strong><p>Homes, Inventar-GUI, /back, Permissions und sichere Teleports. Direkt kompilierbar.</p><span class="template-bottom"><span class="template-badge builtin">BUILT-IN / NO AI KEY</span><span class="template-arrow">↗</span></span></button>
+        <button class="template-card" data-template-card data-template="moderator" data-category="server" type="button"><span class="template-icon">⛨</span><strong>GuardRail</strong><p>Warnungen, Freeze, Staffchat und sauber getrennte Moderationsrechte.</p><span class="template-bottom"><span class="template-badge">AI GENERATED</span><span class="template-arrow">↗</span></span></button>
+        <button class="template-card" data-template-card data-template="economy" data-category="server" type="button"><span class="template-icon">◈</span><strong>CrispyEconomy</strong><p>Kontostände, sichere Überweisungen und eine Server-Rangliste.</p><span class="template-bottom"><span class="template-badge">AI GENERATED</span><span class="template-arrow">↗</span></span></button>
+        <button class="template-card" data-template-card data-template="teleport" data-category="server" type="button"><span class="template-icon">⌖</span><strong>WarpDeck</strong><p>Warps, Teleport-Anfragen, Ablaufzeiten und Permissions.</p><span class="template-bottom"><span class="template-badge">AI GENERATED</span><span class="template-arrow">↗</span></span></button>
+        <button class="template-card" data-template-card data-template="death" data-category="client" type="button"><span class="template-icon">✚</span><strong>LastSignal</strong><p>Letzten Todesort speichern und per Keybind oder HUD anzeigen.</p><span class="template-bottom"><span class="template-badge">FABRIC CLIENT</span><span class="template-arrow">↗</span></span></button>
+        <button class="template-card" data-template-card data-template="miner" data-category="client" type="button"><span class="template-icon">⛏</span><strong>VeinCraft</strong><p>Erzadern mit Reichweitenlimit, Werkzeugprüfung und Survival-Schutz abbauen.</p><span class="template-bottom"><span class="template-badge">FABRIC CLIENT</span><span class="template-arrow">↗</span></span></button>
+        <button class="template-card" data-template-card data-template="recipes" data-category="server" type="button"><span class="template-icon">♜</span><strong>RecipeSmith</strong><p>Serverrezepte aus config, Validierung und Admin-Reload.</p><span class="template-bottom"><span class="template-badge">AI GENERATED</span><span class="template-arrow">↗</span></span></button>
+        <button class="template-card" data-template-card data-template="starter" data-category="starter" type="button"><span class="template-icon">✳</span><strong>Custom Blueprint</strong><p>Ein sauberes Fundament für eine eigene Idee und individuelle Features.</p><span class="template-bottom"><span class="template-badge">YOUR IDEA</span><span class="template-arrow">↗</span></span></button>
       </div>
     </section>
-    <div class="section-top" id="project"><div><span class="section-tag">BUILD YOUR SPEC / 02</span><h2>Dein Projekt. Deine Regeln.</h2><p>Alle Felder ändern direkt die Projektübersicht und die Build-Konfiguration.</p></div><button class="btn small" id="ideaInspire" type="button">✳ Idee vorschlagen</button></div>
+    <div class="section-heading" id="project"><div><span class="section-tag">02 / Project setup</span><h2>Projekt konfigurieren.</h2><p>Diese Werte steuern die Java-Paketstruktur, Metadaten und den echten Build.</p></div></div>
     <div class="workspace">
       <div class="stack">
         <section class="panel">
-          <div class="panelhead"><div><div class="panel-kicker">01 / Plattform</div><h3>Was baust du?</h3><p class="panel-sub">Die gewählte Plattform bestimmt Loader, Einstiegsklasse und Build-Setup.</p></div><span class="stepno">01</span></div>
-          <div class="kindgrid"><button class="kindtile active tile" data-kind="mod" type="button"><span class="kindicon">🧩</span><span><strong>Fabric-Mod</strong><small>Client oder Fabric-Server</small></span></button><button class="kindtile tile" data-kind="plugin" type="button"><span class="kindicon">⚙</span><span><strong>Paper-Plugin</strong><small>Paper und Purpur</small></span></button></div>
+          <div class="panelhead"><div><div class="panel-kicker">01 / Target</div><h3>Plattform & Identität</h3><p class="panel-sub">Wähle, wo dein Projekt laufen soll und gib ihm eindeutige Metadaten.</p></div><span class="stepno">01</span></div>
+          <div class="kindgrid"><button class="kindtile tile active" data-kind="mod" type="button"><span class="kindicon">🧩</span><span><strong>Fabric-Mod</strong><small>Client oder Fabric-Server</small></span></button><button class="kindtile tile" data-kind="plugin" type="button"><span class="kindicon">⚙</span><span><strong>Paper-Plugin</strong><small>Paper / Purpur Server</small></span></button></div>
           <div class="fields">
             <div class="field"><label for="name">PROJEKTNAME</label><input class="input" id="name" value="ToasterTools" maxlength="48" placeholder="MeinProjekt"></div>
             <div class="field"><label for="id">PROJEKT-ID</label><input class="input" id="id" value="toastertools" maxlength="48" placeholder="mein-projekt"></div>
-            <div class="field"><label for="version">MINECRAFT-VERSION</label><select id="version"><option>26.2</option><option>26.1.2</option><option selected>1.21.11</option><option>1.21.10</option><option>1.21.8</option><option>1.21.4</option><option>1.21.1</option><option>1.20.6</option><option>1.20.4</option><option>1.20.1</option><option>1.19.4</option><option>1.18.2</option><option>1.16.5</option><option>1.12.2</option><option>1.8.8</option><option value="custom">Eigene Version …</option></select><input class="input" id="customVersion" placeholder="1.21.3" style="display:none;margin-top:7px"></div>
-            <div class="field"><label for="platform">PLATTFORM / LOADER</label><select id="platform" disabled><option value="fabric">Fabric</option></select><p class="hint">Wird abhängig vom Projekttyp gesetzt.</p></div>
+            <div class="field"><label for="version">MINECRAFT-VERSION</label><select id="version"><option>26.2</option><option>26.1.2</option><option selected>1.21.11</option><option>1.21.10</option><option>1.21.8</option><option>1.21.4</option><option>1.21.1</option><option>1.20.6</option><option>1.20.4</option><option>1.20.1</option><option>1.19.4</option><option>1.18.2</option><option>1.16.5</option><option>1.12.2</option><option>1.8.8</option><option value="custom">Custom version …</option></select><input class="input" id="customVersion" placeholder="Zum Beispiel 1.21.3" style="display:none;margin-top:7px"></div>
+            <div class="field"><label for="platform">LOADER / SERVER</label><select id="platform" disabled><option value="fabric">Fabric</option></select><p class="hint">Wird aus dem Projekttyp ermittelt und beim Build verwendet.</p></div>
             <div class="field"><label for="pkg">JAVA-PACKAGE</label><input class="input" id="pkg" value="de.toastomat.toastertools" placeholder="de.beispiel.projekt"></div>
-            <div class="field"><label for="desc">KURZBESCHREIBUNG</label><input class="input" id="desc" value="Toasterstarke Minecraft-Features" maxlength="180" placeholder="Was macht das Projekt?"></div>
+            <div class="field"><label for="desc">KURZBESCHREIBUNG</label><input class="input" id="desc" value="Toasterstarke Minecraft-Features" maxlength="180" placeholder="Wozu dient das Projekt?"></div>
           </div>
-          <div class="overview"><div class="overview-title"><span>LIVE PROJECT CARD</span><span>● SYNC</span></div><div class="overview-project"><span class="overview-icon">▦</span><span><span class="overview-name" id="overviewName">ToasterTools</span><span class="overview-id" id="overviewId">toastertools</span></span></div><div class="overview-grid"><div class="overview-cell"><small>TYPE</small><b id="overviewType">Fabric-Mod</b></div><div class="overview-cell"><small>MINECRAFT</small><b id="overviewVersion">1.21.11</b></div><div class="overview-cell"><small>JAVA-PACKAGE</small><b id="overviewPackage">de.toastomat.toastertools</b></div><div class="overview-cell"><small>DESCRIPTION</small><b id="overviewDesc">Toasterstarke Minecraft-Features</b></div></div></div>
+          <div class="overview"><div class="overview-title"><span>PROJECT MANIFEST / LIVE PREVIEW</span><span style="color:var(--lime)">● SYNCED</span></div><div class="overview-project"><span class="overview-icon">⬡</span><span><span class="overview-name" id="overviewName">ToasterTools</span><span class="overview-id" id="overviewId">toastertools</span></span></div><div class="overview-grid"><div class="overview-cell"><small>PROJECT TYPE</small><b id="overviewType">Fabric-Mod</b></div><div class="overview-cell"><small>MINECRAFT</small><b id="overviewVersion">1.21.11</b></div><div class="overview-cell"><small>JAVA-PACKAGE</small><b id="overviewPackage">de.toastomat.toastertools</b></div><div class="overview-cell"><small>DESCRIPTION</small><b id="overviewDesc">Toasterstarke Minecraft-Features</b></div></div></div>
         </section>
         <section class="panel" id="code">
-          <div class="panelhead"><div><div class="panel-kicker">02 / Anforderungen</div><h3>Code-Werkstatt</h3><p class="panel-sub">Beschreibe Verhalten und Fehlerfälle möglichst konkret. Nutze die Schnellbausteine zum Nachschärfen.</p></div><span class="stepno">02</span></div>
-          <div class="field"><label for="idea">PROJEKTSPEZIFIKATION</label><textarea id="idea" maxlength="6000">Erstelle ein Starterprojekt mit einem Beispiel-Feature, sauberer Struktur, Kommentaren und einer README mit Installations- und Build-Anleitung. IDs müssen konsistent sein.</textarea><div class="idea-meta"><span class="hint" id="ideaCounter">0 / 6000</span><span class="meter"><span id="ideaMeter"></span></span></div></div>
-          <div class="spec-chips"><button class="spec-chip" type="button" data-spec="commands">+ Befehle</button><button class="spec-chip" type="button" data-spec="permissions">+ Permissions</button><button class="spec-chip" type="button" data-spec="config">+ config.yml</button><button class="spec-chip" type="button" data-spec="gui">+ Inventar-GUI</button><button class="spec-chip" type="button" data-spec="persistence">+ Speichern</button><button class="spec-chip" type="button" data-spec="tests">+ Fehlerbehandlung</button></div>
-          <div class="keybox"><h4>✳ OpenRouter · KI-Codegenerator</h4><div class="field"><label for="key">API-KEY</label><input class="input" id="key" type="password" autocomplete="off" placeholder="sk-or-v1-…"><p class="hint">Nur für KI-generierte Eigenideen und Vorlagen außer HomeMaster. Niemals hier im Chat posten.</p></div><div class="field" style="margin-top:10px"><label for="model">MODELL-ID</label><input class="input" id="model" value="openrouter/free" placeholder="openrouter/free"></div><div class="inline" style="margin-top:10px"><button class="btn small" id="testAI" type="button">KI-Verbindung testen</button><span id="aiDiag" class="hint" aria-live="polite"></span></div></div>
+          <div class="panelhead"><div><div class="panel-kicker">02 / Specification</div><h3>Was soll der Code tun?</h3><p class="panel-sub">Beschreibe konkrete Abläufe, Grenzfälle, Berechtigungen und Datenhaltung. Nicht nur „mach cool“.</p></div><span class="stepno">02</span></div>
+          <div class="field"><label for="idea">PROJEKTSPEZIFIKATION</label><textarea id="idea" maxlength="6000">Erstelle eine sauber strukturierte Fabric-Mod für Minecraft mit einem kleinen, wirklich nutzbaren Quality-of-Life-Feature, verständlichen Fehlermeldungen und einer kurzen Installationsanleitung.</textarea><div class="idea-meta"><span class="hint" id="ideaCounter">0 / 6000</span><span class="meter"><span id="ideaMeter"></span></span></div></div>
+          <div class="spec-chips"><button class="spec-chip" type="button" data-spec="commands">+ Commands</button><button class="spec-chip" type="button" data-spec="permissions">+ Permissions</button><button class="spec-chip" type="button" data-spec="config">+ config.yml</button><button class="spec-chip" type="button" data-spec="gui">+ GUI</button><button class="spec-chip" type="button" data-spec="persistence">+ Data storage</button><button class="spec-chip" type="button" data-spec="tests">+ Error handling</button></div>
+          <div class="keybox"><h4>✳ OpenRouter · AI code engine</h4><div class="field"><label for="key">API-KEY</label><input class="input" id="key" type="password" autocomplete="off" placeholder="sk-or-v1-…"><p class="hint">Nur für eigene KI-Codegenerierung. HomeMaster nutzt die integrierte Vorlage und benötigt diesen Key nicht. Niemals Keys in den Chat posten.</p></div><div class="field" style="margin-top:11px"><label for="model">MODEL ID</label><input class="input" id="model" value="openrouter/free" placeholder="openrouter/free"></div><div class="inline" style="margin-top:10px"><button class="btn small" id="testAI" type="button">Verbindung testen</button><span class="hint" id="aiDiag" aria-live="polite"></span></div></div>
         </section>
         <section class="panel" id="buildaccess">
-          <div class="panelhead"><div><div class="panel-kicker">03 / Freigabe</div><h3>GitHub-Build-Zugriff</h3><p class="panel-sub">Der Build läuft im Repository und liefert nach Erfolg nur die JAR-Datei aus.</p></div><span class="stepno">03</span></div>
-          <div class="field"><label for="ghToken">FINE-GRAINED PERSONAL ACCESS TOKEN</label><input class="input" id="ghToken" type="password" autocomplete="off" placeholder="github_pat_…"></div>
-          <p class="hint">Repository: <strong>Lennonbsiq999/craft-attack-app</strong> · Berechtigung: <strong>Actions: Read and write</strong>. Tokens werden niemals im lokalen Entwurf gespeichert.</p>
-          <div class="inline"><a class="btn small" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noreferrer">Token erstellen ↗</a><a class="btn small subtle" href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">Workflow ansehen ↗</a></div>
-          <div class="save-row"><label class="save-label"><input id="saveDraft" type="checkbox"> Entwurf in diesem Browser lokal speichern</label><button class="btn small subtle" id="clearDraft" type="button">Lokalen Entwurf löschen</button></div>
-          <p class="hint">Nur Projektfelder und Idee können lokal gespeichert werden. API-Keys und GitHub-Token sind ausdrücklich ausgeschlossen.</p>
+          <div class="panelhead"><div><div class="panel-kicker">03 / Authorization</div><h3>Build-Zugang</h3><p class="panel-sub">GitHub kompiliert Java und gibt nach Erfolg ausschließlich das JAR-Artefakt zurück.</p></div><span class="stepno">03</span></div>
+          <div class="field"><label for="ghToken">GITHUB FINE-GRAINED TOKEN</label><input class="input" id="ghToken" type="password" autocomplete="off" placeholder="github_pat_…"></div>
+          <p class="hint">Repository <strong>Lennonbsiq999/craft-attack-app</strong> · Permission <strong>Actions: Read and write</strong>. Das Token wird nicht an OpenRouter gesendet und nicht in lokalen Entwürfen gespeichert.</p>
+          <div class="inline"><a class="btn small" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noreferrer">Token erstellen ↗</a><a class="btn small quiet" href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">Actions öffnen ↗</a></div>
+          <div class="save-row"><label class="save-label"><input id="saveDraft" type="checkbox"> Projektentwurf lokal speichern</label><button class="btn small quiet" id="clearDraft" type="button">Entwurf löschen</button></div>
+          <p class="hint">Lokal gespeichert werden nur Projektfelder und Spezifikation. Passwörter und Tokens sind ausgeschlossen.</p>
           <div class="divider"></div>
-          <button class="btn primary primary-wide" id="generate" type="button">⚡ Projekt kompilieren & JAR laden</button>
-          <p class="hint" style="margin:10px 0 0">Tastenkürzel: Strg + Enter im Ideenfeld startet den Build, sofern die Pflichtfelder gültig sind.</p>
+          <button class="btn primary primary-wide" id="generate" type="button">⚡ Jetzt kompilieren & JAR herunterladen</button>
+          <p class="hint" style="margin:10px 0 0">Shortcut: <strong>Strg + Enter</strong> im Spezifikationsfeld startet die Validierung.</p>
         </section>
       </div>
       <aside class="stack rightstack">
         <section class="panel">
-          <div class="panelhead"><div><div class="panel-kicker">Ready check</div><h3>Projektqualität</h3><p class="panel-sub">Live-Prüfung der Angaben vor dem Build.</p></div><span class="stepno">✓</span></div>
-          <div class="readiness-head"><span class="hint">Konfigurations-Check</span><strong class="score" id="readinessScore">0%</strong></div><div class="scorebar"><span id="readinessFill"></span></div>
-          <div class="checks"><div class="check" id="checkName"><span class="check-icon">!</span><span class="check-text">Projektname gesetzt</span></div><div class="check" id="checkId"><span class="check-icon">!</span><span class="check-text">Projekt-ID gültig</span></div><div class="check" id="checkPackage"><span class="check-icon">!</span><span class="check-text">Java-Package gültig</span></div><div class="check" id="checkIdea"><span class="check-icon">!</span><span class="check-text">Projektidee konkret</span></div><div class="check" id="checkVersion"><span class="check-icon">!</span><span class="check-text">Version erkannt</span></div></div>
-          <div class="notice warn" id="readinessAlert">Wähle eine Vorlage oder konfiguriere deine Idee.</div>
+          <div class="panelhead"><div><div class="panel-kicker">Preflight / 01</div><h3>Readiness check</h3><p class="panel-sub">Prüft die Projektangaben, bevor Ressourcen verbraucht werden.</p></div><span class="stepno">✓</span></div>
+          <div class="readiness-head"><span class="hint">Projekt-Vollständigkeit</span><strong class="score" id="readinessScore">0%</strong></div><div class="scorebar"><span id="readinessFill"></span></div>
+          <div class="checks"><div class="check" id="checkName"><span class="check-icon">!</span><span class="check-text">Projektname gesetzt</span></div><div class="check" id="checkId"><span class="check-icon">!</span><span class="check-text">Projekt-ID gültig</span></div><div class="check" id="checkPackage"><span class="check-icon">!</span><span class="check-text">Java-Package gültig</span></div><div class="check" id="checkIdea"><span class="check-icon">!</span><span class="check-text">Spezifikation konkret</span></div><div class="check" id="checkVersion"><span class="check-icon">!</span><span class="check-text">Version erkannt</span></div></div>
+          <div class="notice warn" id="readinessAlert">Wähle eine Vorlage oder beschreibe deine Idee.</div>
         </section>
         <section class="panel" id="pipeline">
-          <div class="panelhead"><div><div class="panel-kicker">04 / Build engine</div><h3>Build-Konsole</h3><p class="panel-sub">Vier klar getrennte Schritte bis zur fertigen JAR.</p></div><span class="stepno">04</span></div>
+          <div class="panelhead"><div><div class="panel-kicker">Build engine / 04</div><h3>Build-Konsole</h3><p class="panel-sub">Live-Status bis zur fertigen JAR-Datei.</p></div><span class="stepno">04</span></div>
           <span class="status" id="status">Bereit</span><p class="pipeline-note" id="pipelineNote">Wähle eine Vorlage und fülle die Pflichtfelder aus.</p>
-          <div class="pipeline"><div class="phase" id="phase1"><span class="phase-num">01</span>Code</div><div class="phase" id="phase2"><span class="phase-num">02</span>Prüfen</div><div class="phase" id="phase3"><span class="phase-num">03</span>Build</div><div class="phase" id="phase4"><span class="phase-num">04</span>JAR</div></div>
-          <div class="resultempty" id="empty"><div class="emptyicon">⌘</div><b>Noch kein Build gestartet</b><p>Dein Build-Ergebnis und der Link zu den GitHub-Details werden hier angezeigt.</p></div>
+          <div class="pipeline"><div class="phase" id="phase1"><span class="phase-num">01</span>CODE</div><div class="phase" id="phase2"><span class="phase-num">02</span>CHECK</div><div class="phase" id="phase3"><span class="phase-num">03</span>BUILD</div><div class="phase" id="phase4"><span class="phase-num">04</span>JAR</div></div>
+          <div class="resultempty" id="empty"><div class="emptyicon">⌘</div><b>Warte auf dein erstes Build</b><p>Das Ergebnis, der Download und der GitHub-Run erscheinen in diesem Bereich.</p></div>
           <div class="buildresult" id="buildresult" style="display:none"><b id="resultTitle">Build abgeschlossen</b><p id="resultText"></p><a id="runlink" class="btn small" href="#" target="_blank" rel="noreferrer" style="display:none">Build-Details öffnen ↗</a></div>
-          <div class="divider"></div><div class="info-row"><strong>KI-Codegenerator <span id="modelState" style="float:right;color:var(--muted);font-weight:750">KI-Key fehlt</span></strong><p>HomeMaster benötigt keinen OpenRouter-Key. Andere Vorlagen generieren ihre Java-Implementierung mit dem gewählten Modell.</p></div><div class="info-row"><strong>GitHub-Zugriff <span id="accessState" style="float:right;color:var(--muted);font-weight:750">Token fehlt</span></strong><p>Nur ein vollständiger Build kann eine herunterladbare JAR erzeugen.</p></div>
+          <div class="divider"></div><div class="info-row"><strong>KI-Code <span id="modelState" style="float:right;color:#789093;font:8px 'DM Mono',monospace">KEY MISSING</span></strong><p>HomeMaster ist eingebaut. Andere Vorlagen benötigen OpenRouter zur Java-Generierung.</p></div><div class="info-row"><strong>GitHub-Zugang <span id="accessState" style="float:right;color:#789093;font:8px 'DM Mono',monospace">TOKEN MISSING</span></strong><p>Ein erfolgreicher Build muss Java kompilieren und gültige Metadaten enthalten, bevor das JAR angeboten wird.</p></div>
         </section>
-        <section class="panel"><div class="panelhead"><div><div class="panel-kicker">Hinweise</div><h3>Vor dem Build wissen</h3></div></div><div class="info-row"><strong>Fabric-Mod</strong><p>Die Mod wird im mods-Ordner installiert. Loader- und API-Versionen müssen zu deinem Minecraft passen.</p></div><div class="info-row"><strong>Paper / Purpur Plugin</strong><p>Die JAR gehört in den plugins-Ordner eines kompatiblen Servers. Danach Server-Konsole auf Fehler prüfen.</p></div><div class="info-row"><strong>Kein Quellcode-Download</strong><p>ModForge liefert nur das fertig kompilierte JAR-Artefakt. Die KI garantiert nicht, dass jede Wunschfunktion zur Laufzeit perfekt ist.</p></div></section>
+        <section class="panel"><div class="panelhead"><div><div class="panel-kicker">Notes</div><h3>Vor dem Einbau</h3></div></div><div class="info-row"><strong>Fabric-Mod</strong><p>Die JAR kommt in den mods-Ordner. Loader und Abhängigkeiten müssen passen.</p></div><div class="info-row"><strong>Paper / Purpur</strong><p>Die JAR kommt in plugins. Nach dem Neustart die Server-Konsole auf Fehler prüfen.</p></div><div class="info-row"><strong>Build ist nicht Runtime-Test</strong><p>Erfolgreiche Kompilierung garantiert keine fehlerfreie Spiel-Logik. Teste auf einer Kopie deines Servers.</p></div></section>
       </aside>
     </div>
-    <footer><span>MODFORGE LAB 3.0 · BUILD WORKSHOP</span><span><a href="https://github.com/Lennonbsiq999/craft-attack-app" target="_blank" rel="noreferrer">Repository</a> · <a href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">Build-Verlauf</a> · <a href="https://docs.fabricmc.net/" target="_blank" rel="noreferrer">Fabric</a> · <a href="https://docs.papermc.io/" target="_blank" rel="noreferrer">Paper</a></span></footer>
+    <footer><span>MODFORGE X / BUILD WORKBENCH / RELEASE 04</span><span><a href="https://github.com/Lennonbsiq999/craft-attack-app/tree/main/public/modforge-lab" target="_blank" rel="noreferrer">Source</a> · <a href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">Build history</a> · <a href="https://docs.fabricmc.net/" target="_blank" rel="noreferrer">Fabric</a> · <a href="https://docs.papermc.io/" target="_blank" rel="noreferrer">Paper</a></span></footer>
   </div>
 </main>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
+
 
 
 (function(){
@@ -705,11 +842,14 @@ $('testAI').onclick=testAIConnection;
 })();
 
 
+
 </script>
 <script>
 (function(){
 document.addEventListener("keydown",function(e){
- if((e.ctrlKey||e.metaKey)&&e.key==="Enter"&&document.activeElement&&document.activeElement.id==="idea"){e.preventDefault();document.getElementById("generate").click();}
+ if((e.ctrlKey||e.metaKey)&&e.key==="Enter"&&document.activeElement&&document.activeElement.id==="idea"){
+  e.preventDefault();document.getElementById("generate").click();
+ }
 });
 })();
 </script>
