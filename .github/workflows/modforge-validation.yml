@@ -38,7 +38,7 @@ jobs:
           from pathlib import Path
 
           html = Path("public/modforge-lab/index.html").read_text(encoding="utf-8")
-          scripts = re.findall(r"<script(?:\\s[^>]*)?>(.*?)</script>", html, flags=re.S)
+          scripts = re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>", html, flags=re.S)
           inline = [script for script in scripts if script.strip()]
           if not inline:
               raise SystemExit("No inline ModForge JavaScript was found.")
@@ -77,7 +77,7 @@ jobs:
           };
           const pluginFiles = {
             'src/main/java/de/toastomat/test/Main.java':
-              'package de.toastomat.test;\\nimport org.bukkit.plugin.java.JavaPlugin;\\npublic final class Main extends JavaPlugin { @Override public void onEnable() {} }\\n'
+              'package de.toastomat.test;\nimport org.bukkit.plugin.java.JavaPlugin;\npublic final class Main extends JavaPlugin { @Override public void onEnable() {} }\n'
           };
           await downloadProjectZip(pluginConfig, pluginFiles);
           const modConfig = {
@@ -87,7 +87,7 @@ jobs:
           };
           const modFiles = {
             'src/main/java/de/toastomat/test/TokenlessMod.java':
-              'package de.toastomat.test;\\nimport net.fabricmc.api.ModInitializer;\\npublic final class TokenlessMod implements ModInitializer { public void onInitialize() {} }\\n'
+              'package de.toastomat.test;\nimport net.fabricmc.api.ModInitializer;\npublic final class TokenlessMod implements ModInitializer { public void onInitialize() {} }\n'
           };
           await downloadProjectZip(modConfig, modFiles);
           if (downloads.length !== 2) throw new Error('Expected Paper and Fabric ZIP downloads.');
@@ -97,12 +97,9 @@ jobs:
             await writeFile('/tmp/' + item.name, bytes);
           }
           '''
-          full_js = harness + '\\n' + build_helpers + '\\n' + export_helpers + '\\n' + fixture_code
+          full_js = harness + '\n' + build_helpers + '\n' + export_helpers + '\n' + fixture_code
           Path("/tmp/modforge-export-test.mjs").write_text(full_js, encoding="utf-8")
           PY
-
-      - name: Check JavaScript syntax
-        run: node --check /tmp/modforge-page.js
 
       - name: Check JavaScript syntax
         run: node --check /tmp/modforge-page.js
