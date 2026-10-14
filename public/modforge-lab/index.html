@@ -596,6 +596,25 @@ if(!response.ok)return null;
 return await response.json();
 }catch(e){return null}
 }
+function buildFiles(files){
+const allowed={};
+const resourceExtensions=new Set(['json','yml','yaml','txt','properties','lang','toml','mcmeta','xml']);
+for(const [rawPath,content] of Object.entries(files||{})){
+if(typeof content!=='string')continue;
+let path=String(rawPath).split(String.fromCharCode(92)).join('/');
+while(path.startsWith('/'))path=path.slice(1);
+if(!path||path.split('/').some(part=>part===''||part==='.'||part==='..')||path.includes(':'))continue;
+const lower=path.toLowerCase();
+if(lower.endsWith('.java'))allowed[path]=content;
+else if(path.startsWith('src/main/resources/')){
+const suffix=lower.includes('.')?lower.slice(lower.lastIndexOf('.')+1):'';
+if(resourceExtensions.has(suffix)&&!lower.endsWith('/plugin.yml')&&!lower.endsWith('/fabric.mod.json'))allowed[path]=content;
+}
+}
+if(!Object.keys(allowed).some(path=>path.toLowerCase().endsWith('.java')))throw new Error('Die KI hat keinen Java-Einstiegspunkt erstellt. Versuche es mit einer klareren Idee.');
+return allowed;
+}
+
 function normalizeExportFiles(c, files){
 const raw=buildFiles(files);
 const normalized={};
