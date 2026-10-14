@@ -45,7 +45,7 @@ jobs:
           Path("/tmp/modforge-page.js").write_text(inline[0], encoding="utf-8")
 
           build_start = html.index("function buildFiles(files)")
-          build_end = html.index("async function encodePayload", build_start)
+          build_end = html.index("function normalizeExportFiles", build_start)
           build_helpers = html[build_start:build_end]
           export_start = html.index("function crc32Bytes")
           export_end = html.index("document.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{", export_start)
