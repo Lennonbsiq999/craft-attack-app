@@ -196,7 +196,7 @@ footer a{color:#8ca7a8}footer a:hover{color:var(--cyan)}
   <div class="rail-label">Quick launch</div>
   <nav class="nav">
     <button type="button" onclick="document.getElementById('homePreset').click()"><span class="navicon">⌂</span><span class="navtext">HomeMaster Ultra</span></button>
-    <a href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer"><span class="navicon">↗</span><span class="navtext">GitHub Build-History</span></a>
+    <a href="https://github.com/Lennonbsiq999/craft-attack-app" target="_blank" rel="noreferrer"><span class="navicon">↗</span><span class="navtext">GitHub Quellcode</span></a>
   </nav>
   <div class="rail-spacer"></div>
   <div class="rail-status"><div class="rail-status-head"><span class="led"></span> Tokenloser Export</div><p>Das vollständige Gradle-Projekt wird direkt im Browser als ZIP erstellt. Kein GitHub-Token nötig.</p></div>
@@ -206,7 +206,7 @@ footer a{color:#8ca7a8}footer a:hover{color:var(--cyan)}
   <header class="topbar"><div class="crumb">MODFORGE / <strong>BUILD WORKBENCH</strong></div><div class="top-tools"><span class="pill"><span class="led"></span> PIPELINE READY</span><span class="pill purple">FABRIC + PAPER</span><span class="userchip">MF</span></div></header>
   <div class="content">
     <section class="hero">
-      <div><div class="overline">Minecraft developer tools / 04</div><h1>Vom Konzept zum<br><span>Build-Projekt.</span></h1><p>Erstelle ein vollständiges Gradle-Projekt für eine Fabric-Mod oder ein Paper-Plugin. ModForge packt Java-Code, Minecraft-Metadaten und Build-Konfiguration direkt im Browser in ein ZIP. Kein GitHub-Token und kein Zugriff auf dein Repository erforderlich.</p><div class="hero-actions"><a class="btn primary" href="#templates">Vorlage wählen <span>↓</span></a><a class="btn cyan" href="#project">Eigenes Projekt konfigurieren</a><a class="btn quiet" href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">Build-Logs ↗</a></div></div>
+      <div><div class="overline">Minecraft developer tools / 04</div><h1>Vom Konzept zum<br><span>Build-Projekt.</span></h1><p>Erstelle ein vollständiges Gradle-Projekt für eine Fabric-Mod oder ein Paper-Plugin. ModForge packt Java-Code, Minecraft-Metadaten und Build-Konfiguration direkt im Browser in ein ZIP. Kein GitHub-Token und kein Zugriff auf dein Repository erforderlich.</p><div class="hero-actions"><a class="btn primary" href="#templates">Vorlage wählen <span>↓</span></a><a class="btn cyan" href="#project">Eigenes Projekt konfigurieren</a><a class="btn quiet" href="https://github.com/Lennonbsiq999/craft-attack-app" target="_blank" rel="noreferrer">Quellcode auf GitHub ↗</a></div></div>
       <div class="hero-art"><div class="art-top"><span>MODFORGE / STATION 04</span><span>● LIVE</span></div><div class="art-icon">⚒</div><div class="art-title">Compile. Verify. Play.</div><div class="art-sub">JAVA · GRADLE · PAPER · FABRIC</div></div>
     </section>
     <div class="stats">
@@ -281,7 +281,7 @@ footer a{color:#8ca7a8}footer a:hover{color:var(--cyan)}
         <section class="panel"><div class="panelhead"><div><div class="panel-kicker">Notes</div><h3>Vor dem Einbau</h3></div></div><div class="info-row"><strong>ZIP zuerst entpacken</strong><p>Das Paket enthält ein vollständiges Gradle-Projekt. Baue es mit einer passenden Java-Version und Gradle über <code>gradle build</code>.</p></div><div class="info-row"><strong>Fabric / Paper</strong><p>Die fertige JAR liegt nach einem erfolgreichen lokalen Build in <code>build/libs</code>. Bei Fabric gehört sie in <code>mods</code>, bei Paper in <code>plugins</code>.</p></div><div class="info-row"><strong>Build ist nicht Runtime-Test</strong><p>Ein Projekt-ZIP ist noch keine kompilierte JAR. Prüfe die Kompatibilität und teste auf einer Kopie deines Servers.</p></div></section>
       </aside>
     </div>
-    <footer><span>MODFORGE X / BUILD WORKBENCH / RELEASE 04</span><span><a href="https://github.com/Lennonbsiq999/craft-attack-app/tree/main/public/modforge-lab" target="_blank" rel="noreferrer">Source</a> · <a href="https://github.com/Lennonbsiq999/craft-attack-app/actions" target="_blank" rel="noreferrer">Build history</a> · <a href="https://docs.fabricmc.net/" target="_blank" rel="noreferrer">Fabric</a> · <a href="https://docs.papermc.io/" target="_blank" rel="noreferrer">Paper</a></span></footer>
+    <footer><span>MODFORGE X / BUILD WORKBENCH / RELEASE 04</span><span><a href="https://github.com/Lennonbsiq999/craft-attack-app/tree/main/public/modforge-lab" target="_blank" rel="noreferrer">Source</a> · <a href="https://github.com/Lennonbsiq999/craft-attack-app" target="_blank" rel="noreferrer">GitHub Repository</a> · <a href="https://docs.fabricmc.net/" target="_blank" rel="noreferrer">Fabric</a> · <a href="https://docs.papermc.io/" target="_blank" rel="noreferrer">Paper</a></span></footer>
   </div>
 </main>
 </div>
@@ -726,7 +726,7 @@ desc,
 '',
 '## Lokal bauen',
 '',
-'Installiere eine passende Java-Version und Gradle. Öffne dieses Verzeichnis im Terminal und führe aus:',
+(c.kind==='plugin'?'Für Paper/Minecraft bis 1.21.x benötigst du normalerweise JDK 21. Installiere außerdem Gradle. Öffne dieses Verzeichnis im Terminal und führe aus:':'Für den aktuellen Fabric-Loom-Build benötigst du JDK 25 und Gradle. Öffne dieses Verzeichnis im Terminal und führe aus:'),
 '',
 'gradle build',
 '',
@@ -776,18 +776,18 @@ let files;
 if(isHomeMasterRequest(c)){
 setStatus('Lade integrierte HomeMaster-Vorlage…');
 files=await homeMasterStarter(c);
-toast('HomeMaster-Vorlage aktiviert: Kernfunktionen werden ohne KI generiert und anschließend kompiliert.');
+toast('HomeMaster-Vorlage aktiviert: Das fertige Gradle-Projekt wird ohne KI-Key als ZIP exportiert.');
 }else if($('key').value.trim()){
 setStatus('KI schreibt Java-Code…');
 files=await makeAI(c,p);
 }else{
 files=starter(c);
-toast('Basis-JAR: Ohne OpenRouter-Key wird deine eingegebene Wunschfunktion nicht von der KI umgesetzt.');
+toast('Ohne OpenRouter-Key wird nur ein Starter-Projekt exportiert. Deine Wunschfunktion wird dabei nicht von der KI umgesetzt.');
 }
 setStatus('Quellcode bereit. Erstelle das Gradle-Projekt…');
 await downloadProjectZip(c,files);
 }catch(e){
-setStatus('Build fehlgeschlagen',true);
+setStatus('Export fehlgeschlagen',true);
 $('buildresult').style.display='block';$('empty').style.display='none';
 $('resultTitle').textContent='Projekt-ZIP konnte nicht erstellt werden';
 $('resultText').textContent=e&&e.message?e.message:'Unbekannter Fehler beim Erstellen der JAR.';
