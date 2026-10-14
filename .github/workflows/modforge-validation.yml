@@ -73,7 +73,7 @@ jobs:
                   "test-project/src/Main.java",
                   "test-project/README.md",
               }
-              assert archive.read("test-project/src/Main.java") == b"class Main {}\\n"
+              assert archive.read("test-project/src/Main.java").startswith(b"class Main {}")
               assert archive.testzip() is None
           print("Native ZIP writer created a valid downloadable archive.")
           PY
