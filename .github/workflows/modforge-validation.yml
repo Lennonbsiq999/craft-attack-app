@@ -45,3 +45,24 @@ jobs:
 
       - name: Check browser JavaScript syntax
         run: node --check /tmp/modforge-page.js
+
+      - name: Ensure client-side GitHub token is not required
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html = Path("public/modforge-lab/index.html").read_text(encoding="utf-8")
+          forbidden = [
+              'id="ghToken"',
+              'GITHUB FINE-GRAINED TOKEN',
+              'function ghHeaders',
+              'function ghJson(',
+              'api.github.com/repos/',
+              'GitHub-Build-Token'
+          ]
+          present = [item for item in forbidden if item in html]
+          if present:
+              raise SystemExit("Client-side GitHub authentication remains: " + ", ".join(present))
+          if "async function downloadProjectZip" not in html:
+              raise SystemExit("Tokenless project ZIP exporter is missing.")
+          print("Tokenless ZIP export check passed.")
+          PY
