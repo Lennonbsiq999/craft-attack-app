@@ -30,21 +30,53 @@ jobs:
       - name: Check Python syntax
         run: python -m py_compile scripts/modforge_build_jar.py
 
-      - name: Extract the ModForge browser script
+      - name: Extract ModForge scripts and ZIP self-test
         shell: bash
         run: |
           python - <<'PY'
+          import re
           from pathlib import Path
+
           html = Path("public/modforge-lab/index.html").read_text(encoding="utf-8")
-          lib = '<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>'
-          pos = html.index(lib) + len(lib)
-          start = html.index("<script>", pos) + len("<script>")
-          end = html.index("</script>", start)
-          Path("/tmp/modforge-page.js").write_text(html[start:end], encoding="utf-8")
+          scripts = re.findall(r"<script(?:\\s[^>]*)?>(.*?)</script>", html, flags=re.S)
+          inline = [script for script in scripts if script.strip()]
+          if not inline:
+              raise SystemExit("No inline ModForge JavaScript was found.")
+          Path("/tmp/modforge-page.js").write_text(inline[0], encoding="utf-8")
+
+          start = html.index("function crc32Bytes")
+          end = html.index("function versionParts", start)
+          zip_helpers = html[start:end]
+          test_js = zip_helpers + """
+          import { writeFile } from 'node:fs/promises';
+          const blob = makeZipBlob([
+            { name: 'test-project/src/Main.java', content: 'class Main {}\\n' },
+            { name: 'test-project/README.md', content: 'ZIP export self-test\\n' }
+          ]);
+          await writeFile('/tmp/modforge-test.zip', new Uint8Array(await blob.arrayBuffer()));
+          """
+          Path("/tmp/modforge-zip-test.mjs").write_text(test_js, encoding="utf-8")
           PY
 
       - name: Check browser JavaScript syntax
         run: node --check /tmp/modforge-page.js
+
+      - name: Test generated ZIP archive
+        run: |
+          node /tmp/modforge-zip-test.mjs
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          path = Path("/tmp/modforge-test.zip")
+          with ZipFile(path) as archive:
+              assert set(archive.namelist()) == {
+                  "test-project/src/Main.java",
+                  "test-project/README.md",
+              }
+              assert archive.read("test-project/src/Main.java") == b"class Main {}\\n"
+              assert archive.testzip() is None
+          print("Native ZIP writer created a valid downloadable archive.")
+          PY
 
       - name: Ensure client-side GitHub token is not required
         run: |
