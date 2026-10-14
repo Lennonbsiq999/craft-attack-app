@@ -30,7 +30,7 @@ jobs:
       - name: Check Python syntax
         run: python -m py_compile scripts/modforge_build_jar.py
 
-      - name: Extract ModForge scripts and ZIP self-test
+      - name: Extract ModForge scripts and create real export fixtures
         shell: bash
         run: |
           python - <<'PY'
@@ -44,38 +44,96 @@ jobs:
               raise SystemExit("No inline ModForge JavaScript was found.")
           Path("/tmp/modforge-page.js").write_text(inline[0], encoding="utf-8")
 
-          start = html.index("function crc32Bytes")
-          end = html.index("function versionParts", start)
-          zip_helpers = html[start:end]
-          test_js = zip_helpers + """
+          build_start = html.index("function buildFiles(files)")
+          build_end = html.index("async function encodePayload", build_start)
+          build_helpers = html[build_start:build_end]
+          export_start = html.index("function crc32Bytes")
+          export_end = html.index("document.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{", export_start)
+          export_helpers = html[export_start:export_end]
+
+          harness = """
           import { writeFile } from 'node:fs/promises';
-          const blob = makeZipBlob([
-            { name: 'test-project/src/Main.java', content: 'class Main {}\\n' },
-            { name: 'test-project/README.md', content: 'ZIP export self-test\\n' }
-          ]);
-          await writeFile('/tmp/modforge-test.zip', new Uint8Array(await blob.arrayBuffer()));
+          const ui = {};
+          const downloads = [];
+          function $(id) {
+            if (!ui[id]) ui[id] = { style: {}, textContent: '', className: '' };
+            return ui[id];
+          }
+          function setStatus(message) { ui.lastStatus = message; }
+          function toast() {}
+          function download(name, blob, type) { downloads.push({ name, blob, type }); }
+          function slug(value) {
+            const clean = String(value || '').toLowerCase().trim()
+              .replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48) || 'minecraft-project';
+            return /^[a-z]/.test(clean) ? clean : 'project-' + clean;
+          }
+          globalThis.fetch = async () => ({ ok: false, json: async () => null });
           """
-          Path("/tmp/modforge-zip-test.mjs").write_text(test_js, encoding="utf-8")
+          fixture_code = r'''
+          const pluginConfig = {
+            kind: 'plugin', platform: 'paper', version: '1.21.11',
+            name: 'TokenlessPlugin', id: 'tokenless-plugin',
+            pkg: 'de.toastomat.test', desc: 'ZIP export test'
+          };
+          const pluginFiles = {
+            'src/main/java/de/toastomat/test/Main.java':
+              'package de.toastomat.test;\\nimport org.bukkit.plugin.java.JavaPlugin;\\npublic final class Main extends JavaPlugin { @Override public void onEnable() {} }\\n'
+          };
+          await downloadProjectZip(pluginConfig, pluginFiles);
+          const modConfig = {
+            kind: 'mod', platform: 'fabric', version: '1.21.11',
+            name: 'TokenlessMod', id: 'tokenless-mod',
+            pkg: 'de.toastomat.test', desc: 'ZIP export test'
+          };
+          const modFiles = {
+            'src/main/java/de/toastomat/test/TokenlessMod.java':
+              'package de.toastomat.test;\\nimport net.fabricmc.api.ModInitializer;\\npublic final class TokenlessMod implements ModInitializer { public void onInitialize() {} }\\n'
+          };
+          await downloadProjectZip(modConfig, modFiles);
+          if (downloads.length !== 2) throw new Error('Expected Paper and Fabric ZIP downloads.');
+          for (const item of downloads) {
+            if (item.type !== 'application/zip') throw new Error('Unexpected MIME type: ' + item.type);
+            const bytes = new Uint8Array(await item.blob.arrayBuffer());
+            await writeFile('/tmp/' + item.name, bytes);
+          }
+          '''
+          full_js = harness + '\\n' + build_helpers + '\\n' + export_helpers + '\\n' + fixture_code
+          Path("/tmp/modforge-export-test.mjs").write_text(full_js, encoding="utf-8")
           PY
 
-      - name: Check browser JavaScript syntax
+      - name: Check JavaScript syntax
         run: node --check /tmp/modforge-page.js
 
-      - name: Test generated ZIP archive
+      - name: Check JavaScript syntax
+        run: node --check /tmp/modforge-page.js
+
+      - name: Run full tokenless export tests
         run: |
-          node /tmp/modforge-zip-test.mjs
+          node /tmp/modforge-export-test.mjs
           python - <<'PY'
-          from pathlib import Path
           from zipfile import ZipFile
-          path = Path("/tmp/modforge-test.zip")
-          with ZipFile(path) as archive:
-              assert set(archive.namelist()) == {
-                  "test-project/src/Main.java",
-                  "test-project/README.md",
-              }
-              assert archive.read("test-project/src/Main.java").startswith(b"class Main {}")
-              assert archive.testzip() is None
-          print("Native ZIP writer created a valid downloadable archive.")
+          cases = [
+              ("/tmp/tokenless-plugin-project.zip",
+               ["tokenless-plugin/src/main/java/de/toastomat/test/Main.java",
+                "tokenless-plugin/src/main/resources/plugin.yml",
+                "tokenless-plugin/build.gradle",
+                "tokenless-plugin/README.md"]),
+              ("/tmp/tokenless-mod-project.zip",
+               ["tokenless-mod/src/main/java/de/toastomat/test/TokenlessMod.java",
+                "tokenless-mod/src/main/resources/fabric.mod.json",
+                "tokenless-mod/build.gradle",
+                "tokenless-mod/gradle.properties",
+                "tokenless-mod/README.md"])
+          ]
+          for path, required in cases:
+              with ZipFile(path) as archive:
+                  assert archive.testzip() is None, path
+                  names = set(archive.namelist())
+                  missing = set(required) - names
+                  assert not missing, f"{path}: missing {sorted(missing)}"
+                  for name in required:
+                      assert archive.read(name), f"{path}: empty {name}"
+          print("Paper and Fabric project ZIPs passed archive and metadata checks.")
           PY
 
       - name: Ensure client-side GitHub token is not required
